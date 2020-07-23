@@ -1,0 +1,10 @@
+body {
+	background-color: red;
+	width: 750px;
+	height: 600px;
+}
+
+::-webkit-scrollbar {
+    width: 0px;
+    background: transparent;
+}

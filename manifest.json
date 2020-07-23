@@ -1,0 +1,22 @@
+{
+ "manifest_version": 2,
+ "name": "InstaBot",
+ "version": "1.0.0",
+ "description": "This is a simple bot allowing the user to see which of the people he follows do not follow him back. The user also has the option to unfollow those people.",
+ "permissions": ["activeTab", "declarativeContent", "storage"],
+ "content_scripts": [
+   {
+     "matches": ["https://instagram.com/*"],
+     "css": ["css/style.css"],
+     "js": ["js/main.js"]
+   }
+ ],
+ "browser_action": {
+   "default_title": "Does a thing when you do a thing",
+   "default_popup": "html/popup.html",
+   "default_icon": {
+     "16": "icons/icon16.png",
+     "32": "icons/icon32.png"
+   }
+ }
+}
