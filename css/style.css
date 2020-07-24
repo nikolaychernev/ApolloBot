@@ -1,10 +1,29 @@
 body {
-	background-color: red;
+	background-color: white;
 	width: 750px;
 	height: 600px;
+	font-family: 'Roboto', sans-serif;
 }
 
 ::-webkit-scrollbar {
     width: 0px;
     background: transparent;
+}
+
+#loadPeopleBtn, #removeSelectedBtn, #startUnfollowingBtn {
+	display: none;
+}
+
+img {
+	width: 10%;
+}
+
+img.selected {
+	outline: 4px solid blue;
+    outline-offset: -4px;
+}
+
+img.processed {
+	outline: 4px solid red;
+    outline-offset: -4px;
 }

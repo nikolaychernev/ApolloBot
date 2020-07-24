@@ -3,7 +3,7 @@
  "name": "InstaBot",
  "version": "1.0.0",
  "description": "This is a simple bot allowing the user to see which of the people he follows do not follow him back. The user also has the option to unfollow those people.",
- "permissions": ["activeTab", "declarativeContent", "storage"],
+ "permissions": ["activeTab", "declarativeContent", "storage", "cookies", "*://*.instagram.com/*"],
  "content_scripts": [
    {
      "matches": ["https://instagram.com/*"],
