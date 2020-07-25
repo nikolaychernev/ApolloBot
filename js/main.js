@@ -164,7 +164,10 @@ $(function () {
         $(profilePicture).attr("src", user.profile_pic_url);
         $(profilePicture).on("click", onProfilePictureClicked);
 
-        $(userElementClone).find("p.name").text(user.username);
+        $(userElementClone).find("a.name")
+            .attr("href", "https://www.instagram.com/" + user.username + "/")
+            .text(user.username);
+
         $(container).append($(userElementClone));
     }
 
