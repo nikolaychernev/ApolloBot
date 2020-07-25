@@ -13,8 +13,12 @@ let following = new Map();
 let notFollowingBack = new Map();
 
 // Settings
+let loadingUsersBatchSize = 48;
+let loadingUsersTimeout = 1;
+
 let unfollowTimeout = 60;
 let timeoutRandomization = 50;
+
 let loadFollowersQueryHash = "c76146de99bb02f6415203be841dd25a";
 let loadFollowingQueryHash = "d04b0a864b4b54837c0d870b0e77e076";
 
@@ -60,7 +64,7 @@ $(function () {
     }
 
     function onLoadNotFollowingBackBtnClicked() {
-        loadFollowers(loadFollowing);
+        loadFollowers(loadFollowing, 0, "");
 
         $(loadNotFollowingBackBtn).hide();
 
@@ -71,14 +75,14 @@ $(function () {
         $(startUnfollowingBtn).on("click", onStartUnfollowingBtnClicked);
     }
 
-    function loadFollowers(callback) {
+    function loadFollowers(callback, loadedFollowersCount, after) {
         let jsonVars = {
             id: currentUserId,
-            first: 2
+            first: loadingUsersBatchSize,
+            after: after
         };
 
         let encodedJsonVars = encodeURIComponent(JSON.stringify(jsonVars));
-        let loadedFollowersCount = 0;
 
         $.ajax("https://www.instagram.com/graphql/query/?query_hash=" + loadFollowersQueryHash + "&variables=" + encodedJsonVars)
             .done(function (data) {
@@ -91,18 +95,24 @@ $(function () {
                 }
 
                 $(log).text("Loaded " + loadedFollowersCount + "/" + totalFollowersCount + " followers.");
-                callback(loadNotFollowingBack);
+                let pageInfo = data.data.user.edge_followed_by.page_info;
+
+                if (pageInfo.has_next_page) {
+                    loadFollowers(callback, loadedFollowersCount, pageInfo.end_cursor);
+                }
+
+                callback(loadNotFollowingBack, 0, "");
             });
     }
 
-    function loadFollowing(callback) {
+    function loadFollowing(callback, loadedFollowingCount, after) {
         let jsonVars = {
             id: currentUserId,
-            first: 2
+            first: loadingUsersBatchSize,
+            after: after
         };
 
         let encodedJsonVars = encodeURIComponent(JSON.stringify(jsonVars));
-        let loadedFollowingCount = 0;
 
         $.ajax("https://www.instagram.com/graphql/query/?query_hash=" + loadFollowingQueryHash + "&variables=" + encodedJsonVars)
             .done(function (data) {
@@ -122,6 +132,12 @@ $(function () {
                 }
 
                 $(log).text("Loaded " + loadedFollowingCount + "/" + totalFollowingCount + " following.");
+                let pageInfo = data.data.user.edge_follow.page_info;
+
+                if (pageInfo.has_next_page) {
+                    loadFollowing(callback, loadedFollowingCount, pageInfo.end_cursor);
+                }
+
                 callback();
             });
     }
