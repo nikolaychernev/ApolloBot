@@ -1,5 +1,13 @@
 let currentUrl;
 let csrfToken;
+let currentUserId;
+
+let selectedClass = "selected";
+let processedClass = "processed";
+
+let followersIds = [];
+let following = new Map();
+let notFollowingBack = new Map();
 
 chrome.tabs.query({
     'active': true,
@@ -18,37 +26,131 @@ chrome.tabs.query({
     });
 });
 
-$(document).ready(function () {
-    let currentUserId;
-
-    let loadPeopleBtn = $("#loadPeopleBtn");
+$(function () {
+    let loadNotFollowingBackBtn = $("#loadNotFollowingBackBtn");
     let removeSelectedBtn = $("#removeSelectedBtn");
     let startUnfollowingBtn = $("#startUnfollowingBtn");
 
     let usernameField = $("#username");
     let container = $("div.container");
-    let person = $("div.person");
+    let userElement = $("div.userElement");
     let log = $("#log");
-
-    let selectedClass = "selected";
-    let processedClass = "processed";
-
-    let followersIds = new Array();
-    let following = new Map()
-        let notFollowingBack = new Map();
 
     extractUsernameAndId();
 
-    function onLoadPeopleBtnClicked() {
+    function extractUsernameAndId() {
+        $.ajax(currentUrl + "?__a=1").done(function (data) {
+            currentUserId = data.graphql.user.id;
+
+            let currentUsername = currentUrl.split("/")[3];
+            $(usernameField).text(currentUsername);
+
+            $(loadNotFollowingBackBtn).on("click", onLoadNotFollowingBackBtnClicked);
+            $(loadNotFollowingBackBtn).show();
+        });
+    }
+
+    function onLoadNotFollowingBackBtnClicked() {
         loadFollowers(loadFollowing);
 
-        $(loadPeopleBtn).hide();
+        $(loadNotFollowingBackBtn).hide();
 
         $(removeSelectedBtn).show();
-        $(removeSelectedBtn).click(onRemoveSelectedBtnClicked);
+        $(removeSelectedBtn).on("click", onRemoveSelectedBtnClicked);
 
         $(startUnfollowingBtn).show();
-        $(startUnfollowingBtn).click(onStartUnfollowingBtnClicked);
+        $(startUnfollowingBtn).on("click", onStartUnfollowingBtnClicked);
+    }
+
+    function loadFollowers(callback) {
+        let jsonVars = {
+            id: currentUserId,
+            first: 2
+        };
+
+        let encodedJsonVars = encodeURIComponent(JSON.stringify(jsonVars));
+        let loadedFollowersCount = 0;
+
+        $.ajax("https://www.instagram.com/graphql/query/?query_hash=c76146de99bb02f6415203be841dd25a&variables=" + encodedJsonVars)
+            .done(function (data) {
+                let followers = data.data.user.edge_followed_by.edges;
+                let totalFollowersCount = data.data.user.edge_followed_by.count;
+
+                for (let follower of followers) {
+                    followersIds.push(follower.node.id);
+                    loadedFollowersCount++;
+                }
+
+                $(log).text("Loaded " + loadedFollowersCount + "/" + totalFollowersCount + " followers.");
+                callback(loadNotFollowingBack);
+            });
+    }
+
+    function loadFollowing(callback) {
+        let jsonVars = {
+            id: currentUserId,
+            first: 2
+        };
+
+        let encodedJsonVars = encodeURIComponent(JSON.stringify(jsonVars));
+        let loadedFollowingCount = 0;
+
+        $.ajax("https://www.instagram.com/graphql/query/?query_hash=d04b0a864b4b54837c0d870b0e77e076&variables=" + encodedJsonVars)
+            .done(function (data) {
+                let usersFollowing = data.data.user.edge_follow.edges;
+                let totalFollowingCount = data.data.user.edge_follow.count;
+
+                for (let userFollowing of usersFollowing) {
+                    let user = {
+                        id: userFollowing.node.id,
+                        username: userFollowing.node.username,
+                        full_name: userFollowing.node.full_name,
+                        profile_pic_url: userFollowing.node.profile_pic_url
+                    };
+
+                    following.set(userFollowing.node.id, user);
+                    loadedFollowingCount++;
+                }
+
+                $(log).text("Loaded " + loadedFollowingCount + "/" + totalFollowingCount + " following.");
+                callback();
+            });
+    }
+
+    function loadNotFollowingBack() {
+        for (let userFollowing of following.values()) {
+            if (followersIds.includes(userFollowing.id)) {
+                continue;
+            }
+
+            notFollowingBack.set(userFollowing.id, userFollowing);
+            drawUser(userFollowing);
+        }
+
+        $(log).text("There are " + notFollowingBack.size + " users not following you back.");
+    }
+
+    function drawUser(user) {
+        let userElementClone = $(userElement).clone().show();
+        let profilePicture = $(userElementClone).find("img.profilePicture");
+
+        $(userElementClone).attr("id", user.id);
+
+        $(profilePicture).attr("src", user.profile_pic_url);
+        $(profilePicture).on("click", onProfilePictureClicked);
+
+        $(userElementClone).find("p.name").text(user.username);
+        $(container).append($(userElementClone));
+    }
+
+    function onProfilePictureClicked(event) {
+        let target = $(event.target);
+
+        if ($(target).hasClass(selectedClass)) {
+            $(target).removeClass(selectedClass);
+        } else {
+            $(target).addClass(selectedClass);
+        }
     }
 
     function onRemoveSelectedBtnClicked() {
@@ -68,96 +170,6 @@ $(document).ready(function () {
         }
     }
 
-    function onProfilePictureClicked(event) {
-        let target = $(event.target);
-
-        if ($(target).hasClass(selectedClass)) {
-            $(target).removeClass(selectedClass);
-        } else {
-            $(target).addClass(selectedClass);
-        }
-    }
-
-    function extractUsernameAndId() {
-        $.ajax(currentUrl + "?__a=1").done(function (data) {
-            currentUserId = data.graphql.user.id;
-
-            let currentUsername = currentUrl.split("/")[3];
-            $(usernameField).text(currentUsername);
-
-            $(loadPeopleBtn).click(onLoadPeopleBtnClicked);
-            $(loadPeopleBtn).show();
-        });
-    }
-
-    function loadFollowers(callback) {
-        let jsonVars = {
-            id: currentUserId,
-            first: 2
-        }
-
-        let encodedJsonVars = encodeURIComponent(JSON.stringify(jsonVars));
-        let loadedUsersCount = 0;
-
-        $.ajax("https://www.instagram.com/graphql/query/?query_hash=c76146de99bb02f6415203be841dd25a&variables=" + encodedJsonVars)
-        .done(function (data) {
-            let followers = data.data.user.edge_followed_by.edges;
-            let totalUsersCount = data.data.user.edge_followed_by.count;
-
-            for (let follower of followers) {
-                followersIds.push(follower.node.id);
-                loadedUsersCount++;
-            }
-
-            $(log).text("Loaded " + loadedUsersCount + "/" + totalUsersCount + " followers.");
-            callback(loadNotFollowingBack);
-        });
-    }
-
-    function loadFollowing(callback) {
-        let jsonVars = {
-            id: currentUserId,
-            first: 2
-        }
-
-        let encodedJsonVars = encodeURIComponent(JSON.stringify(jsonVars));
-        let loadedUsersCount = 0;
-
-        $.ajax("https://www.instagram.com/graphql/query/?query_hash=d04b0a864b4b54837c0d870b0e77e076&variables=" + encodedJsonVars)
-        .done(function (data) {
-            let usersFollowing = data.data.user.edge_follow.edges;
-            let totalUsersCount = data.data.user.edge_follow.count;
-
-            for (let userFollowing of usersFollowing) {
-                let user = {
-                    id: userFollowing.node.id,
-                    username: userFollowing.node.username,
-                    full_name: userFollowing.node.full_name,
-                    profile_pic_url: userFollowing.node.profile_pic_url
-                }
-
-                following.set(userFollowing.node.id, user);
-                loadedUsersCount++;
-            }
-
-            $(log).text("Loaded " + loadedUsersCount + "/" + totalUsersCount + " followers.");
-            callback();
-        });
-    }
-
-    function loadNotFollowingBack() {
-        for (let userFollowing of following.values()) {
-            if (followersIds.includes(userFollowing.id)) {
-                continue;
-            }
-
-            notFollowingBack.set(userFollowing.id, userFollowing);
-            drawPerson(userFollowing);
-        }
-
-        $(log).text("There are " + notFollowingBack.size + " users not following you back.");
-    }
-
     function unfollowUser(user) {
         $.ajax({
             url: "https://www.instagram.com/web/friendships/" + user.id + "/unfollow/",
@@ -166,22 +178,9 @@ $(document).ready(function () {
                 xhr.setRequestHeader('x-csrftoken', csrfToken);
             }
         })
-        .done(function (data) {
-            $("div#" + user.id + " img").addClass(processedClass);
-            $(log).text("Unfollowed " + user.username + ".");
-        });
-    }
-
-    function drawPerson(user) {
-        let newPerson = $(person).clone().show();
-        let profilePicture = $(newPerson).find("img.profilePicture");
-
-        $(newPerson).attr("id", user.id);
-
-        $(profilePicture).attr("src", user.profile_pic_url);
-        $(profilePicture).click(onProfilePictureClicked);
-
-        $(newPerson).find("p.name").text(user.username);
-        $(container).append($(newPerson));
+            .done(function () {
+                $("div#" + user.id + " img").addClass(processedClass);
+                $(log).text("Unfollowed " + user.username + ".");
+            });
     }
 });

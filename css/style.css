@@ -1,29 +1,29 @@
 body {
-	background-color: white;
-	width: 750px;
-	height: 600px;
-	font-family: 'Roboto', sans-serif;
+    background-color: white;
+    width: 750px;
+    height: 600px;
+    font-family: 'Roboto', sans-serif;
 }
 
 ::-webkit-scrollbar {
-    width: 0px;
+    width: 0;
     background: transparent;
 }
 
-#loadPeopleBtn, #removeSelectedBtn, #startUnfollowingBtn {
-	display: none;
+#loadNotFollowingBackBtn, #removeSelectedBtn, #startUnfollowingBtn {
+    display: none;
 }
 
 img {
-	width: 10%;
+    width: 10%;
 }
 
 img.selected {
-	outline: 4px solid blue;
+    outline: 4px solid blue;
     outline-offset: -4px;
 }
 
 img.processed {
-	outline: 4px solid red;
+    outline: 4px solid red;
     outline-offset: -4px;
 }
