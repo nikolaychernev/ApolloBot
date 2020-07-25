@@ -43,6 +43,10 @@ $(function () {
     let loadNotFollowingBackBtn = $("#loadNotFollowingBackBtn");
     let removeSelectedBtn = $("#removeSelectedBtn");
     let startUnfollowingBtn = $("#startUnfollowingBtn");
+    let settingsBtn = $(".settingsBtn");
+
+    let overlay = $(".overlay");
+    let settingsPage = $(".settingsPage");
 
     let usernameField = $("#username");
     let container = $("div.container");
@@ -50,6 +54,7 @@ $(function () {
     let log = $("#log");
 
     extractUsernameAndId();
+    initializeEventListeners();
 
     function extractUsernameAndId() {
         $.ajax(currentUrl + "?__a=1").done(function (data) {
@@ -57,22 +62,39 @@ $(function () {
 
             let currentUsername = currentUrl.split("/")[3];
             $(usernameField).text(currentUsername);
-
-            $(loadNotFollowingBackBtn).on("click", onLoadNotFollowingBackBtnClicked);
+            $(settingsBtn).show();
             $(loadNotFollowingBackBtn).show();
         });
+    }
+
+    function initializeEventListeners() {
+        $(overlay).on("click", onOverlayClicked);
+        $(settingsBtn).on("click", onSettingsBtnClicked);
+        $(loadNotFollowingBackBtn).on("click", onLoadNotFollowingBackBtnClicked);
+        $(removeSelectedBtn).on("click", onRemoveSelectedBtnClicked);
+        $(startUnfollowingBtn).on("click", onStartUnfollowingBtnClicked);
+    }
+
+    function onOverlayClicked(e) {
+        if (!$(e.target).is($(overlay))) {
+            return;
+        }
+
+        $(overlay).hide();
+        $(settingsPage).hide();
+    }
+
+    function onSettingsBtnClicked() {
+        $(overlay).css("display", "flex");
+        $(settingsPage).show();
     }
 
     function onLoadNotFollowingBackBtnClicked() {
         loadFollowers(loadFollowing, 0, "");
 
         $(loadNotFollowingBackBtn).hide();
-
         $(removeSelectedBtn).show();
-        $(removeSelectedBtn).on("click", onRemoveSelectedBtnClicked);
-
         $(startUnfollowingBtn).show();
-        $(startUnfollowingBtn).on("click", onStartUnfollowingBtnClicked);
     }
 
     function loadFollowers(callback, loadedFollowersCount, after) {
