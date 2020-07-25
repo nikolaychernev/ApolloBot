@@ -10,12 +10,21 @@ body {
     background: transparent;
 }
 
+.container {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.userElement {
+    width: 20%;
+}
+
 #loadNotFollowingBackBtn, #removeSelectedBtn, #startUnfollowingBtn {
     display: none;
 }
 
 img {
-    width: 10%;
+    width: 80%;
 }
 
 img.selected {
