@@ -36,3 +36,12 @@ img.processed {
     outline: 4px solid red;
     outline-offset: -4px;
 }
+
+header {
+    display: flex;
+    justify-content: space-between;
+}
+
+.settingsBtn {
+    width: 5%;
+}
