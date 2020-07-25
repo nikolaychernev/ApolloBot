@@ -1,13 +1,22 @@
+// Global Variables
 let currentUrl;
 let csrfToken;
 let currentUserId;
 
+// Constants
 let selectedClass = "selected";
 let processedClass = "processed";
 
+// In-Memory Collections
 let followersIds = [];
 let following = new Map();
 let notFollowingBack = new Map();
+
+// Settings
+let unfollowTimeout = 60;
+let timeoutRandomization = 50;
+let loadFollowersQueryHash = "c76146de99bb02f6415203be841dd25a";
+let loadFollowingQueryHash = "d04b0a864b4b54837c0d870b0e77e076";
 
 chrome.tabs.query({
     'active': true,
@@ -71,7 +80,7 @@ $(function () {
         let encodedJsonVars = encodeURIComponent(JSON.stringify(jsonVars));
         let loadedFollowersCount = 0;
 
-        $.ajax("https://www.instagram.com/graphql/query/?query_hash=c76146de99bb02f6415203be841dd25a&variables=" + encodedJsonVars)
+        $.ajax("https://www.instagram.com/graphql/query/?query_hash=" + loadFollowersQueryHash + "&variables=" + encodedJsonVars)
             .done(function (data) {
                 let followers = data.data.user.edge_followed_by.edges;
                 let totalFollowersCount = data.data.user.edge_followed_by.count;
@@ -95,7 +104,7 @@ $(function () {
         let encodedJsonVars = encodeURIComponent(JSON.stringify(jsonVars));
         let loadedFollowingCount = 0;
 
-        $.ajax("https://www.instagram.com/graphql/query/?query_hash=d04b0a864b4b54837c0d870b0e77e076&variables=" + encodedJsonVars)
+        $.ajax("https://www.instagram.com/graphql/query/?query_hash=" + loadFollowingQueryHash + "&variables=" + encodedJsonVars)
             .done(function (data) {
                 let usersFollowing = data.data.user.edge_follow.edges;
                 let totalFollowingCount = data.data.user.edge_follow.count;
@@ -165,12 +174,17 @@ $(function () {
     }
 
     function onStartUnfollowingBtnClicked() {
-        for (let notFollowingBackUser of notFollowingBack.values()) {
-            unfollowUser(notFollowingBackUser);
+        if (notFollowingBack.size === 0) {
+            return;
         }
+
+        let usersToUnfollowIterator = notFollowingBack.values();
+        unfollowUsers(usersToUnfollowIterator);
     }
 
-    function unfollowUser(user) {
+    function unfollowUsers(usersIterator) {
+        let user = usersIterator.next().value;
+
         $.ajax({
             url: "https://www.instagram.com/web/friendships/" + user.id + "/unfollow/",
             method: "POST",
@@ -181,6 +195,38 @@ $(function () {
             .done(function () {
                 $("div#" + user.id + " img").addClass(processedClass);
                 $(log).text("Unfollowed " + user.username + ".");
+
+                notFollowingBack.delete(user.id);
+
+                if (notFollowingBack.size === 0) {
+                    return;
+                }
+
+                let secondsRemaining = randomizeTimeout(unfollowTimeout, timeoutRandomization);
+                countDown(secondsRemaining, usersIterator);
             });
+    }
+
+    function randomizeTimeout(unfollowTimeout, timeoutRandomization) {
+        let lowerBound = unfollowTimeout + (unfollowTimeout * (timeoutRandomization / 100));
+        let upperBound = unfollowTimeout - (unfollowTimeout * (timeoutRandomization / 100));
+
+        return randomIntFromInterval(lowerBound, upperBound);
+    }
+
+    function randomIntFromInterval(min, max) {
+        return Math.floor(Math.random() * (max - min + 1) + min);
+    }
+
+    function countDown(secondsRemaining, usersIterator) {
+        if (secondsRemaining > 0) {
+            $(log).text("Waiting " + secondsRemaining + " seconds to unfollow the next user.");
+
+            setTimeout(function () {
+                countDown(secondsRemaining - 1, usersIterator);
+            }, 1000);
+        } else {
+            unfollowUsers(usersIterator);
+        }
     }
 });
