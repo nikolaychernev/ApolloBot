@@ -10,7 +10,7 @@ let processedClass = "processed";
 // In-Memory Collections
 let followersIds = [];
 let following = new Map();
-let notFollowingBack = new Map();
+let usersQueue = new Map();
 
 // Settings
 let loadFollowersQueryHash = "c76146de99bb02f6415203be841dd25a";
@@ -155,10 +155,10 @@ $(function () {
 
         for (let selectedUser of selectedUsers) {
             $(selectedUser).remove();
-            notFollowingBack.delete($(selectedUser).attr("id"));
+            usersQueue.delete($(selectedUser).attr("id"));
         }
 
-        $(log).text("There are " + notFollowingBack.size + " users in the queue.");
+        $(log).text("There are " + usersQueue.size + " users in the queue.");
     }
 
     function onLoadNotFollowingBackBtnClicked() {
@@ -268,11 +268,11 @@ $(function () {
                 continue;
             }
 
-            notFollowingBack.set(userFollowing.id, userFollowing);
+            usersQueue.set(userFollowing.id, userFollowing);
             drawUser(userFollowing);
         }
 
-        $(log).text("There are " + notFollowingBack.size + " users in the queue.");
+        $(log).text("There are " + usersQueue.size + " users in the queue.");
     }
 
     function drawUser(user) {
@@ -306,11 +306,11 @@ $(function () {
     }
 
     function onStartUnfollowingBtnClicked() {
-        if (notFollowingBack.size === 0) {
+        if (usersQueue.size === 0) {
             return;
         }
 
-        let usersToUnfollowIterator = notFollowingBack.values();
+        let usersToUnfollowIterator = usersQueue.values();
         unfollowUsers(usersToUnfollowIterator);
     }
 
@@ -328,9 +328,9 @@ $(function () {
                 $("div#" + user.id + " img").addClass(processedClass);
                 $(log).text("Unfollowed " + user.username + ".");
 
-                notFollowingBack.delete(user.id);
+                usersQueue.delete(user.id);
 
-                if (notFollowingBack.size === 0) {
+                if (usersQueue.size === 0) {
                     return;
                 }
 
