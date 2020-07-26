@@ -13,14 +13,14 @@ let following = new Map();
 let notFollowingBack = new Map();
 
 // Settings
+let loadFollowersQueryHash = "c76146de99bb02f6415203be841dd25a";
+let loadFollowingQueryHash = "d04b0a864b4b54837c0d870b0e77e076";
+
 let loadingUsersBatchSize = 48;
 let loadingUsersTimeout = 1;
 
 let unfollowTimeout = 60;
 let timeoutRandomization = 50;
-
-let loadFollowersQueryHash = "c76146de99bb02f6415203be841dd25a";
-let loadFollowingQueryHash = "d04b0a864b4b54837c0d870b0e77e076";
 
 chrome.tabs.query({
     'active': true,
@@ -52,6 +52,8 @@ $(function () {
     let settingsPage = $(".settingsPage");
     let loadFollowersQueryHashInput = $("#loadFollowersQueryHash");
     let loadFollowingQueryHashInput = $("#loadFollowingQueryHash");
+    let loadingUsersBatchSizeInput = $("#loadingUsersBatchSize");
+    let loadingUsersTimeoutInput = $("#loadingUsersTimeout");
     let unfollowTimeoutInput = $("#unfollowTimeout");
     let timeoutRandomizationInput = $("#timeoutRandomization");
 
@@ -102,6 +104,8 @@ $(function () {
     function initializeSettings() {
         $(loadFollowersQueryHashInput).val(loadFollowersQueryHash);
         $(loadFollowingQueryHashInput).val(loadFollowingQueryHash);
+        $(loadingUsersBatchSizeInput).val(loadingUsersBatchSize);
+        $(loadingUsersTimeoutInput).val(loadingUsersTimeout);
         $(unfollowTimeoutInput).val(unfollowTimeout);
         $(timeoutRandomizationInput).val(timeoutRandomization);
     }
@@ -109,6 +113,8 @@ $(function () {
     function onSaveSettingsBtnClicked() {
         loadFollowersQueryHash = $(loadFollowersQueryHashInput).val();
         loadFollowingQueryHash = $(loadFollowingQueryHashInput).val();
+        loadingUsersBatchSize = $(loadingUsersBatchSizeInput).val();
+        loadingUsersTimeout = $(loadingUsersTimeoutInput).val();
         unfollowTimeout = $(unfollowTimeoutInput).val();
         timeoutRandomization = $(timeoutRandomizationInput).val();
 
