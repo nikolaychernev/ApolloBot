@@ -63,7 +63,6 @@ $(function () {
 
     extractUsernameAndId();
     initializeEventListeners();
-    initializeSettings();
 
     function extractUsernameAndId() {
         $.ajax(currentUrl + "?__a=1").done(function (data) {
@@ -85,13 +84,6 @@ $(function () {
         $(startUnfollowingBtn).on("click", onStartUnfollowingBtnClicked);
     }
 
-    function initializeSettings() {
-        $(loadFollowersQueryHashInput).val(loadFollowersQueryHash);
-        $(loadFollowingQueryHashInput).val(loadFollowingQueryHash);
-        $(unfollowTimeoutInput).val(unfollowTimeout);
-        $(timeoutRandomizationInput).val(timeoutRandomization);
-    }
-
     function onOverlayClicked(e) {
         if (!$(e.target).is($(overlay))) {
             return;
@@ -101,11 +93,25 @@ $(function () {
     }
 
     function onSettingsBtnClicked() {
+        initializeSettings();
+
         $(overlay).css("display", "flex");
         $(settingsPage).css("display", "flex");
     }
 
+    function initializeSettings() {
+        $(loadFollowersQueryHashInput).val(loadFollowersQueryHash);
+        $(loadFollowingQueryHashInput).val(loadFollowingQueryHash);
+        $(unfollowTimeoutInput).val(unfollowTimeout);
+        $(timeoutRandomizationInput).val(timeoutRandomization);
+    }
+
     function onSaveSettingsBtnClicked() {
+        loadFollowersQueryHash = $(loadFollowersQueryHashInput).val();
+        loadFollowingQueryHash = $(loadFollowingQueryHashInput).val();
+        unfollowTimeout = $(unfollowTimeoutInput).val();
+        timeoutRandomization = $(timeoutRandomizationInput).val();
+
         hideSettingsPage();
     }
 
