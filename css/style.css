@@ -1,6 +1,6 @@
 body {
     background-color: white;
-    padding: 1% 2%;
+    padding: 2%;
     margin: 0;
     box-sizing: border-box;
     width: 750px;
@@ -8,15 +8,11 @@ body {
     font-family: 'Roboto', sans-serif;
 }
 
-h1 {
-    margin-bottom: 5%;
-}
-
 .container {
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
-    max-height: 70%;
+    height: 53%;
     overflow-x: hidden;
     overflow-y: scroll;
 }
@@ -29,10 +25,6 @@ h1 {
 
 p {
     margin: 4%;
-}
-
-#loadNotFollowingBackBtn, #removeSelectedBtn, #startUnfollowingBtn {
-    display: none;
 }
 
 img {
@@ -51,14 +43,13 @@ img.processed {
     outline-offset: -4px;
 }
 
-header {
+header, .buttons {
     display: flex;
     justify-content: space-between;
 }
 
 #settingsBtn {
     width: 5%;
-    display: none;
 }
 
 .overlay {
@@ -90,4 +81,20 @@ header {
 input {
     width: 100%;
     box-sizing: border-box;
+}
+
+#startUnfollowingBtn {
+    width: 100%;
+    background-color: lightgreen;
+}
+
+.centered {
+    margin: 0 auto;
+    width: 50%;
+}
+
+button {
+    margin-top: 2%;
+    margin-bottom: 2%;
+    height: 2.5em;
 }

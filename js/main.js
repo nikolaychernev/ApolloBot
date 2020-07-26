@@ -41,11 +41,20 @@ chrome.tabs.query({
 
 $(function () {
     // Buttons
-    let loadNotFollowingBackBtn = $("#loadNotFollowingBackBtn");
-    let removeSelectedBtn = $("#removeSelectedBtn");
-    let startUnfollowingBtn = $("#startUnfollowingBtn");
     let settingsBtn = $("#settingsBtn");
     let saveSettingsBtn = $("#saveSettingsBtn");
+
+    let selectAllBtn = $("#selectAllBtn");
+    let selectNoneBtn = $("#selectNoneBtn");
+    let removeSelectedBtn = $("#removeSelectedBtn");
+
+    let loadNotFollowingBackBtn = $("#loadNotFollowingBackBtn");
+    let loadUnfollowedBtn = $("#loadUnfollowedBtn");
+
+    let loadQueueBtn = $("#loadQueueBtn");
+    let saveQueueBtn = $("#saveQueueBtn");
+
+    let startUnfollowingBtn = $("#startUnfollowingBtn");
 
     // Settings Page
     let overlay = $(".overlay");
@@ -72,8 +81,6 @@ $(function () {
 
             let currentUsername = currentUrl.split("/")[3];
             $(usernameField).text(currentUsername);
-            $(settingsBtn).show();
-            $(loadNotFollowingBackBtn).show();
         });
     }
 
@@ -81,8 +88,17 @@ $(function () {
         $(overlay).on("click", onOverlayClicked);
         $(settingsBtn).on("click", onSettingsBtnClicked);
         $(saveSettingsBtn).on("click", onSaveSettingsBtnClicked);
-        $(loadNotFollowingBackBtn).on("click", onLoadNotFollowingBackBtnClicked);
+
+        $(selectAllBtn).on("click", onSelectAllBtnClicked);
+        $(selectNoneBtn).on("click", onSelectNoneBtnClicked);
         $(removeSelectedBtn).on("click", onRemoveSelectedBtnClicked);
+
+        $(loadNotFollowingBackBtn).on("click", onLoadNotFollowingBackBtnClicked);
+        $(loadUnfollowedBtn).on("click", onLoadUnfollowedBtnClicked);
+
+        $(loadQueueBtn).on("click", onLoadQueueBtnClicked);
+        $(saveQueueBtn).on("click", onSaveQueueBtnClicked);
+
         $(startUnfollowingBtn).on("click", onStartUnfollowingBtnClicked);
     }
 
@@ -126,12 +142,39 @@ $(function () {
         $(settingsPage).hide();
     }
 
+    function onSelectAllBtnClicked() {
+        $(".userElement").find($("img")).addClass(selectedClass);
+    }
+
+    function onSelectNoneBtnClicked() {
+        $(".userElement").find($("img")).removeClass(selectedClass);
+    }
+
+    function onRemoveSelectedBtnClicked() {
+        let selectedUsers = $("img.selected").parent();
+
+        for (let selectedUser of selectedUsers) {
+            $(selectedUser).remove();
+            notFollowingBack.delete($(selectedUser).attr("id"));
+        }
+
+        $(log).text("There are " + notFollowingBack.size + " users in the queue.");
+    }
+
     function onLoadNotFollowingBackBtnClicked() {
         loadFollowers(loadFollowing, 0, "");
+    }
 
-        $(loadNotFollowingBackBtn).hide();
-        $(removeSelectedBtn).show();
-        $(startUnfollowingBtn).show();
+    function onLoadUnfollowedBtnClicked() {
+        //TODO
+    }
+
+    function onLoadQueueBtnClicked() {
+        //TODO
+    }
+
+    function onSaveQueueBtnClicked() {
+        //TODO
     }
 
     function loadFollowers(callback, loadedFollowersCount, after) {
@@ -229,7 +272,7 @@ $(function () {
             drawUser(userFollowing);
         }
 
-        $(log).text("There are " + notFollowingBack.size + " users not following you back.");
+        $(log).text("There are " + notFollowingBack.size + " users in the queue.");
     }
 
     function drawUser(user) {
@@ -260,17 +303,6 @@ $(function () {
         } else {
             $(target).addClass(selectedClass);
         }
-    }
-
-    function onRemoveSelectedBtnClicked() {
-        let selectedUsers = $("img.selected").parent();
-
-        for (let selectedUser of selectedUsers) {
-            $(selectedUser).remove();
-            notFollowingBack.delete($(selectedUser).attr("id"));
-        }
-
-        $(log).text("There are " + notFollowingBack.size + " users in the queue.");
     }
 
     function onStartUnfollowingBtnClicked() {
