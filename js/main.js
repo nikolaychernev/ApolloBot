@@ -17,7 +17,7 @@ let loadFollowersQueryHash = "c76146de99bb02f6415203be841dd25a";
 let loadFollowingQueryHash = "d04b0a864b4b54837c0d870b0e77e076";
 
 let loadingUsersBatchSize = 48;
-let loadingUsersTimeout = 1;
+let loadingUsersTimeout = 3;
 
 let unfollowTimeout = 60;
 let timeoutRandomization = 50;
@@ -113,10 +113,10 @@ $(function () {
     function onSaveSettingsBtnClicked() {
         loadFollowersQueryHash = $(loadFollowersQueryHashInput).val();
         loadFollowingQueryHash = $(loadFollowingQueryHashInput).val();
-        loadingUsersBatchSize = $(loadingUsersBatchSizeInput).val();
-        loadingUsersTimeout = $(loadingUsersTimeoutInput).val();
-        unfollowTimeout = $(unfollowTimeoutInput).val();
-        timeoutRandomization = $(timeoutRandomizationInput).val();
+        loadingUsersBatchSize = parseInt($(loadingUsersBatchSizeInput).val());
+        loadingUsersTimeout = parseInt($(loadingUsersTimeoutInput).val());
+        unfollowTimeout = parseInt($(unfollowTimeoutInput).val());
+        timeoutRandomization = parseInt($(timeoutRandomizationInput).val());
 
         hideSettingsPage();
     }
@@ -157,10 +157,14 @@ $(function () {
                 let pageInfo = data.data.user.edge_followed_by.page_info;
 
                 if (pageInfo.has_next_page) {
-                    loadFollowers(callback, loadedFollowersCount, pageInfo.end_cursor);
-                }
+                    let secondsRemaining = randomizeTimeout(loadingUsersTimeout, timeoutRandomization);
 
-                callback(loadNotFollowingBack, 0, "");
+                    loadUsersTimeout(secondsRemaining, function () {
+                        loadFollowers(callback, loadedFollowersCount, pageInfo.end_cursor);
+                    });
+                } else {
+                    callback(loadNotFollowingBack, 0, "");
+                }
             });
     }
 
@@ -194,11 +198,25 @@ $(function () {
                 let pageInfo = data.data.user.edge_follow.page_info;
 
                 if (pageInfo.has_next_page) {
-                    loadFollowing(callback, loadedFollowingCount, pageInfo.end_cursor);
-                }
+                    let secondsRemaining = randomizeTimeout(loadingUsersTimeout, timeoutRandomization);
 
-                callback();
+                    loadUsersTimeout(secondsRemaining, function () {
+                        loadFollowing(callback, loadedFollowingCount, pageInfo.end_cursor);
+                    });
+                } else {
+                    callback();
+                }
             });
+    }
+
+    function loadUsersTimeout(secondsRemaining, callback) {
+        if (secondsRemaining > 0) {
+            setTimeout(function () {
+                loadUsersTimeout(secondsRemaining - 1, callback);
+            }, 1000);
+        } else {
+            callback();
+        }
     }
 
     function loadNotFollowingBack() {
@@ -289,9 +307,9 @@ $(function () {
             });
     }
 
-    function randomizeTimeout(unfollowTimeout, timeoutRandomization) {
-        let lowerBound = unfollowTimeout + (unfollowTimeout * (timeoutRandomization / 100));
-        let upperBound = unfollowTimeout - (unfollowTimeout * (timeoutRandomization / 100));
+    function randomizeTimeout(timeout, timeoutRandomization) {
+        let lowerBound = timeout + (timeout * (timeoutRandomization / 100));
+        let upperBound = timeout - (timeout * (timeoutRandomization / 100));
 
         return randomIntFromInterval(lowerBound, upperBound);
     }
