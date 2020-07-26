@@ -217,7 +217,11 @@ $(function () {
         $(profilePicture).attr("src", user.profile_pic_url);
         $(profilePicture).on("click", onProfilePictureClicked);
 
-        $(userElementClone).find("a.name")
+        if (user.full_name) {
+            $(userElementClone).find("p.name").text(user.full_name);
+        }
+
+        $(userElementClone).find("a.username")
             .attr("href", "https://www.instagram.com/" + user.username + "/")
             .text(user.username);
 
