@@ -40,14 +40,22 @@ chrome.tabs.query({
 });
 
 $(function () {
+    // Buttons
     let loadNotFollowingBackBtn = $("#loadNotFollowingBackBtn");
     let removeSelectedBtn = $("#removeSelectedBtn");
     let startUnfollowingBtn = $("#startUnfollowingBtn");
-    let settingsBtn = $(".settingsBtn");
+    let settingsBtn = $("#settingsBtn");
+    let saveSettingsBtn = $("#saveSettingsBtn");
 
+    // Settings Page
     let overlay = $(".overlay");
     let settingsPage = $(".settingsPage");
+    let loadFollowersQueryHashInput = $("#loadFollowersQueryHash");
+    let loadFollowingQueryHashInput = $("#loadFollowingQueryHash");
+    let unfollowTimeoutInput = $("#unfollowTimeout");
+    let timeoutRandomizationInput = $("#timeoutRandomization");
 
+    // Other Elements
     let usernameField = $("#username");
     let container = $("div.container");
     let userElement = $("div.userElement");
@@ -55,6 +63,7 @@ $(function () {
 
     extractUsernameAndId();
     initializeEventListeners();
+    initializeSettings();
 
     function extractUsernameAndId() {
         $.ajax(currentUrl + "?__a=1").done(function (data) {
@@ -70,9 +79,17 @@ $(function () {
     function initializeEventListeners() {
         $(overlay).on("click", onOverlayClicked);
         $(settingsBtn).on("click", onSettingsBtnClicked);
+        $(saveSettingsBtn).on("click", onSaveSettingsBtnClicked);
         $(loadNotFollowingBackBtn).on("click", onLoadNotFollowingBackBtnClicked);
         $(removeSelectedBtn).on("click", onRemoveSelectedBtnClicked);
         $(startUnfollowingBtn).on("click", onStartUnfollowingBtnClicked);
+    }
+
+    function initializeSettings() {
+        $(loadFollowersQueryHashInput).val(loadFollowersQueryHash);
+        $(loadFollowingQueryHashInput).val(loadFollowingQueryHash);
+        $(unfollowTimeoutInput).val(unfollowTimeout);
+        $(timeoutRandomizationInput).val(timeoutRandomization);
     }
 
     function onOverlayClicked(e) {
@@ -80,13 +97,21 @@ $(function () {
             return;
         }
 
-        $(overlay).hide();
-        $(settingsPage).hide();
+        hideSettingsPage();
     }
 
     function onSettingsBtnClicked() {
         $(overlay).css("display", "flex");
-        $(settingsPage).show();
+        $(settingsPage).css("display", "flex");
+    }
+
+    function onSaveSettingsBtnClicked() {
+        hideSettingsPage();
+    }
+
+    function hideSettingsPage() {
+        $(overlay).hide();
+        $(settingsPage).hide();
     }
 
     function onLoadNotFollowingBackBtnClicked() {
