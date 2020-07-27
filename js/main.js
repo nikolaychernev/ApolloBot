@@ -89,7 +89,7 @@ $(function () {
     }
 
     function initializeLastCheckedField() {
-        chrome.storage.sync.get(currentUserId, function (item) {
+        chrome.storage.local.get(currentUserId, function (item) {
             let lastChecked = item[currentUserId];
 
             if (lastChecked) {
@@ -181,12 +181,36 @@ $(function () {
     }
 
     function onLoadUnfollowedBtnClicked() {
-        let lastChecked = {
-            "followers": followersMap,
+        loadFollowers(loadUnfollowed, 0, "");
+    }
+
+    function loadUnfollowed() {
+        chrome.storage.local.get(currentUserId, function (item) {
+            updateLastChecked();
+
+            let lastChecked = item[currentUserId];
+            let previousFollowers = lastChecked.followers;
+            let unfollowed = [];
+
+            for (let previousFollower of previousFollowers) {
+                if (followersMap.has(previousFollower.id)) {
+                    continue;
+                }
+
+                unfollowed.push(previousFollower);
+            }
+
+            drawUsers(unfollowed);
+        });
+    }
+
+    function updateLastChecked() {
+        let lastCheckedUpdated = {
+            "followers": Array.from(followersMap.values()),
             "timestamp": getCurrentTimestamp()
         };
 
-        chrome.storage.sync.set({[currentUserId]: lastChecked}, function () {
+        chrome.storage.local.set({[currentUserId]: lastCheckedUpdated}, function () {
             initializeLastCheckedField();
         });
     }
