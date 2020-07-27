@@ -181,9 +181,24 @@ $(function () {
     }
 
     function onLoadUnfollowedBtnClicked() {
-        chrome.storage.sync.set({[currentUserId]: 'hello'}, function () {
-            console.log('Settings saved');
+        let lastChecked = {
+            "followers": followersMap,
+            "timestamp": getCurrentTimestamp()
+        };
+
+        chrome.storage.sync.set({[currentUserId]: lastChecked}, function () {
+            initializeLastCheckedField();
         });
+    }
+
+    function getCurrentTimestamp() {
+        let date = new Date();
+
+        return date.getFullYear() + "/"
+            + ('0' + (date.getMonth() + 1)).slice(-2) + "/"
+            + ('0' + date.getDate()).slice(-2) + " "
+            + ('0' + date.getHours()).slice(-2) + ":"
+            + ('0' + date.getMinutes()).slice(-2);
     }
 
     function onLoadQueueBtnClicked() {
