@@ -166,7 +166,7 @@ $(function () {
     }
 
     function onRemoveSelectedBtnClicked() {
-        let selectedUsers = $("img.selected").parent();
+        let selectedUsers = $(".selected").parent();
 
         for (let selectedUser of selectedUsers) {
             $(selectedUser).remove();
