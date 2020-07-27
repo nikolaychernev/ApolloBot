@@ -177,6 +177,7 @@ $(function () {
 
     function onLoadQueueFileInputChange() {
         let file = $(loadQueueFileInput).prop('files')[0];
+        $(loadQueueFileInput).val("");
 
         if (file) {
             let reader = new FileReader();
