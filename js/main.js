@@ -145,11 +145,11 @@ $(function () {
     }
 
     function onSelectAllBtnClicked() {
-        $(".userElement").find($("img")).addClass(selectedClass);
+        $(".userElement").find($(".profilePictureContainer")).addClass(selectedClass);
     }
 
     function onSelectNoneBtnClicked() {
-        $(".userElement").find($("img")).removeClass(selectedClass);
+        $(".userElement").find($(".profilePictureContainer")).removeClass(selectedClass);
     }
 
     function onRemoveSelectedBtnClicked() {
@@ -309,11 +309,12 @@ $(function () {
         for (let user of users) {
             let userElementClone = $(userElement).clone().show();
             let profilePicture = $(userElementClone).find("img.profilePicture");
+            let profilePictureContainer = $(userElementClone).find(".profilePictureContainer");
 
             $(userElementClone).attr("id", user.id);
 
             $(profilePicture).attr("src", user.profile_pic_url);
-            $(profilePicture).on("click", onProfilePictureClicked);
+            $(profilePictureContainer).on("click", onProfilePictureClicked);
 
             if (user.full_name) {
                 $(userElementClone).find("p.name").text(user.full_name);
@@ -359,7 +360,7 @@ $(function () {
             }
         })
             .done(function () {
-                $("div#" + user.id + " img").addClass(processedClass);
+                $("div#" + user.id).find(".profilePictureContainer").addClass(processedClass);
                 $(log).text("Unfollowed " + user.username + ".");
 
                 usersQueue.delete(user.id);
