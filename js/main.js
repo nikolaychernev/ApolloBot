@@ -43,6 +43,7 @@ $(function () {
     // Buttons
     let settingsBtn = $("#settingsBtn");
     let saveSettingsBtn = $("#saveSettingsBtn");
+    let resetSettingsBtn = $("#resetSettingsBtn");
 
     let selectAllBtn = $("#selectAllBtn");
     let selectNoneBtn = $("#selectNoneBtn");
@@ -115,6 +116,7 @@ $(function () {
         $(overlay).on("click", onOverlayClicked);
         $(settingsBtn).on("click", onSettingsBtnClicked);
         $(saveSettingsBtn).on("click", onSaveSettingsBtnClicked);
+        $(resetSettingsBtn).on("click", onResetSettingsBtnClicked);
 
         $(selectAllBtn).on("click", onSelectAllBtnClicked);
         $(selectNoneBtn).on("click", onSelectNoneBtnClicked);
@@ -139,12 +141,7 @@ $(function () {
     }
 
     function onSettingsBtnClicked() {
-        $(loadFollowersQueryHashInput).val(settings.loadFollowersQueryHash);
-        $(loadFollowingQueryHashInput).val(settings.loadFollowingQueryHash);
-        $(loadingUsersBatchSizeInput).val(settings.loadingUsersBatchSize);
-        $(loadingUsersTimeoutInput).val(settings.loadingUsersTimeout);
-        $(unfollowTimeoutInput).val(settings.unfollowTimeout);
-        $(timeoutRandomizationInput).val(settings.timeoutRandomization);
+        populateSettings();
 
         $(overlay).css("display", "flex");
         $(settingsPage).css("display", "flex");
@@ -163,6 +160,23 @@ $(function () {
         chrome.storage.local.set({"settings": settings}, function () {
             hideSettingsPage();
         });
+    }
+
+    function onResetSettingsBtnClicked() {
+        settings = defaultSettings;
+
+        chrome.storage.local.set({"settings": settings}, function () {
+            populateSettings();
+        });
+    }
+
+    function populateSettings() {
+        $(loadFollowersQueryHashInput).val(settings.loadFollowersQueryHash);
+        $(loadFollowingQueryHashInput).val(settings.loadFollowingQueryHash);
+        $(loadingUsersBatchSizeInput).val(settings.loadingUsersBatchSize);
+        $(loadingUsersTimeoutInput).val(settings.loadingUsersTimeout);
+        $(unfollowTimeoutInput).val(settings.unfollowTimeout);
+        $(timeoutRandomizationInput).val(settings.timeoutRandomization);
     }
 
     function hideSettingsPage() {

@@ -118,3 +118,7 @@ button {
 .lastChecked {
     color: red;
 }
+
+#saveSettingsBtn, #resetSettingsBtn {
+    display: inline-block;
+}
