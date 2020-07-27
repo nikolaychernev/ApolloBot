@@ -238,12 +238,7 @@ $(function () {
             reader.readAsText(file);
             reader.onload = function (e) {
                 let users = JSON.parse(e.target.result);
-
-                for (let user of users) {
-                    usersQueue.set(user.id, user);
-                }
-
-                drawUsers(Array.from(usersQueue.values()));
+                drawUsers(users);
             };
         }
     }
@@ -353,19 +348,22 @@ $(function () {
     }
 
     function loadNotFollowingBack() {
+        let notFollowingBack = [];
+
         for (let userFollowing of followingMap.values()) {
             if (followersMap.has(userFollowing.id)) {
                 continue;
             }
 
-            usersQueue.set(userFollowing.id, userFollowing);
+            notFollowingBack.push(userFollowing);
         }
 
-        drawUsers(Array.from(usersQueue.values()));
+        drawUsers(notFollowingBack);
     }
 
     function drawUsers(users) {
         $(container).empty();
+        usersQueue.clear();
 
         for (let user of users) {
             let userElementClone = $(userElement).clone().show();
@@ -386,6 +384,7 @@ $(function () {
                 .text(user.username);
 
             $(container).append($(userElementClone));
+            usersQueue.set(user.id, user);
         }
 
         $(log).text("There are " + users.length + " users in the queue.");
