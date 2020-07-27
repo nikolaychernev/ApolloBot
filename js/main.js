@@ -3,6 +3,8 @@ let currentUrl;
 let csrfToken;
 let currentUserId;
 let settings;
+let loadUsersTimeoutObject;
+let unfollowUsersTimeoutObject;
 
 // Constants
 let defaultSettings = {
@@ -55,7 +57,8 @@ $(function () {
     let loadQueueBtn = $("#loadQueueBtn");
     let saveQueueBtn = $("#saveQueueBtn");
 
-    let startUnfollowingBtn = $(".startUnfollowingBtn");
+    let startUnfollowingBtn = $("#startUnfollowingBtn");
+    let stopUnfollowingBtn = $("#stopUnfollowingBtn");
 
     // Settings Page
     let overlay = $(".overlay");
@@ -131,6 +134,7 @@ $(function () {
         $(saveQueueBtn).on("click", onSaveQueueBtnClicked);
 
         $(startUnfollowingBtn).on("click", onStartUnfollowingBtnClicked);
+        $(stopUnfollowingBtn).on("click", onStopUnfollowingBtnClicked);
     }
 
     function onOverlayClicked(e) {
@@ -367,7 +371,7 @@ $(function () {
 
     function loadUsersTimeout(secondsRemaining, callback) {
         if (secondsRemaining > 0) {
-            setTimeout(function () {
+            loadUsersTimeoutObject = setTimeout(function () {
                 loadUsersTimeout(secondsRemaining - 1, callback);
             }, 1000);
         } else {
@@ -439,8 +443,8 @@ $(function () {
     }
 
     function unfollowUsers(usersIterator) {
-        $(startUnfollowingBtn).addClass("stopUnfollowingBtn");
-        $(startUnfollowingBtn).text("Stop Unfollowing");
+        $(startUnfollowingBtn).hide();
+        $(stopUnfollowingBtn).show();
 
         let user = usersIterator.next().value;
 
@@ -456,14 +460,14 @@ $(function () {
                 usersQueue.delete(user.id);
 
                 if (usersQueue.size === 0) {
-                    $(startUnfollowingBtn).removeClass("stopUnfollowingBtn");
-                    $(startUnfollowingBtn).text("Start Unfollowing");
+                    $(stopUnfollowingBtn).hide();
+                    $(startUnfollowingBtn).show();
 
                     return;
                 }
 
                 let secondsRemaining = randomizeTimeout(settings.unfollowTimeout, settings.timeoutRandomization);
-                countDown(secondsRemaining, usersIterator);
+                unfollowUsersTimeout(secondsRemaining, usersIterator);
             });
     }
 
@@ -478,15 +482,22 @@ $(function () {
         return Math.floor(Math.random() * (max - min + 1) + min);
     }
 
-    function countDown(secondsRemaining, usersIterator) {
+    function unfollowUsersTimeout(secondsRemaining, usersIterator) {
         if (secondsRemaining > 0) {
             // $(log).text("Waiting " + secondsRemaining + " seconds to unfollow the next user.");
 
-            setTimeout(function () {
-                countDown(secondsRemaining - 1, usersIterator);
+            unfollowUsersTimeoutObject = setTimeout(function () {
+                unfollowUsersTimeout(secondsRemaining - 1, usersIterator);
             }, 1000);
         } else {
             unfollowUsers(usersIterator);
         }
+    }
+
+    function onStopUnfollowingBtnClicked() {
+        clearTimeout(unfollowUsersTimeoutObject);
+
+        $(stopUnfollowingBtn).hide();
+        $(startUnfollowingBtn).show();
     }
 });
