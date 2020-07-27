@@ -2,8 +2,18 @@
 let currentUrl;
 let csrfToken;
 let currentUserId;
+let settings;
 
 // Constants
+let defaultSettings = {
+    "loadFollowersQueryHash": "c76146de99bb02f6415203be841dd25a",
+    "loadFollowingQueryHash": "d04b0a864b4b54837c0d870b0e77e076",
+    "loadingUsersBatchSize": 48,
+    "loadingUsersTimeout": 3,
+    "unfollowTimeout": 60,
+    "timeoutRandomization": 50
+};
+
 let selectedClass = "selected";
 let processedClass = "processed";
 
@@ -11,16 +21,6 @@ let processedClass = "processed";
 let followersMap = new Map();
 let followingMap = new Map();
 let usersQueue = new Map();
-
-// Settings
-let loadFollowersQueryHash = "c76146de99bb02f6415203be841dd25a";
-let loadFollowingQueryHash = "d04b0a864b4b54837c0d870b0e77e076";
-
-let loadingUsersBatchSize = 48;
-let loadingUsersTimeout = 3;
-
-let unfollowTimeout = 60;
-let timeoutRandomization = 50;
 
 chrome.tabs.query({
     'active': true,
@@ -75,6 +75,7 @@ $(function () {
     let log = $("#log");
 
     extractUsernameAndId();
+    initializeSettings();
     initializeEventListeners();
 
     function extractUsernameAndId() {
@@ -94,6 +95,18 @@ $(function () {
 
             if (lastChecked) {
                 $(lastCheckedField).text(lastChecked.timestamp).css("color", "green");
+            }
+        });
+    }
+
+    function initializeSettings() {
+        chrome.storage.local.get("settings", function (item) {
+            let loadedSettings = item["settings"];
+
+            if (loadedSettings) {
+                settings = loadedSettings;
+            } else {
+                settings = defaultSettings;
             }
         });
     }
@@ -126,30 +139,30 @@ $(function () {
     }
 
     function onSettingsBtnClicked() {
-        initializeSettings();
+        $(loadFollowersQueryHashInput).val(settings.loadFollowersQueryHash);
+        $(loadFollowingQueryHashInput).val(settings.loadFollowingQueryHash);
+        $(loadingUsersBatchSizeInput).val(settings.loadingUsersBatchSize);
+        $(loadingUsersTimeoutInput).val(settings.loadingUsersTimeout);
+        $(unfollowTimeoutInput).val(settings.unfollowTimeout);
+        $(timeoutRandomizationInput).val(settings.timeoutRandomization);
 
         $(overlay).css("display", "flex");
         $(settingsPage).css("display", "flex");
     }
 
-    function initializeSettings() {
-        $(loadFollowersQueryHashInput).val(loadFollowersQueryHash);
-        $(loadFollowingQueryHashInput).val(loadFollowingQueryHash);
-        $(loadingUsersBatchSizeInput).val(loadingUsersBatchSize);
-        $(loadingUsersTimeoutInput).val(loadingUsersTimeout);
-        $(unfollowTimeoutInput).val(unfollowTimeout);
-        $(timeoutRandomizationInput).val(timeoutRandomization);
-    }
-
     function onSaveSettingsBtnClicked() {
-        loadFollowersQueryHash = $(loadFollowersQueryHashInput).val();
-        loadFollowingQueryHash = $(loadFollowingQueryHashInput).val();
-        loadingUsersBatchSize = parseInt($(loadingUsersBatchSizeInput).val());
-        loadingUsersTimeout = parseInt($(loadingUsersTimeoutInput).val());
-        unfollowTimeout = parseInt($(unfollowTimeoutInput).val());
-        timeoutRandomization = parseInt($(timeoutRandomizationInput).val());
+        settings = {
+            "loadFollowersQueryHash": $(loadFollowersQueryHashInput).val(),
+            "loadFollowingQueryHash": $(loadFollowingQueryHashInput).val(),
+            "loadingUsersBatchSize": parseInt($(loadingUsersBatchSizeInput).val()),
+            "loadingUsersTimeout": parseInt($(loadingUsersTimeoutInput).val()),
+            "unfollowTimeout": parseInt($(unfollowTimeoutInput).val()),
+            "timeoutRandomization": parseInt($(timeoutRandomizationInput).val())
+        };
 
-        hideSettingsPage();
+        chrome.storage.local.set({"settings": settings}, function () {
+            hideSettingsPage();
+        });
     }
 
     function hideSettingsPage() {
@@ -258,13 +271,13 @@ $(function () {
     function loadFollowers(callback, loadedFollowersCount, after) {
         let jsonVars = {
             id: currentUserId,
-            first: loadingUsersBatchSize,
+            first: settings.loadingUsersBatchSize,
             after: after
         };
 
         let encodedJsonVars = encodeURIComponent(JSON.stringify(jsonVars));
 
-        $.ajax("https://www.instagram.com/graphql/query/?query_hash=" + loadFollowersQueryHash + "&variables=" + encodedJsonVars)
+        $.ajax("https://www.instagram.com/graphql/query/?query_hash=" + settings.loadFollowersQueryHash + "&variables=" + encodedJsonVars)
             .done(function (data) {
                 let followers = data.data.user.edge_followed_by.edges;
                 let totalFollowersCount = data.data.user.edge_followed_by.count;
@@ -285,7 +298,7 @@ $(function () {
                 let pageInfo = data.data.user.edge_followed_by.page_info;
 
                 if (pageInfo.has_next_page) {
-                    let secondsRemaining = randomizeTimeout(loadingUsersTimeout, timeoutRandomization);
+                    let secondsRemaining = randomizeTimeout(settings.loadingUsersTimeout, settings.timeoutRandomization);
 
                     loadUsersTimeout(secondsRemaining, function () {
                         loadFollowers(callback, loadedFollowersCount, pageInfo.end_cursor);
@@ -299,13 +312,13 @@ $(function () {
     function loadFollowing(callback, loadedFollowingCount, after) {
         let jsonVars = {
             id: currentUserId,
-            first: loadingUsersBatchSize,
+            first: settings.loadingUsersBatchSize,
             after: after
         };
 
         let encodedJsonVars = encodeURIComponent(JSON.stringify(jsonVars));
 
-        $.ajax("https://www.instagram.com/graphql/query/?query_hash=" + loadFollowingQueryHash + "&variables=" + encodedJsonVars)
+        $.ajax("https://www.instagram.com/graphql/query/?query_hash=" + settings.loadFollowingQueryHash + "&variables=" + encodedJsonVars)
             .done(function (data) {
                 let usersFollowing = data.data.user.edge_follow.edges;
                 let totalFollowingCount = data.data.user.edge_follow.count;
@@ -326,7 +339,7 @@ $(function () {
                 let pageInfo = data.data.user.edge_follow.page_info;
 
                 if (pageInfo.has_next_page) {
-                    let secondsRemaining = randomizeTimeout(loadingUsersTimeout, timeoutRandomization);
+                    let secondsRemaining = randomizeTimeout(settings.loadingUsersTimeout, settings.timeoutRandomization);
 
                     loadUsersTimeout(secondsRemaining, function () {
                         loadFollowing(callback, loadedFollowingCount, pageInfo.end_cursor);
@@ -429,7 +442,7 @@ $(function () {
                     return;
                 }
 
-                let secondsRemaining = randomizeTimeout(unfollowTimeout, timeoutRandomization);
+                let secondsRemaining = randomizeTimeout(settings.unfollowTimeout, settings.timeoutRandomization);
                 countDown(secondsRemaining, usersIterator);
             });
     }
