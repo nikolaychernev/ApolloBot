@@ -174,7 +174,15 @@ $(function () {
     }
 
     function onSaveQueueBtnClicked() {
-        //TODO
+        let queue = Array.from(usersQueue.values());
+
+        let blob = new Blob([JSON.stringify(queue)], {type: "text/plain"});
+        let url = URL.createObjectURL(blob);
+
+        chrome.downloads.download({
+            url: url,
+            filename: "queue.txt"
+        });
     }
 
     function loadFollowers(callback, loadedFollowersCount, after) {
