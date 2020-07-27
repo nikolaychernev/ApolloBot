@@ -49,6 +49,10 @@ img {
     box-shadow: inset 0 0 0 3px red;
 }
 
+.processing {
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
 .spaceBetween {
     display: flex;
     justify-content: space-between;

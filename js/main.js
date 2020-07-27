@@ -18,6 +18,7 @@ let defaultSettings = {
 
 let selectedClass = "selected";
 let processedClass = "processed";
+let processingClass = "processing";
 
 // In-Memory Collections
 let followersMap = new Map();
@@ -456,7 +457,13 @@ $(function () {
             }
         })
             .done(function () {
-                $("div#" + user.id).find(".profilePictureContainer").addClass(processedClass);
+                let userElement = $("div#" + user.id);
+                let profilePictureContainer = $(userElement).find(".profilePictureContainer");
+
+                $(profilePictureContainer).removeClass(processingClass);
+                $(profilePictureContainer).addClass(processedClass);
+                $(userElement).next().find(".profilePictureContainer").addClass(processingClass);
+
                 usersQueue.delete(user.id);
 
                 if (usersQueue.size === 0) {
