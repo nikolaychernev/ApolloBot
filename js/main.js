@@ -55,7 +55,7 @@ $(function () {
     let loadQueueBtn = $("#loadQueueBtn");
     let saveQueueBtn = $("#saveQueueBtn");
 
-    let startUnfollowingBtn = $("#startUnfollowingBtn");
+    let startUnfollowingBtn = $(".startUnfollowingBtn");
 
     // Settings Page
     let overlay = $(".overlay");
@@ -439,6 +439,9 @@ $(function () {
     }
 
     function unfollowUsers(usersIterator) {
+        $(startUnfollowingBtn).addClass("stopUnfollowingBtn");
+        $(startUnfollowingBtn).text("Stop Unfollowing");
+
         let user = usersIterator.next().value;
 
         $.ajax({
@@ -453,6 +456,9 @@ $(function () {
                 usersQueue.delete(user.id);
 
                 if (usersQueue.size === 0) {
+                    $(startUnfollowingBtn).removeClass("stopUnfollowingBtn");
+                    $(startUnfollowingBtn).text("Start Unfollowing");
+
                     return;
                 }
 

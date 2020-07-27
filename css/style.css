@@ -90,9 +90,14 @@ input {
     box-sizing: border-box;
 }
 
-#startUnfollowingBtn {
+.startUnfollowingBtn {
     width: 100%;
     background-color: lightgreen;
+}
+
+.stopUnfollowingBtn {
+    background-color: red;
+    color: white;
 }
 
 .centered {
