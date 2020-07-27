@@ -74,6 +74,7 @@ $(function () {
     let loadQueueFileInput = $("#loadQueueFileSelector");
     let lastCheckedField = $(".lastChecked");
     let messageField = $("#message");
+    let queueSizeField = $("#queueSize");
 
     extractUsernameAndId();
     initializeSettings();
@@ -200,7 +201,7 @@ $(function () {
             usersQueue.delete($(selectedUser).attr("id"));
         }
 
-        // $(log).text("There are " + usersQueue.size + " users in the queue.");
+        $(queueSizeField).text(usersQueue.size + " Users Loaded");
     }
 
     function onLoadNotFollowingBackBtnClicked() {
@@ -227,7 +228,7 @@ $(function () {
                 unfollowed.push(previousFollower);
             }
 
-            drawUsers(unfollowed, "Users unfollowed since " + lastChecked.timestamp);
+            drawUsers(unfollowed, "Users Unfollowed Since " + lastChecked.timestamp);
         });
     }
 
@@ -265,7 +266,7 @@ $(function () {
             reader.readAsText(file);
             reader.onload = function (e) {
                 let users = JSON.parse(e.target.result);
-                drawUsers(users, "Users queue");
+                drawUsers(users, "Users Queue");
             };
         }
     }
@@ -385,7 +386,7 @@ $(function () {
             notFollowingBack.push(userFollowing);
         }
 
-        drawUsers(notFollowingBack, "Users not following back");
+        drawUsers(notFollowingBack, "Users Not Following Back");
     }
 
     function drawUsers(users, message) {
@@ -415,7 +416,7 @@ $(function () {
         }
 
         $(messageField).text(message);
-        // $(log).text("There are " + users.length + " users in the queue.");
+        $(queueSizeField).text(users.length + " Users Loaded");
     }
 
     function onProfilePictureClicked(event) {
@@ -449,8 +450,6 @@ $(function () {
         })
             .done(function () {
                 $("div#" + user.id).find(".profilePictureContainer").addClass(processedClass);
-                // $(log).text("Unfollowed " + user.username + ".");
-
                 usersQueue.delete(user.id);
 
                 if (usersQueue.size === 0) {
