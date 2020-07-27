@@ -8,8 +8,8 @@ let selectedClass = "selected";
 let processedClass = "processed";
 
 // In-Memory Collections
-let followersIds = [];
-let following = new Map();
+let followersMap = new Map();
+let followingMap = new Map();
 let usersQueue = new Map();
 
 // Settings
@@ -71,6 +71,7 @@ $(function () {
     let container = $("div.container");
     let userElement = $("div.userElement");
     let loadQueueFileInput = $("#loadQueueFileSelector");
+    let lastCheckedField = $(".lastChecked");
     let log = $("#log");
 
     extractUsernameAndId();
@@ -82,6 +83,18 @@ $(function () {
 
             let currentUsername = currentUrl.split("/")[3];
             $(usernameField).text(currentUsername);
+
+            initializeLastCheckedField();
+        });
+    }
+
+    function initializeLastCheckedField() {
+        chrome.storage.sync.get(currentUserId, function (item) {
+            let lastChecked = item[currentUserId];
+
+            if (lastChecked) {
+                $(lastCheckedField).text(lastChecked.timestamp).css("color", "green");
+            }
         });
     }
 
@@ -168,7 +181,9 @@ $(function () {
     }
 
     function onLoadUnfollowedBtnClicked() {
-        //TODO
+        chrome.storage.sync.set({[currentUserId]: 'hello'}, function () {
+            console.log('Settings saved');
+        });
     }
 
     function onLoadQueueBtnClicked() {
@@ -221,7 +236,14 @@ $(function () {
                 let totalFollowersCount = data.data.user.edge_followed_by.count;
 
                 for (let follower of followers) {
-                    followersIds.push(follower.node.id);
+                    let user = {
+                        id: follower.node.id,
+                        username: follower.node.username,
+                        full_name: follower.node.full_name,
+                        profile_pic_url: follower.node.profile_pic_url
+                    };
+
+                    followersMap.set(follower.node.id, user);
                     loadedFollowersCount++;
                 }
 
@@ -262,7 +284,7 @@ $(function () {
                         profile_pic_url: userFollowing.node.profile_pic_url
                     };
 
-                    following.set(userFollowing.node.id, user);
+                    followingMap.set(userFollowing.node.id, user);
                     loadedFollowingCount++;
                 }
 
@@ -292,8 +314,8 @@ $(function () {
     }
 
     function loadNotFollowingBack() {
-        for (let userFollowing of following.values()) {
-            if (followersIds.includes(userFollowing.id)) {
+        for (let userFollowing of followingMap.values()) {
+            if (followersMap.has(userFollowing.id)) {
                 continue;
             }
 
