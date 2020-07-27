@@ -8,15 +8,20 @@
     <title>InstaBot</title>
 </head>
 <body>
-<header>
+<div class="spaceBetween">
     <h1 id="username">Please go to your profile page and then open the extension.</h1>
     <div id="settingsBtn">
         <img src="../icons/settings.png" alt="Settings Button">
     </div>
-</header>
-<button id="selectAllBtn">Select All</button>
-<button id="selectNoneBtn">Select None</button>
-<button id="removeSelectedBtn">Remove Selected</button>
+</div>
+<div class="spaceBetween">
+    <h2 id="message">Start by selecting one of the options below</h2>
+    <div>
+        <button id="selectAllBtn">Select All</button>
+        <button id="selectNoneBtn">Select None</button>
+        <button id="removeSelectedBtn">Remove Selected</button>
+    </div>
+</div>
 <div class="container">
     <div class="userElement" id="" style="display: none">
         <div class="profilePictureContainer">
@@ -26,8 +31,7 @@
         <a href="" class="username"></a>
     </div>
 </div>
-<h2 id="log">Start by selecting one of the options below.</h2>
-<div class="buttons">
+<div class="spaceBetween">
     <div class="loadUsersButtons">
         <button id="loadNotFollowingBackBtn">Load Not Following Back</button>
         <div class="loadUnfollowed">

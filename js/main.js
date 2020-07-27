@@ -73,7 +73,7 @@ $(function () {
     let userElement = $("div.userElement");
     let loadQueueFileInput = $("#loadQueueFileSelector");
     let lastCheckedField = $(".lastChecked");
-    let log = $("#log");
+    let messageField = $("#message");
 
     extractUsernameAndId();
     initializeSettings();
@@ -200,7 +200,7 @@ $(function () {
             usersQueue.delete($(selectedUser).attr("id"));
         }
 
-        $(log).text("There are " + usersQueue.size + " users in the queue.");
+        // $(log).text("There are " + usersQueue.size + " users in the queue.");
     }
 
     function onLoadNotFollowingBackBtnClicked() {
@@ -227,7 +227,7 @@ $(function () {
                 unfollowed.push(previousFollower);
             }
 
-            drawUsers(unfollowed);
+            drawUsers(unfollowed, "Users unfollowed since " + lastChecked.timestamp);
         });
     }
 
@@ -265,7 +265,7 @@ $(function () {
             reader.readAsText(file);
             reader.onload = function (e) {
                 let users = JSON.parse(e.target.result);
-                drawUsers(users);
+                drawUsers(users, "Users queue");
             };
         }
     }
@@ -308,7 +308,7 @@ $(function () {
                     loadedFollowersCount++;
                 }
 
-                $(log).text("Loaded " + loadedFollowersCount + "/" + totalFollowersCount + " followers.");
+                // $(log).text("Loaded " + loadedFollowersCount + "/" + totalFollowersCount + " followers.");
                 let pageInfo = data.data.user.edge_followed_by.page_info;
 
                 if (pageInfo.has_next_page) {
@@ -349,7 +349,7 @@ $(function () {
                     loadedFollowingCount++;
                 }
 
-                $(log).text("Loaded " + loadedFollowingCount + "/" + totalFollowingCount + " following.");
+                // $(log).text("Loaded " + loadedFollowingCount + "/" + totalFollowingCount + " following.");
                 let pageInfo = data.data.user.edge_follow.page_info;
 
                 if (pageInfo.has_next_page) {
@@ -385,10 +385,10 @@ $(function () {
             notFollowingBack.push(userFollowing);
         }
 
-        drawUsers(notFollowingBack);
+        drawUsers(notFollowingBack, "Users not following back");
     }
 
-    function drawUsers(users) {
+    function drawUsers(users, message) {
         $(container).empty();
         usersQueue.clear();
 
@@ -414,7 +414,8 @@ $(function () {
             usersQueue.set(user.id, user);
         }
 
-        $(log).text("There are " + users.length + " users in the queue.");
+        $(messageField).text(message);
+        // $(log).text("There are " + users.length + " users in the queue.");
     }
 
     function onProfilePictureClicked(event) {
@@ -448,7 +449,7 @@ $(function () {
         })
             .done(function () {
                 $("div#" + user.id).find(".profilePictureContainer").addClass(processedClass);
-                $(log).text("Unfollowed " + user.username + ".");
+                // $(log).text("Unfollowed " + user.username + ".");
 
                 usersQueue.delete(user.id);
 
@@ -474,7 +475,7 @@ $(function () {
 
     function countDown(secondsRemaining, usersIterator) {
         if (secondsRemaining > 0) {
-            $(log).text("Waiting " + secondsRemaining + " seconds to unfollow the next user.");
+            // $(log).text("Waiting " + secondsRemaining + " seconds to unfollow the next user.");
 
             setTimeout(function () {
                 countDown(secondsRemaining - 1, usersIterator);
