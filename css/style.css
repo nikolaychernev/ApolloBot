@@ -12,7 +12,7 @@ body {
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
-    height: 53%;
+    height: 50%;
     overflow-x: hidden;
     overflow-y: scroll;
 }
@@ -101,4 +101,13 @@ button {
 
 #loadQueueFileSelector {
     display: none;
+}
+
+.loadUnfollowed {
+    display: inline-flex;
+    flex-direction: column;
+}
+
+.lastChecked {
+    color: red;
 }
