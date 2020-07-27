@@ -70,6 +70,7 @@ $(function () {
     let usernameField = $("#username");
     let container = $("div.container");
     let userElement = $("div.userElement");
+    let loadQueueFileInput = $("#loadQueueFileSelector");
     let log = $("#log");
 
     extractUsernameAndId();
@@ -97,6 +98,7 @@ $(function () {
         $(loadUnfollowedBtn).on("click", onLoadUnfollowedBtnClicked);
 
         $(loadQueueBtn).on("click", onLoadQueueBtnClicked);
+        $(loadQueueFileInput).on("change", onLoadQueueFileInputChange);
         $(saveQueueBtn).on("click", onSaveQueueBtnClicked);
 
         $(startUnfollowingBtn).on("click", onStartUnfollowingBtnClicked);
@@ -170,7 +172,25 @@ $(function () {
     }
 
     function onLoadQueueBtnClicked() {
-        //TODO
+        $(loadQueueFileInput).trigger("click");
+    }
+
+    function onLoadQueueFileInputChange() {
+        let file = $(loadQueueFileInput).prop('files')[0];
+
+        if (file) {
+            let reader = new FileReader();
+            reader.readAsText(file);
+            reader.onload = function (e) {
+                let users = JSON.parse(e.target.result);
+
+                for (let user of users) {
+                    usersQueue.set(user.id, user);
+                }
+
+                drawUsers(Array.from(usersQueue.values()));
+            };
+        }
     }
 
     function onSaveQueueBtnClicked() {
@@ -277,30 +297,35 @@ $(function () {
             }
 
             usersQueue.set(userFollowing.id, userFollowing);
-            drawUser(userFollowing);
         }
 
-        $(log).text("There are " + usersQueue.size + " users in the queue.");
+        drawUsers(Array.from(usersQueue.values()));
     }
 
-    function drawUser(user) {
-        let userElementClone = $(userElement).clone().show();
-        let profilePicture = $(userElementClone).find("img.profilePicture");
+    function drawUsers(users) {
+        $(container).empty();
 
-        $(userElementClone).attr("id", user.id);
+        for (let user of users) {
+            let userElementClone = $(userElement).clone().show();
+            let profilePicture = $(userElementClone).find("img.profilePicture");
 
-        $(profilePicture).attr("src", user.profile_pic_url);
-        $(profilePicture).on("click", onProfilePictureClicked);
+            $(userElementClone).attr("id", user.id);
 
-        if (user.full_name) {
-            $(userElementClone).find("p.name").text(user.full_name);
+            $(profilePicture).attr("src", user.profile_pic_url);
+            $(profilePicture).on("click", onProfilePictureClicked);
+
+            if (user.full_name) {
+                $(userElementClone).find("p.name").text(user.full_name);
+            }
+
+            $(userElementClone).find("a.username")
+                .attr("href", "https://www.instagram.com/" + user.username + "/")
+                .text(user.username);
+
+            $(container).append($(userElementClone));
         }
 
-        $(userElementClone).find("a.username")
-            .attr("href", "https://www.instagram.com/" + user.username + "/")
-            .text(user.username);
-
-        $(container).append($(userElementClone));
+        $(log).text("There are " + users.length + " users in the queue.");
     }
 
     function onProfilePictureClicked(event) {

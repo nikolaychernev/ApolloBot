@@ -98,3 +98,7 @@ button {
     margin-bottom: 2%;
     height: 2.5em;
 }
+
+#loadQueueFileSelector {
+    display: none;
+}
