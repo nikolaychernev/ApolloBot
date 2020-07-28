@@ -219,7 +219,7 @@ $(function () {
             usersQueue.delete($(selectedUser).attr("id"));
         }
 
-        $(queueSizeField).text(usersQueue.size + " Users Loaded");
+        $(queueSizeField).text(usersQueue.size + " Users");
     }
 
     function onLoadNotFollowingBackBtnClicked() {
@@ -447,7 +447,7 @@ $(function () {
         }
 
         $(messageField).text(message);
-        $(queueSizeField).text(users.length + " Users Loaded");
+        $(queueSizeField).text(users.length + " Users");
 
         $(".selection").on("click", onProfilePictureClicked);
     }
