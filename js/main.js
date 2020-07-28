@@ -5,6 +5,7 @@ let currentUserId;
 let settings;
 let loadUsersTimeoutObject;
 let unfollowUsersTimeoutObject;
+let lastChecked;
 
 // Constants
 let defaultSettings = {
@@ -107,10 +108,10 @@ $(function () {
 
     function initializeLastCheckedField() {
         chrome.storage.local.get(currentUserId, function (item) {
-            let lastChecked = item[currentUserId];
+            let lastCheckedItem = item[currentUserId];
 
-            if (lastChecked) {
-                $(lastCheckedField).text(lastChecked.timestamp).css("color", "lightgreen");
+            if (lastCheckedItem) {
+                lastChecked = lastCheckedItem;
             }
         });
     }
@@ -139,6 +140,8 @@ $(function () {
 
         $(loadNotFollowingBackBtn).on("click", onLoadNotFollowingBackBtnClicked);
         $(loadUnfollowedBtn).on("click", onLoadUnfollowedBtnClicked);
+        $(loadUnfollowedBtn).on("mouseenter", onLoadUnfollowedBtnMouseEnter);
+        $(loadUnfollowedBtn).on("mouseleave", onLoadUnfollowedBtnMouseLeave);
 
         $(loadQueueBtn).on("click", onLoadQueueBtnClicked);
         $(loadQueueFileInput).on("change", onLoadQueueFileInputChange);
@@ -227,24 +230,33 @@ $(function () {
         loadFollowers(loadUnfollowed, 0, "");
     }
 
+    function onLoadUnfollowedBtnMouseEnter() {
+        if (lastChecked) {
+            $(loadUnfollowedBtn).text(lastChecked.timestamp);
+        } else {
+            $(loadUnfollowedBtn).text("Never Checked");
+        }
+    }
+
+    function onLoadUnfollowedBtnMouseLeave() {
+        $(loadUnfollowedBtn).text("Load Unfollowed");
+    }
+
     function loadUnfollowed() {
-        chrome.storage.local.get(currentUserId, function (item) {
-            updateLastChecked();
+        updateLastChecked();
 
-            let lastChecked = item[currentUserId];
-            let previousFollowers = lastChecked.followers;
-            let unfollowed = [];
+        let previousFollowers = lastChecked.followers;
+        let unfollowed = [];
 
-            for (let previousFollower of previousFollowers) {
-                if (followersMap.has(previousFollower.id)) {
-                    continue;
-                }
-
-                unfollowed.push(previousFollower);
+        for (let previousFollower of previousFollowers) {
+            if (followersMap.has(previousFollower.id)) {
+                continue;
             }
 
-            drawUsers(unfollowed, "Users Unfollowed Since " + lastChecked.timestamp);
-        });
+            unfollowed.push(previousFollower);
+        }
+
+        drawUsers(unfollowed, "Users Unfollowed Since " + lastChecked.timestamp);
     }
 
     function updateLastChecked() {
