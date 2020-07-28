@@ -1,6 +1,6 @@
 body {
     color: white;
-    padding: 2%;
+    padding: 3%;
     margin: 0;
     box-sizing: border-box;
     width: 750px;
@@ -10,7 +10,7 @@ body {
 }
 
 .container {
-    height: 61%;
+    height: 62%;
     background-color: rgba(0, 0, 0, 0.5);
     border-radius: 8px;
 }
@@ -62,7 +62,7 @@ img {
 .profilePictureContainer {
     position: relative;
     margin: 0 auto;
-    width: 70%;
+    width: 65%;
 }
 
 .selected {
