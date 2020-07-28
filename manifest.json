@@ -33,7 +33,6 @@
   },
   "web_accessible_resources": [
     "icons/icon32.png",
-    "icons/settings32.png",
     "html/main.html"
   ]
 }

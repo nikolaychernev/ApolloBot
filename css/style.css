@@ -5,6 +5,8 @@ body {
     box-sizing: border-box;
     font-family: 'Roboto', sans-serif;
     overflow: hidden;
+    width: 100%;
+    height: 100%;
 }
 
 .container {
@@ -63,7 +65,7 @@ img {
 .profilePictureContainer {
     position: relative;
     margin: 0 auto;
-    width: 65%;
+    width: 55%;
 }
 
 .selected {
