@@ -32,25 +32,22 @@ img {
     width: 100%;
     z-index: -1;
     position: relative;
-    border-radius: 8px;
+    border-radius: 50%;
 }
 
 .profilePictureContainer {
+    position: relative;
     margin: 0 auto;
-    width: 60%;
-    border-radius: 8px;
+    width: 70%;
+    border-radius: 50%;
 }
 
 .selected {
-    box-shadow: inset 0 0 0 3px blue;
+    box-shadow: inset 0 0 0 4px green;
 }
 
 .processed {
-    box-shadow: inset 0 0 0 3px red;
-}
-
-.processing {
-    background-color: rgba(0, 0, 0, 0.5);
+    box-shadow: inset 0 0 0 4px red;
 }
 
 .spaceBetween {
@@ -128,4 +125,23 @@ button {
 
 .lastChecked {
     color: red;
+}
+
+canvas {
+    background-color: rgba(0, 0, 0, 0.5);
+    border-radius: 50%;
+    width: 100%;
+}
+
+.countdown strong {
+    width: 100%;
+    font-size: 2em;
+    color: white;
+    line-height: 300%;
+}
+
+.stackedElement {
+    position: absolute;
+    top: 0;
+    left: 0;
 }

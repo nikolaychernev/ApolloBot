@@ -18,7 +18,6 @@ let defaultSettings = {
 
 let selectedClass = "selected";
 let processedClass = "processed";
-let processingClass = "processing";
 
 // In-Memory Collections
 let followersMap = new Map();
@@ -459,10 +458,7 @@ $(function () {
             .done(function () {
                 let userElement = $("div#" + user.id);
                 let profilePictureContainer = $(userElement).find(".profilePictureContainer");
-
-                $(profilePictureContainer).removeClass(processingClass);
                 $(profilePictureContainer).addClass(processedClass);
-                $(userElement).next().find(".profilePictureContainer").addClass(processingClass);
 
                 usersQueue.delete(user.id);
 
@@ -473,8 +469,11 @@ $(function () {
                     return;
                 }
 
+                let nextElementProfilePictureContainer = $(userElement).next().find(".profilePictureContainer");
+                let countdownElement = $(nextElementProfilePictureContainer).find(".countdown");
+
                 let secondsRemaining = randomizeTimeout(settings.unfollowTimeout, settings.timeoutRandomization);
-                unfollowUsersTimeout(secondsRemaining, usersIterator);
+                unfollowUsersTimeout(secondsRemaining, secondsRemaining, countdownElement, usersIterator);
             });
     }
 
@@ -489,16 +488,31 @@ $(function () {
         return Math.floor(Math.random() * (max - min + 1) + min);
     }
 
-    function unfollowUsersTimeout(secondsRemaining, usersIterator) {
+    function unfollowUsersTimeout(totalSeconds, secondsRemaining, countdownElement, usersIterator) {
         if (secondsRemaining > 0) {
-            // $(log).text("Waiting " + secondsRemaining + " seconds to unfollow the next user.");
+            updateCountdownElement(totalSeconds, secondsRemaining, countdownElement);
 
             unfollowUsersTimeoutObject = setTimeout(function () {
-                unfollowUsersTimeout(secondsRemaining - 1, usersIterator);
+                unfollowUsersTimeout(totalSeconds, secondsRemaining - 1, countdownElement, usersIterator);
             }, 1000);
         } else {
             unfollowUsers(usersIterator);
         }
+    }
+
+    function updateCountdownElement(totalSeconds, secondsRemaining, countdownElement) {
+        $(countdownElement).circleProgress({
+            value: (totalSeconds - secondsRemaining) / totalSeconds,
+            startAngle: -Math.PI / 2,
+            reverse: true,
+            thickness: "4px",
+            fill: {
+                color: "#4ac5f8"
+            },
+            animation: false
+        });
+
+        $(countdownElement).find("strong").text(secondsRemaining);
     }
 
     function onStopUnfollowingBtnClicked() {
