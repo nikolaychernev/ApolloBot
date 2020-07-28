@@ -458,7 +458,9 @@ $(function () {
             .done(function () {
                 let userElement = $("div#" + user.id);
                 let profilePictureContainer = $(userElement).find(".profilePictureContainer");
+
                 $(profilePictureContainer).addClass(processedClass);
+                $(profilePictureContainer).find(".countdown").hide();
 
                 usersQueue.delete(user.id);
 
@@ -470,10 +472,11 @@ $(function () {
                 }
 
                 let nextElementProfilePictureContainer = $(userElement).next().find(".profilePictureContainer");
-                let countdownElement = $(nextElementProfilePictureContainer).find(".countdown");
+                let nextElementCountdownElement = $(nextElementProfilePictureContainer).find(".countdown");
+                $(nextElementCountdownElement).show();
 
                 let secondsRemaining = randomizeTimeout(settings.unfollowTimeout, settings.timeoutRandomization);
-                unfollowUsersTimeout(secondsRemaining, secondsRemaining, countdownElement, usersIterator);
+                unfollowUsersTimeout(secondsRemaining, secondsRemaining, nextElementCountdownElement, usersIterator);
             });
     }
 
@@ -517,6 +520,7 @@ $(function () {
 
     function onStopUnfollowingBtnClicked() {
         clearTimeout(unfollowUsersTimeoutObject);
+        $(".countdown").hide();
 
         $(stopUnfollowingBtn).hide();
         $(startUnfollowingBtn).show();
