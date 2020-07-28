@@ -13,7 +13,7 @@ body {
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
-    height: 60%;
+    height: 58%;
     overflow-x: hidden;
     overflow-y: scroll;
     background-color: rgba(0, 0, 0, 0.5);
@@ -49,11 +49,11 @@ img {
 }
 
 .selected {
-    box-shadow: inset 0 0 0 4px green;
+    box-shadow: inset 0 0 0 4px lightgreen;
 }
 
 .processed {
-    box-shadow: inset 0 0 0 4px red;
+    box-shadow: inset 0 0 0 4px indianred;
 }
 
 .spaceBetween {
@@ -99,14 +99,23 @@ input {
 
 #startUnfollowingBtn {
     width: 100%;
+    border-color: lightgreen;
+}
+
+#startUnfollowingBtn:hover {
+    color: #000000;
     background-color: lightgreen;
 }
 
 #stopUnfollowingBtn {
     width: 100%;
     display: none;
-    background-color: red;
-    color: white;
+    border-color: indianred;
+}
+
+#stopUnfollowingBtn:hover {
+    color: #000000;
+    background-color: indianred;
 }
 
 .centered {
@@ -130,7 +139,7 @@ button {
 }
 
 .lastChecked {
-    color: red;
+    color: indianred;
 }
 
 .countdown canvas {

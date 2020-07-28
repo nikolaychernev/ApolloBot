@@ -101,7 +101,7 @@ $(function () {
             let lastChecked = item[currentUserId];
 
             if (lastChecked) {
-                $(lastCheckedField).text(lastChecked.timestamp).css("color", "green");
+                $(lastCheckedField).text(lastChecked.timestamp).css("color", "lightgreen");
             }
         });
     }
