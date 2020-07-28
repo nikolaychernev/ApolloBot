@@ -192,15 +192,15 @@ $(function () {
     }
 
     function onSelectAllBtnClicked() {
-        $(".userElement").find($(".profilePictureContainer")).addClass(selectedClass);
+        $(".selection").addClass(selectedClass);
     }
 
     function onSelectNoneBtnClicked() {
-        $(".userElement").find($(".profilePictureContainer")).removeClass(selectedClass);
+        $(".selection").removeClass(selectedClass);
     }
 
     function onRemoveSelectedBtnClicked() {
-        let selectedUsers = $(".selected").parent();
+        let selectedUsers = $(".selected").parent().parent();
 
         for (let selectedUser of selectedUsers) {
             $(selectedUser).remove();
@@ -408,12 +408,9 @@ $(function () {
         for (let user of users) {
             let userElementClone = $(userElement).clone().show();
             let profilePicture = $(userElementClone).find("img.profilePicture");
-            let profilePictureContainer = $(userElementClone).find(".profilePictureContainer");
 
             $(userElementClone).attr("id", user.id);
-
             $(profilePicture).attr("src", user.profile_pic_url);
-            $(profilePictureContainer).on("click", onProfilePictureClicked);
 
             if (user.full_name) {
                 $(userElementClone).find("p.name").text(user.full_name);
@@ -429,6 +426,8 @@ $(function () {
 
         $(messageField).text(message);
         $(queueSizeField).text(users.length + " Users Loaded");
+
+        $(".selection").on("click", onProfilePictureClicked);
     }
 
     function onProfilePictureClicked(event) {
@@ -467,7 +466,7 @@ $(function () {
                 let userElement = $("div#" + user.id);
                 let profilePictureContainer = $(userElement).find(".profilePictureContainer");
 
-                $(profilePictureContainer).addClass(processedClass);
+                $(profilePictureContainer).find(".selection").addClass(processedClass);
                 $(profilePictureContainer).find(".countdown").hide();
 
                 usersQueue.delete(user.id);
