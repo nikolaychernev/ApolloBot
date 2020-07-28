@@ -127,7 +127,7 @@ button {
     color: red;
 }
 
-canvas {
+.countdown canvas {
     background-color: rgba(0, 0, 0, 0.5);
     border-radius: 50%;
     width: 100%;
@@ -142,6 +142,38 @@ canvas {
     font-size: 2em;
     color: white;
     line-height: 300%;
+}
+
+#loadingBar canvas {
+    position: absolute;
+    top: 25%;
+    left: 30%;
+    background-color: rgba(0, 0, 0, 0.5);
+    border-radius: 50%;
+    width: 40%;
+}
+
+#loadingBar {
+    display: none;
+    background-color: rgba(0, 0, 0, 0.5);
+    width: 100%;
+    height: 100%;
+    position: fixed;
+    left: 0;
+    top: 0;
+}
+
+#loadingBar div {
+    position: absolute;
+    top: 42%;
+    left: 38%;
+    text-align: center;
+}
+
+#loadingBar strong, #loadingMessage {
+    width: 100%;
+    font-size: 2em;
+    color: white;
 }
 
 .stackedElement {

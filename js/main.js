@@ -78,6 +78,8 @@ $(function () {
     let lastCheckedField = $(".lastChecked");
     let messageField = $("#message");
     let queueSizeField = $("#queueSize");
+    let loadingBarElement = $("#loadingBar");
+    let loadingMessageField = $("#loadingMessage");
 
     extractUsernameAndId();
     initializeSettings();
@@ -313,7 +315,9 @@ $(function () {
                     loadedFollowersCount++;
                 }
 
-                // $(log).text("Loaded " + loadedFollowersCount + "/" + totalFollowersCount + " followers.");
+                $(loadingBarElement).show();
+                updateLoadingBarElement(totalFollowersCount, loadedFollowersCount, "Loading Followers");
+
                 let pageInfo = data.data.user.edge_followed_by.page_info;
 
                 if (pageInfo.has_next_page) {
@@ -323,6 +327,7 @@ $(function () {
                         loadFollowers(callback, loadedFollowersCount, pageInfo.end_cursor);
                     });
                 } else {
+                    $(loadingBarElement).hide();
                     callback(loadNotFollowingBack, 0, "");
                 }
             });
@@ -354,7 +359,9 @@ $(function () {
                     loadedFollowingCount++;
                 }
 
-                // $(log).text("Loaded " + loadedFollowingCount + "/" + totalFollowingCount + " following.");
+                $(loadingBarElement).show();
+                updateLoadingBarElement(totalFollowingCount, loadedFollowingCount, "Loading Following");
+
                 let pageInfo = data.data.user.edge_follow.page_info;
 
                 if (pageInfo.has_next_page) {
@@ -364,6 +371,7 @@ $(function () {
                         loadFollowing(callback, loadedFollowingCount, pageInfo.end_cursor);
                     });
                 } else {
+                    $(loadingBarElement).hide();
                     callback();
                 }
             });
@@ -501,6 +509,22 @@ $(function () {
         } else {
             unfollowUsers(usersIterator);
         }
+    }
+
+    function updateLoadingBarElement(total, loaded, loadingMessage) {
+        $(loadingBarElement).circleProgress({
+            value: loaded / total,
+            size: "500",
+            startAngle: -Math.PI / 2,
+            thickness: "4px",
+            fill: {
+                color: "#4ac5f8"
+            },
+            animation: false
+        });
+
+        $(loadingMessageField).text(loadingMessage);
+        $(loadingBarElement).find("strong").text(loaded + "/" + total);
     }
 
     function updateCountdownElement(totalSeconds, secondsRemaining, countdownElement) {
