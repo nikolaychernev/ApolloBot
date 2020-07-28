@@ -81,9 +81,14 @@ $(function () {
     let loadingBarElement = $("#loadingBar");
     let loadingMessageField = $("#loadingMessage");
 
+    initializeCustomScrollBar();
     extractUsernameAndId();
     initializeSettings();
     initializeEventListeners();
+
+    function initializeCustomScrollBar() {
+        new SimpleBar($(container)[0]);
+    }
 
     function extractUsernameAndId() {
         $.ajax(currentUrl + "?__a=1").done(function (data) {
@@ -402,7 +407,8 @@ $(function () {
     }
 
     function drawUsers(users, message) {
-        $(container).empty();
+        let simpleBarContent = $(".simplebar-content");
+        $(simpleBarContent).empty();
         usersQueue.clear();
 
         for (let user of users) {
@@ -420,7 +426,7 @@ $(function () {
                 .attr("href", "https://www.instagram.com/" + user.username + "/")
                 .text(user.username);
 
-            $(container).append($(userElementClone));
+            $(simpleBarContent).append($(userElementClone));
             usersQueue.set(user.id, user);
         }
 
