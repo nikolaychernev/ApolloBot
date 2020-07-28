@@ -10,7 +10,7 @@ body {
 }
 
 .container {
-    height: 58%;
+    height: 59%;
     background-color: rgba(0, 0, 0, 0.5);
     border-radius: 8px;
 }
@@ -41,10 +41,22 @@ a {
     text-decoration: none;
 }
 
+#username {
+    display: inline-block;
+    margin: 0;
+}
+
 img {
+    border-radius: 50%;
+}
+
+.profilePicture {
     width: 100%;
     position: relative;
-    border-radius: 50%;
+}
+
+#currentUserProfilePicture {
+    width: 15%;
 }
 
 .profilePictureContainer {

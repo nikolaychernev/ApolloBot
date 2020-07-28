@@ -71,6 +71,7 @@ $(function () {
     let timeoutRandomizationInput = $("#timeoutRandomization");
 
     // Other Elements
+    let currentUserProfilePicture = $("#currentUserProfilePicture");
     let usernameField = $("#username");
     let container = $("div.container");
     let userElement = $("div.userElement");
@@ -82,7 +83,7 @@ $(function () {
     let loadingMessageField = $("#loadingMessage");
 
     initializeCustomScrollBar();
-    extractUsernameAndId();
+    extractUserInfo();
     initializeSettings();
     initializeEventListeners();
 
@@ -90,9 +91,12 @@ $(function () {
         new SimpleBar($(container)[0]);
     }
 
-    function extractUsernameAndId() {
+    function extractUserInfo() {
         $.ajax(currentUrl + "?__a=1").done(function (data) {
             currentUserId = data.graphql.user.id;
+
+            let currentUserProfilePictureUrl = data.graphql.user.profile_pic_url;
+            $(currentUserProfilePicture).attr("src", currentUserProfilePictureUrl);
 
             let currentUsername = currentUrl.split("/")[3];
             $(usernameField).text(currentUsername);
