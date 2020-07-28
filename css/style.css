@@ -21,6 +21,10 @@ body {
     justify-content: space-between;
 }
 
+.simplebar-scrollbar::before {
+    background-color: white;
+}
+
 .userElement {
     width: 15%;
     margin-top: 2%;
