@@ -1,0 +1,15 @@
+.injectedIcon {
+    background-image: url('chrome-extension://__MSG_@@extension_id__/icons/icon32.png');
+    background-size: contain;
+    width: 22px;
+    height: 22px;
+    cursor: pointer;
+}
+
+.injectedWrapper {
+    display: none;
+    position: absolute;
+    z-index: 1;
+    width: 50%;
+    height: 50%;
+}
