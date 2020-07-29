@@ -342,7 +342,7 @@ $(function () {
                     loadedFollowersCount++;
                 }
 
-                $(loadingBarElement).show();
+                $(loadingBarElement).css("display", "flex");
                 updateLoadingBarElement(totalFollowersCount, loadedFollowersCount, "Loading Followers");
 
                 let pageInfo = data.data.user.edge_followed_by.page_info;
@@ -386,7 +386,7 @@ $(function () {
                     loadedFollowingCount++;
                 }
 
-                $(loadingBarElement).show();
+                $(loadingBarElement).css("display", "flex");
                 updateLoadingBarElement(totalFollowingCount, loadedFollowingCount, "Loading Following");
 
                 let pageInfo = data.data.user.edge_follow.page_info;
