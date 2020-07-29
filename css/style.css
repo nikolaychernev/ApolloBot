@@ -72,8 +72,9 @@ img {
 
 .profilePictureContainer {
     position: relative;
-    margin: 0 auto;
+    margin: 0 auto 1em;
     width: 6em;
+    height: 6em;
 }
 
 .selected {
