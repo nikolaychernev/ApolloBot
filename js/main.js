@@ -45,6 +45,7 @@ chrome.tabs.query({
 $(function () {
     // Buttons
     let settingsBtn = $("#settingsBtn");
+    let cancelSettingsBtn = $("#cancelSettingsBtn");
     let saveSettingsBtn = $("#saveSettingsBtn");
     let resetSettingsBtn = $("#resetSettingsBtn");
 
@@ -131,6 +132,7 @@ $(function () {
     function initializeEventListeners() {
         $(overlay).on("click", onOverlayClicked);
         $(settingsBtn).on("click", onSettingsBtnClicked);
+        $(cancelSettingsBtn).on("click", hideSettingsPage);
         $(saveSettingsBtn).on("click", onSaveSettingsBtnClicked);
         $(resetSettingsBtn).on("click", onResetSettingsBtnClicked);
 

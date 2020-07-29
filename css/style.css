@@ -131,25 +131,31 @@ input {
     text-align: center;
 }
 
-#startUnfollowingBtn {
-    width: 50%;
+.greenButton {
     border-color: lightgreen;
 }
 
-#startUnfollowingBtn:hover {
+.greenButton:hover {
     color: #000000;
     background-color: lightgreen;
+}
+
+.redButton {
+    border-color: indianred;
+}
+
+.redButton:hover {
+    color: #000000;
+    background-color: indianred;
+}
+
+#startUnfollowingBtn {
+    width: 50%;
 }
 
 #stopUnfollowingBtn {
     width: 50%;
     display: none;
-    border-color: indianred;
-}
-
-#stopUnfollowingBtn:hover {
-    color: #000000;
-    background-color: indianred;
 }
 
 button {

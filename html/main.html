@@ -39,7 +39,6 @@
         </div>
     </div>
 </div>
-<!--<div class="spaceBetween">-->
 <!--    <h2 id="message">Start By Selecting Any Option Below</h2>-->
 <div class="container">
     <div class="userElement" id="" style="display: none">
@@ -81,11 +80,11 @@
 </div>
 <div class="spaceBetween">
     <div class="startStopUnfollowingButtons">
-        <button id="startUnfollowingBtn">
+        <button id="startUnfollowingBtn" class="greenButton">
             <span class="jam jam-play"></span>
             <span>Start Unfollowing</span>
         </button>
-        <button id="stopUnfollowingBtn">
+        <button id="stopUnfollowingBtn" class="redButton">
             <span class="jam jam-stop"></span>
             <span>Stop Unfollowing</span>
         </button>
@@ -123,9 +122,12 @@
             <label for="timeoutRandomization">Timeout Randomization (%):</label>
             <input type="number" id="timeoutRandomization" name="timeoutRandomization">
         </div>
-        <div>
-            <button id="saveSettingsBtn">Save Settings</button>
-            <button id="resetSettingsBtn">Reset Settings</button>
+        <div class="spaceBetween setting">
+            <button id="cancelSettingsBtn">Cancel</button>
+            <div>
+                <button id="saveSettingsBtn" class="greenButton">Save</button>
+                <button id="resetSettingsBtn" class="redButton">Reset</button>
+            </div>
         </div>
     </div>
 </div>
