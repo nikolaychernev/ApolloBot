@@ -75,7 +75,7 @@ $(function () {
     // Other Elements
     let currentUserProfilePicture = $("#currentUserProfilePicture");
     let usernameField = $("#username");
-    let container = $("div.container");
+    let scrollableArea = $(".scrollable-area");
     let userElement = $("div.userElement");
     let loadQueueFileInput = $("#loadQueueFileSelector");
     let lastCheckedField = $(".lastChecked");
@@ -90,7 +90,7 @@ $(function () {
     initializeEventListeners();
 
     function initializeCustomScrollBar() {
-        new SimpleBar($(container)[0]);
+        new SimpleBar($(scrollableArea)[0]);
     }
 
     function extractUserInfo() {
