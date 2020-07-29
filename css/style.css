@@ -151,10 +151,12 @@ input {
 
 #startUnfollowingBtn {
     width: 50%;
+    border-width: 0.15em;
 }
 
 #stopUnfollowingBtn {
     width: 50%;
+    border-width: 0.15em;
     display: none;
 }
 
