@@ -232,14 +232,20 @@ $(function () {
 
     function onLoadUnfollowedBtnMouseEnter() {
         if (lastChecked) {
-            $(loadUnfollowedBtn).text(lastChecked.timestamp);
+            $(loadUnfollowedBtn).html(
+                "<span class=\"jam jam-calendar\"></span>" +
+                "<span>" + lastChecked.timestamp + "</span>");
         } else {
-            $(loadUnfollowedBtn).text("Never Checked");
+            $(loadUnfollowedBtn).html(
+                "<span class=\"jam jam-calendar\"></span>" +
+                "<span>Never Checked</span>");
         }
     }
 
     function onLoadUnfollowedBtnMouseLeave() {
-        $(loadUnfollowedBtn).text("Load Unfollowed");
+        $(loadUnfollowedBtn).html(
+            "<span class=\"jam jam-user\"></span>" +
+            "<span>Load Unfollowed</span>");
     }
 
     function loadUnfollowed() {

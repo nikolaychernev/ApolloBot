@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
     <link rel="stylesheet" href="../css/background.css">
+    <link rel="stylesheet" href="../css/jam.min.css">
     <link rel="stylesheet" href="../css/buttons.css">
     <link rel="stylesheet" href="../css/simplebar.css">
     <link rel="stylesheet" href="../css/style.css">
@@ -18,18 +19,27 @@
 <div class="spaceBetween">
     <div class="currentUser">
         <img id="currentUserProfilePicture" src="../images/blank.png" alt=""/>
-        <h1 id="username">Not On A Profile Page.</h1>
+        <h2 id="username">Not A Profile Page</h2>
     </div>
     <div id="settingsBtn">
-        <img src="../icons/settings32.png" alt="Settings Button">
+        <span class="jam jam-cog-f"></span>
     </div>
 </div>
 <div class="spaceBetween">
     <h2 id="message">Start By Selecting Any Option Below</h2>
     <div>
-        <button id="selectAllBtn">Select All</button>
-        <button id="selectNoneBtn">Select None</button>
-        <button id="removeSelectedBtn">Remove Selected</button>
+        <button id="selectAllBtn">
+            <span class="jam jam-check"></span>
+            <span>Select All</span>
+        </button>
+        <button id="selectNoneBtn">
+            <span class="jam jam-minus"></span>
+            <span>Select None</span>
+        </button>
+        <button id="removeSelectedBtn">
+            <span class="jam jam-close"></span>
+            <span>Remove Selected</span>
+        </button>
     </div>
 </div>
 <div class="container">
@@ -47,19 +57,37 @@
 </div>
 <div class="spaceBetween">
     <div class="loadUsersButtons">
-        <button id="loadNotFollowingBackBtn">Load Not Following Back</button>
+        <button id="loadNotFollowingBackBtn">
+            <span class="jam jam-users"></span>
+            <span>Load Not Following Back</span>
+        </button>
         <div class="loadUnfollowed">
-            <button id="loadUnfollowedBtn">Load Unfollowed</button>
+            <button id="loadUnfollowedBtn">
+                <span class="jam jam-users"></span>
+                <span>Load Unfollowed</span>
+            </button>
         </div>
     </div>
     <!--    <h3 id="queueSize">0 Users</h3>-->
     <div class="startStopUnfollowingButtons">
-        <button id="startUnfollowingBtn">Start Unfollowing</button>
-        <button id="stopUnfollowingBtn">Stop Unfollowing</button>
+        <button id="startUnfollowingBtn">
+            <span class="jam jam-play"></span>
+            <span>Start Unfollowing</span>
+        </button>
+        <button id="stopUnfollowingBtn">
+            <span class="jam jam-stop"></span>
+            <span>Stop Unfollowing</span>
+        </button>
     </div>
     <div class="loadSaveQueueButtons">
-        <button id="loadQueueBtn">Load Queue</button>
-        <button id="saveQueueBtn">Save Queue</button>
+        <button id="loadQueueBtn">
+            <span class="jam jam-upload"></span>
+            <span>Load Queue</span>
+        </button>
+        <button id="saveQueueBtn">
+            <span class="jam jam-download"></span>
+            <span>Save Queue</span>
+        </button>
     </div>
 </div>
 <div class="overlay">
