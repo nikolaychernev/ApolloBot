@@ -172,11 +172,6 @@ button {
     display: none;
 }
 
-.loadUnfollowed {
-    display: inline-flex;
-    flex-direction: column;
-}
-
 .countdown canvas {
     background-color: rgba(0, 0, 0, 0.5);
     border-radius: 50%;
