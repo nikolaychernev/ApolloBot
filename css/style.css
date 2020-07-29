@@ -17,6 +17,8 @@ body {
     border-radius: 8px;
     height: 0;
     padding: 1.5em;
+    margin-top: 1em;
+    margin-bottom: 1em;
 }
 
 .simplebar-content {
@@ -63,7 +65,7 @@ img {
     height: 4em;
 }
 
-.currentUser {
+.alignCenter {
     display: flex;
     align-items: center;
 }
@@ -234,5 +236,6 @@ button {
 
 #settingsBtn .jam {
     font-size: 3em;
+    margin-left: 0.5em;
     margin-right: 0;
 }
