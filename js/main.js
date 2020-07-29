@@ -479,7 +479,7 @@ $(function () {
 
     function unfollowUsers(usersIterator) {
         $(startUnfollowingBtn).hide();
-        $(stopUnfollowingBtn).show();
+        $(stopUnfollowingBtn).css("display", "inline-flex");
 
         let user = usersIterator.next().value;
 
