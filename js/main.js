@@ -235,11 +235,13 @@ $(function () {
     }
 
     function onLoadUnfollowedBtnClicked() {
-        //TODO add custom text;
-        $(overlay).css("display", "flex");
-        $(popup).show();
+        if (lastChecked) {
+            $(popup).find("h2").text(
+                "Clicking confirm will load all users who have unfollowed since " + lastChecked.timestamp + ".");
+        }
 
-        loadFollowers(loadUnfollowed, 0, "");
+        $(overlay).css("display", "flex");
+        $(popup).css("display", "flex")();
     }
 
     function onPopupConfirmBtnClicked() {
