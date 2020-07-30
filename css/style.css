@@ -342,8 +342,12 @@ input {
 
 .storyElement {
     height: 20em;
-    margin-bottom: 1em;
+    margin-bottom: 1.5em;
     border-radius: 1.5em;
     cursor: pointer;
     margin-right: 1.5em;
+}
+
+#storyListCancelBtn {
+    margin-top: 2em;
 }
