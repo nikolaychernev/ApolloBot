@@ -468,6 +468,7 @@ $(function () {
 
         $(messageField).text(message);
         updateQueueTotalUsersCounter(users.length);
+        updateQueueSelectedUsersCounter();
 
         $(".selection").on("click", onProfilePictureClicked);
     }
