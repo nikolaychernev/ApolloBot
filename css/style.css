@@ -13,7 +13,7 @@ body {
 
 .button {
     display: inline-flex;
-    padding: 0.8em 1.2em;
+    padding: 0.6em 1.2em;
     border: 0.1em solid #FFFFFF;
     border-radius: 0.5em;
     transition: all 0.2s;
@@ -312,7 +312,9 @@ img {
 }
 
 #popupMessage {
-    margin: 0 0 1.5em;
+    display: block;
+    margin-bottom: 1em;
+    font-size: 1.5em;
 }
 
 input {
