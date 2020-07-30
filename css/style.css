@@ -182,12 +182,7 @@ img {
 }
 
 .setting {
-    margin-bottom: 2em;
-}
-
-input {
-    width: 100%;
-    box-sizing: border-box;
+    margin-bottom: 1.5em;
 }
 
 .loadUsersButton {
@@ -321,9 +316,12 @@ input {
 }
 
 input {
+    width: 100%;
+    box-sizing: border-box;
     background: none;
     border: 0.1em solid #FFFFFF;
     border-radius: 0.5em;
     color: white;
     padding: 0.8em 1.2em;
+    margin-top: 0.5em;
 }
