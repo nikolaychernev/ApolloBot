@@ -73,9 +73,13 @@ body {
     padding-bottom: 2.5em;
 }
 
-#queueSize {
-    position: absolute;
+#queueTotalUsersCount, #queueSelectedUsersCount {
     margin: 0.5em;
+}
+
+#counters {
+    display: flex;
+    position: absolute;
     bottom: 0;
     left: 50%;
     transform: translateX(-50%);

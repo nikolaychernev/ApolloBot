@@ -84,7 +84,8 @@ $(function () {
     let userElement = $("div.userElement");
     let loadQueueFileInput = $("#loadQueueFileSelector");
     let messageField = $("#message");
-    let queueSizeField = $("#queueSize");
+    let queueTotalUsersCount = $("#queueTotalUsersCount");
+    let queueSelectedUsersCount = $("#queueSelectedUsersCount");
     let loadingBarElement = $("#loadingBar");
     let loadingMessageField = $("#loadingMessage");
 
@@ -213,10 +214,12 @@ $(function () {
 
     function onSelectAllBtnClicked() {
         $(".selection").addClass(selectedClass);
+        updateQueueSelectedUsersCounter();
     }
 
     function onSelectNoneBtnClicked() {
         $(".selection").removeClass(selectedClass);
+        updateQueueSelectedUsersCounter();
     }
 
     function onRemoveSelectedBtnClicked() {
@@ -227,7 +230,8 @@ $(function () {
             usersQueue.delete($(selectedUser).attr("id"));
         }
 
-        $(queueSizeField).text(usersQueue.size + " Users");
+        updateQueueTotalUsersCounter(usersQueue.size);
+        updateQueueSelectedUsersCounter();
     }
 
     function onLoadNotFollowingBackBtnClicked() {
@@ -463,10 +467,19 @@ $(function () {
         }
 
         $(messageField).text(message);
-        $(queueSizeField).text(users.length + " Users");
+        updateQueueTotalUsersCounter(users.length);
 
         $(".selection").on("click", onProfilePictureClicked);
     }
+
+    function updateQueueTotalUsersCounter(count) {
+        $(queueTotalUsersCount).text(count + " Users");
+    }
+
+    function updateQueueSelectedUsersCounter() {
+        $(queueSelectedUsersCount).text($(".selected").length + " Selected");
+    }
+
 
     function onProfilePictureClicked(event) {
         let target = $(event.target);
@@ -476,6 +489,8 @@ $(function () {
         } else {
             $(target).addClass(selectedClass);
         }
+
+        updateQueueSelectedUsersCounter();
     }
 
     function onStartUnfollowingBtnClicked() {
