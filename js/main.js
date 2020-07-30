@@ -179,6 +179,7 @@ $(function () {
 
         hideSettingsPage();
         hidePopup();
+        hideStoryList();
     }
 
     function onSettingsBtnClicked() {
