@@ -91,7 +91,7 @@ body {
     box-sizing: border-box;
 }
 
-.simplebar-content {
+.scrollable-area .simplebar-content {
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
@@ -333,6 +333,11 @@ input {
     background-color: #313c49;
     border-radius: 1.5em;
     padding: 2em;
+    width: 70%;
+}
+
+#storyListContent .simplebar-content {
+    display: flex;
 }
 
 .storyElement {
@@ -340,4 +345,5 @@ input {
     margin-bottom: 1em;
     border-radius: 1.5em;
     cursor: pointer;
+    margin-right: 1.5em;
 }

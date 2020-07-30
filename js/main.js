@@ -106,6 +106,21 @@ $(function () {
 
     function initializeCustomScrollBar() {
         new SimpleBar($(scrollableArea)[0]);
+        let storyListContentScrollElement = new SimpleBar($(storyListContent)[0]).getScrollElement();
+        storyListContentScrollElement.onwheel = onStoryListContentScroll;
+    }
+
+    function onStoryListContentScroll(event) {
+        let elementToScroll = event.currentTarget;
+
+        clearTimeout(elementToScroll.timer);
+        elementToScroll.timer = setTimeout(() => {
+            elementToScroll.scrollTo({
+                left: event.deltaY > 0 ? elementToScroll.scrollLeft + 150 : elementToScroll.scrollLeft - 150
+            });
+        }, 20);
+
+        event.preventDefault();
     }
 
     function extractUserInfo() {
@@ -295,7 +310,8 @@ $(function () {
     }
 
     function drawStoryList(stories) {
-        $(storyListContent).empty();
+        let simpleBarContent = $("#storyListContent .simplebar-content");
+        $(simpleBarContent).empty();
 
         for (let story of stories) {
             let storyElement = $("<img>");
@@ -304,7 +320,7 @@ $(function () {
             $(storyElement).addClass("storyElement");
 
             $(storyElement).on("click", onStoryElementClicked);
-            $(storyListContent).append($(storyElement));
+            $(simpleBarContent).append($(storyElement));
         }
     }
 
@@ -531,7 +547,7 @@ $(function () {
     }
 
     function drawUsers(users, message) {
-        let simpleBarContent = $(".simplebar-content");
+        let simpleBarContent = $(".scrollable-area .simplebar-content");
         $(simpleBarContent).empty();
         usersQueue.clear();
 
