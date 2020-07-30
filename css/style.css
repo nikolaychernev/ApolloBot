@@ -182,7 +182,7 @@ img {
 }
 
 .setting {
-    margin-bottom: 5%;
+    margin-bottom: 2em;
 }
 
 input {
@@ -318,4 +318,12 @@ input {
 
 #popupMessage {
     margin: 0 0 1.5em;
+}
+
+input {
+    background: none;
+    border: 0.1em solid #FFFFFF;
+    border-radius: 0.5em;
+    color: white;
+    padding: 0.8em 1.2em;
 }
