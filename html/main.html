@@ -80,6 +80,10 @@
                 <span class="jam jam-user-remove"></span>
                 <span>Load Unfollowed</span>
             </div>
+            <div id="loadStoryViewersBtn" class="button">
+                <span class="jam jam-instant-picture"></span>
+                <span>Load Story Viewers</span>
+            </div>
         </div>
     </div>
     <div class="startStopUnfollowingButtons">
@@ -118,27 +122,30 @@
                 <label for="loadFollowersQueryHash">Load Followers Query Hash:</label>
                 <input type="text" id="loadFollowersQueryHash" name="loadFollowersQueryHash">
             </div>
-
             <div class="setting">
                 <label for="loadFollowingQueryHash">Load Following Query Hash:</label>
                 <input type="text" id="loadFollowingQueryHash" name="loadFollowingQueryHash">
             </div>
-
+            <div class="setting">
+                <label for="loadStoryListQueryHash">Load Story List Query Hash:</label>
+                <input type="text" id="loadStoryListQueryHash" name="loadStoryListQueryHash">
+            </div>
+            <div class="setting">
+                <label for="loadStoryViewersQueryHash">Load Story Viewers Query Hash:</label>
+                <input type="text" id="loadStoryViewersQueryHash" name="loadStoryViewersQueryHash">
+            </div>
             <div class="setting">
                 <label for="unfollowTimeout">Unfollow Timeout (seconds):</label>
                 <input type="number" id="unfollowTimeout" name="unfollowTimeout">
             </div>
-
             <div class="setting">
                 <label for="loadingUsersBatchSize">Loading Users Batch Size (users):</label>
                 <input type="number" id="loadingUsersBatchSize" name="loadingUsersBatchSize">
             </div>
-
             <div class="setting">
                 <label for="loadingUsersTimeout">Loading Users Timeout (seconds):</label>
                 <input type="number" id="loadingUsersTimeout" name="loadingUsersTimeout">
             </div>
-
             <div class="setting">
                 <label for="timeoutRandomization">Timeout Randomization (%):</label>
                 <input type="number" id="timeoutRandomization" name="timeoutRandomization">
@@ -147,7 +154,7 @@
         <div class="spaceBetween setting">
             <div id="cancelSettingsBtn" class="button">
                 <span class="jam jam-close"></span>
-                <span>Cancel<span>
+                <span>Cancel</span>
             </div>
             <div>
                 <div id="saveSettingsBtn" class="button greenButton">
@@ -172,6 +179,13 @@
                 <span class="jam jam-close"></span>
                 <span>Cancel</span>
             </div>
+        </div>
+    </div>
+    <div id="storyList">
+        <div id="storyListContent"></div>
+        <div id="storyListCancelBtn" class="button">
+            <span class="jam jam-close"></span>
+            <span>Cancel</span>
         </div>
     </div>
 </div>

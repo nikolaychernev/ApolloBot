@@ -11,6 +11,8 @@ let lastChecked;
 let defaultSettings = {
     "loadFollowersQueryHash": "c76146de99bb02f6415203be841dd25a",
     "loadFollowingQueryHash": "d04b0a864b4b54837c0d870b0e77e076",
+    "loadStoryListQueryHash": "90709b530ea0969f002c86a89b4f2b8d",
+    "loadStoryViewersQueryHash": "42c6ec100f5e57a1fe09be16cd3a7021",
     "loadingUsersBatchSize": 48,
     "loadingUsersTimeout": 3,
     "unfollowTimeout": 60,
@@ -55,6 +57,7 @@ $(function () {
 
     let loadNotFollowingBackBtn = $("#loadNotFollowingBackBtn");
     let loadUnfollowedBtn = $("#loadUnfollowedBtn");
+    let loadStoryViewersBtn = $("#loadStoryViewersBtn");
 
     let loadQueueBtn = $("#loadQueueBtn");
     let saveQueueBtn = $("#saveQueueBtn");
@@ -67,6 +70,8 @@ $(function () {
     let settingsPage = $(".settingsPage");
     let loadFollowersQueryHashInput = $("#loadFollowersQueryHash");
     let loadFollowingQueryHashInput = $("#loadFollowingQueryHash");
+    let loadStoryListQueryHashInput = $("#loadStoryListQueryHash");
+    let loadStoryViewersQueryHashInput = $("#loadStoryViewersQueryHash");
     let loadingUsersBatchSizeInput = $("#loadingUsersBatchSize");
     let loadingUsersTimeoutInput = $("#loadingUsersTimeout");
     let unfollowTimeoutInput = $("#unfollowTimeout");
@@ -76,6 +81,11 @@ $(function () {
     let popup = $("#popup");
     let popupConfirmBtn = $("#popupConfirmBtn");
     let popupCancelBtn = $("#popupCancelBtn");
+
+    //Story List
+    let storyList = $("#storyList");
+    let storyListContent = $("#storyListContent");
+    let storyListCancelBtn = $("#storyListCancelBtn");
 
     // Other Elements
     let currentUserProfilePicture = $("#currentUserProfilePicture");
@@ -148,6 +158,9 @@ $(function () {
         $(loadNotFollowingBackBtn).on("click", onLoadNotFollowingBackBtnClicked);
         $(loadUnfollowedBtn).on("click", onLoadUnfollowedBtnClicked);
 
+        $(loadStoryViewersBtn).on("click", onLoadStoryViewersBtnClicked);
+        $(storyListCancelBtn).on("click", hideStoryList);
+
         $(popupConfirmBtn).on("click", onPopupConfirmBtnClicked);
         $(popupCancelBtn).on("click", hidePopup);
 
@@ -179,6 +192,8 @@ $(function () {
         settings = {
             "loadFollowersQueryHash": $(loadFollowersQueryHashInput).val(),
             "loadFollowingQueryHash": $(loadFollowingQueryHashInput).val(),
+            "loadStoryListQueryHash": $(loadStoryListQueryHashInput).val(),
+            "loadStoryViewersQueryHash": $(loadStoryViewersQueryHashInput).val(),
             "loadingUsersBatchSize": parseInt($(loadingUsersBatchSizeInput).val()),
             "loadingUsersTimeout": parseInt($(loadingUsersTimeoutInput).val()),
             "unfollowTimeout": parseInt($(unfollowTimeoutInput).val()),
@@ -201,6 +216,8 @@ $(function () {
     function populateSettings() {
         $(loadFollowersQueryHashInput).val(settings.loadFollowersQueryHash);
         $(loadFollowingQueryHashInput).val(settings.loadFollowingQueryHash);
+        $(loadStoryListQueryHashInput).val(settings.loadStoryListQueryHash);
+        $(loadStoryViewersQueryHashInput).val(settings.loadStoryViewersQueryHash);
         $(loadingUsersBatchSizeInput).val(settings.loadingUsersBatchSize);
         $(loadingUsersTimeoutInput).val(settings.loadingUsersTimeout);
         $(unfollowTimeoutInput).val(settings.unfollowTimeout);
@@ -246,6 +263,76 @@ $(function () {
 
         $(overlay).css("display", "flex");
         $(popup).show();
+    }
+
+    function onLoadStoryViewersBtnClicked() {
+        loadStoryList();
+
+        $(overlay).css("display", "flex");
+        $(storyList).show();
+    }
+
+    function loadStoryList() {
+        let jsonVars = {
+            "reel_ids": [
+                currentUserId
+            ],
+            "tag_names": [],
+            "location_ids": [],
+            "highlight_reel_ids": [],
+            "precomposed_overlay": false,
+            "stories_video_dash_manifest": false
+        };
+
+        let encodedJsonVars = encodeURIComponent(JSON.stringify(jsonVars));
+
+        $.ajax("https://www.instagram.com/graphql/query/?query_hash=" + settings.loadStoryListQueryHash + "&variables=" + encodedJsonVars)
+            .done(function (data) {
+                let stories = data.data.reels_media[0].items;
+                drawStoryList(stories);
+            });
+    }
+
+    function drawStoryList(stories) {
+        $(storyListContent).empty();
+
+        for (let story of stories) {
+            let storyElement = $("<img>");
+            $(storyElement).attr("id", story.id);
+            $(storyElement).attr("src", story.display_url);
+            $(storyElement).addClass("storyElement");
+
+            $(storyElement).on("click", onStoryElementClicked);
+            $(storyListContent).append($(storyElement));
+        }
+    }
+
+    function onStoryElementClicked(event) {
+        let target = $(event.target);
+        let storyId = target.attr("id");
+
+        loadStoryViewers(storyId);
+    }
+
+    function loadStoryViewers(storyId) {
+        let jsonVars = {
+            "item_id": storyId,
+            "story_viewer_fetch_count": settings.loadingUsersBatchSize,
+            "story_viewer_cursor": "0"
+        };
+
+        let encodedJsonVars = encodeURIComponent(JSON.stringify(jsonVars));
+
+        $.ajax("https://www.instagram.com/graphql/query/?query_hash=" + settings.loadStoryViewersQueryHash + "&variables=" + encodedJsonVars)
+            .done(function (data) {
+                hideStoryList();
+                console.log(data);
+            });
+    }
+
+    function hideStoryList() {
+        $(overlay).hide();
+        $(storyList).hide();
     }
 
     function onPopupConfirmBtnClicked() {

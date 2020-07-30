@@ -327,3 +327,17 @@ input {
     padding: 0.8em 1.2em;
     margin-top: 0.5em;
 }
+
+#storyList {
+    display: none;
+    background-color: #313c49;
+    border-radius: 1.5em;
+    padding: 2em;
+}
+
+.storyElement {
+    height: 20em;
+    margin-bottom: 1em;
+    border-radius: 1.5em;
+    cursor: pointer;
+}
