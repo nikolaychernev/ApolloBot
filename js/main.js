@@ -116,9 +116,9 @@ $(function () {
         clearTimeout(elementToScroll.timer);
         elementToScroll.timer = setTimeout(() => {
             elementToScroll.scrollTo({
-                left: event.deltaY > 0 ? elementToScroll.scrollLeft + 150 : elementToScroll.scrollLeft - 150
+                left: event.deltaY > 0 ? elementToScroll.scrollLeft + 100 : elementToScroll.scrollLeft - 100
             });
-        }, 20);
+        }, 10);
 
         event.preventDefault();
     }
