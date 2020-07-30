@@ -23,20 +23,20 @@
     <div class="alignCenter">
         <div class="dropdown">
             <div class="button">
-                <span class="jam jam-check"></span>
+                <span class="jam jam-circle"></span>
                 <span>Selection</span>
             </div>
             <div class="dropdown-content left">
                 <div id="selectAllBtn" class="button">
-                    <span class="jam jam-check"></span>
+                    <span class="jam jam-plus-circle"></span>
                     <span>Select All</span>
                 </div>
                 <div id="selectNoneBtn" class="button">
-                    <span class="jam jam-minus"></span>
+                    <span class="jam jam-minus-circle"></span>
                     <span>Select None</span>
                 </div>
                 <div id="removeSelectedBtn" class="button">
-                    <span class="jam jam-close"></span>
+                    <span class="jam jam-close-circle"></span>
                     <span>Remove</span>
                 </div>
             </div>
@@ -110,48 +110,66 @@
 <div class="overlay">
     <div class="settingsPage">
         <h1>Settings</h1>
-        <div class="setting">
-            <label for="loadFollowersQueryHash">Load Followers Query Hash:</label>
-            <input type="text" id="loadFollowersQueryHash" name="loadFollowersQueryHash">
-        </div>
+        <div>
+            <div class="setting">
+                <label for="loadFollowersQueryHash">Load Followers Query Hash:</label>
+                <input type="text" id="loadFollowersQueryHash" name="loadFollowersQueryHash">
+            </div>
 
-        <div class="setting">
-            <label for="loadFollowingQueryHash">Load Following Query Hash:</label>
-            <input type="text" id="loadFollowingQueryHash" name="loadFollowingQueryHash">
-        </div>
+            <div class="setting">
+                <label for="loadFollowingQueryHash">Load Following Query Hash:</label>
+                <input type="text" id="loadFollowingQueryHash" name="loadFollowingQueryHash">
+            </div>
 
-        <div class="setting">
-            <label for="unfollowTimeout">Unfollow Timeout (seconds):</label>
-            <input type="number" id="unfollowTimeout" name="unfollowTimeout">
-        </div>
+            <div class="setting">
+                <label for="unfollowTimeout">Unfollow Timeout (seconds):</label>
+                <input type="number" id="unfollowTimeout" name="unfollowTimeout">
+            </div>
 
-        <div class="setting">
-            <label for="loadingUsersBatchSize">Loading Users Batch Size (users):</label>
-            <input type="number" id="loadingUsersBatchSize" name="loadingUsersBatchSize">
-        </div>
+            <div class="setting">
+                <label for="loadingUsersBatchSize">Loading Users Batch Size (users):</label>
+                <input type="number" id="loadingUsersBatchSize" name="loadingUsersBatchSize">
+            </div>
 
-        <div class="setting">
-            <label for="loadingUsersTimeout">Loading Users Timeout (seconds):</label>
-            <input type="number" id="loadingUsersTimeout" name="loadingUsersTimeout">
-        </div>
+            <div class="setting">
+                <label for="loadingUsersTimeout">Loading Users Timeout (seconds):</label>
+                <input type="number" id="loadingUsersTimeout" name="loadingUsersTimeout">
+            </div>
 
-        <div class="setting">
-            <label for="timeoutRandomization">Timeout Randomization (%):</label>
-            <input type="number" id="timeoutRandomization" name="timeoutRandomization">
+            <div class="setting">
+                <label for="timeoutRandomization">Timeout Randomization (%):</label>
+                <input type="number" id="timeoutRandomization" name="timeoutRandomization">
+            </div>
         </div>
         <div class="spaceBetween setting">
-            <div id="cancelSettingsBtn" class="button">Cancel</div>
+            <div id="cancelSettingsBtn" class="button">
+                <span class="jam jam-close"></span>
+                <span>Cancel<span>
+            </div>
             <div>
-                <div id="saveSettingsBtn" class="button greenButton">Save</div>
-                <div id="resetSettingsBtn" class="button redButton">Reset</div>
+                <div id="saveSettingsBtn" class="button greenButton">
+                    <span class="jam jam-save"></span>
+                    <span>Save</span>
+                </div>
+                <div id="resetSettingsBtn" class="button redButton">
+                    <span class="jam jam-history"></span>
+                    <span>Reset</span>
+                </div>
             </div>
         </div>
     </div>
     <div id="popup">
-        <h2>There is no data for this account's followers. Click confirm to load them for the first time.</h2>
+        <h2 id="popupMessage">There is no data for this account's followers. Click confirm to load them for the first
+            time.</h2>
         <div>
-            <div id="popupConfirmBtn" class="button greenButton">Confirm</div>
-            <div id="popupCancelBtn" class="button">Cancel</div>
+            <div id="popupConfirmBtn" class="button greenButton">
+                <span class="jam jam-check"></span>
+                <span>Confirm</span>
+            </div>
+            <div id="popupCancelBtn" class="button">
+                <span class="jam jam-close"></span>
+                <span>Cancel</span>
+            </div>
         </div>
     </div>
 </div>

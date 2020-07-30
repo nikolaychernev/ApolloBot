@@ -171,7 +171,7 @@ $(function () {
         populateSettings();
 
         $(overlay).css("display", "flex");
-        $(settingsPage).css("display", "flex");
+        $(settingsPage).show();
     }
 
     function onSaveSettingsBtnClicked() {
@@ -241,7 +241,7 @@ $(function () {
         }
 
         $(overlay).css("display", "flex");
-        $(popup).css("display", "flex")();
+        $(popup).show();
     }
 
     function onPopupConfirmBtnClicked() {

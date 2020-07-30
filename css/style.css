@@ -20,7 +20,7 @@ body {
     cursor: pointer;
     justify-content: center;
     align-items: center;
-    font-size: 1.1em;
+    font-size: 1.2em;
 }
 
 .dropdown {
@@ -171,16 +171,13 @@ img {
 
 .settingsPage {
     display: none;
-    flex-direction: column;
-    align-items: center;
     background-color: #313c49;
-    width: 50%;
-    height: 80%;
+    width: 40%;
     border-radius: 1.5em;
+    padding: 2em;
 }
 
 .setting {
-    width: 70%;
     margin-bottom: 5%;
 }
 
@@ -296,7 +293,6 @@ input {
 }
 
 .jam {
-    font-size: 1.5em;
     margin-right: 0.2em;
 }
 
@@ -309,12 +305,13 @@ input {
 
 #popup {
     display: none;
-    flex-direction: column;
-    align-items: center;
-    justify-content: space-between;
+    text-align: center;
     background-color: #313c49;
-    width: 50%;
-    height: 20%;
+    width: 40%;
     border-radius: 1.5em;
-    padding: 1.5em;
+    padding: 2em;
+}
+
+#popupMessage {
+    margin: 0 0 1.5em;
 }
