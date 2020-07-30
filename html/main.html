@@ -3,7 +3,6 @@
 <head>
     <link rel="stylesheet" href="../css/background.css">
     <link rel="stylesheet" href="../css/jam.min.css">
-    <link rel="stylesheet" href="../css/buttons.css">
     <link rel="stylesheet" href="../css/simplebar.css">
     <link rel="stylesheet" href="../css/style.css">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300&display=swap" rel="stylesheet">
@@ -22,18 +21,26 @@
         <h1 id="username">Not On Profile Page</h1>
     </div>
     <div class="alignCenter">
-        <button id="selectAllBtn">
-            <span class="jam jam-check"></span>
-            <span>Select All</span>
-        </button>
-        <button id="selectNoneBtn">
-            <span class="jam jam-minus"></span>
-            <span>Select None</span>
-        </button>
-        <button id="removeSelectedBtn">
-            <span class="jam jam-close"></span>
-            <span>Remove</span>
-        </button>
+        <div class="dropdown">
+            <div class="button">
+                <span class="jam jam-check"></span>
+                <span>Selection</span>
+            </div>
+            <div class="dropdown-content">
+                <div id="selectAllBtn" class="button">
+                    <span class="jam jam-check"></span>
+                    <span>Select All</span>
+                </div>
+                <div id="selectNoneBtn" class="button">
+                    <span class="jam jam-minus"></span>
+                    <span>Select None</span>
+                </div>
+                <div id="removeSelectedBtn" class="button">
+                    <span class="jam jam-close"></span>
+                    <span>Remove Selected</span>
+                </div>
+            </div>
+        </div>
         <div id="settingsBtn">
             <span class="jam jam-cog-f"></span>
         </div>
@@ -56,36 +63,49 @@
     <h3 id="queueSize">0 Users</h3>
 </div>
 <div class="spaceBetween">
-    <div class="loadUsersButtons">
-        <button id="loadNotFollowingBackBtn">
+    <div class="dropdown">
+        <div class="dropdown-content">
+            <div id="loadNotFollowingBackBtn" class="button">
+                <span class="jam jam-user"></span>
+                <span>Load Not Following Back</span>
+            </div>
+            <div id="loadUnfollowedBtn" class="button">
+                <span class="jam jam-user"></span>
+                <span>Load Unfollowed</span>
+            </div>
+        </div>
+        <div class="button loadUsersButton">
             <span class="jam jam-user"></span>
-            <span>Load Not Following Back</span>
-        </button>
-        <button id="loadUnfollowedBtn">
-            <span class="jam jam-user"></span>
-            <span>Load Unfollowed</span>
-        </button>
+            <span>Load Users</span>
+        </div>
     </div>
     <div class="startStopUnfollowingButtons">
-        <button id="startUnfollowingBtn" class="greenButton">
+        <div id="startUnfollowingBtn" class="button greenButton">
             <span class="jam jam-play"></span>
             <span>Start Unfollowing</span>
-        </button>
-        <button id="stopUnfollowingBtn" class="redButton">
+        </div>
+        <div id="stopUnfollowingBtn" class="button redButton">
             <span class="jam jam-stop"></span>
             <span>Stop Unfollowing</span>
-        </button>
+        </div>
     </div>
-    <div class="loadSaveQueueButtons">
-        <button id="loadQueueBtn">
-            <span class="jam jam-upload"></span>
-            <span>Load Queue</span>
-        </button>
-        <button id="saveQueueBtn">
-            <span class="jam jam-download"></span>
-            <span>Save Queue</span>
-        </button>
+    <div class="dropdown">
+        <div class="dropdown-content">
+            <div id="loadQueueBtn" class="button">
+                <span class="jam jam-upload"></span>
+                <span>Load Queue</span>
+            </div>
+            <div id="saveQueueBtn" class="button">
+                <span class="jam jam-download"></span>
+                <span>Save Queue</span>
+            </div>
+        </div>
+        <div class="button queueActionsButton">
+            <span class="jam jam-users"></span>
+            <span>Queue Actions</span>
+        </div>
     </div>
+</div>
 </div>
 <div class="overlay">
     <div class="settingsPage">
@@ -120,10 +140,10 @@
             <input type="number" id="timeoutRandomization" name="timeoutRandomization">
         </div>
         <div class="spaceBetween setting">
-            <button id="cancelSettingsBtn">Cancel</button>
+            <div id="cancelSettingsBtn" class="button">Cancel</div>
             <div>
-                <button id="saveSettingsBtn" class="greenButton">Save</button>
-                <button id="resetSettingsBtn" class="redButton">Reset</button>
+                <div id="saveSettingsBtn" class="button greenButton">Save</div>
+                <div id="resetSettingsBtn" class="button redButton">Reset</div>
             </div>
         </div>
     </div>
