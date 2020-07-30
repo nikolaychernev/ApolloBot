@@ -356,6 +356,10 @@ $(function () {
                         loadFollowers(callback, loadedFollowersCount, pageInfo.end_cursor);
                     });
                 } else {
+                    if (!lastChecked) {
+                        updateLastChecked();
+                    }
+
                     $(loadingBarElement).hide();
                     callback(loadNotFollowingBack, 0, "");
                 }
