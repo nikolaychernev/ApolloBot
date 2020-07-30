@@ -306,3 +306,13 @@ input {
     margin-right: 0;
     cursor: pointer;
 }
+
+#popup {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    background-color: #313c49;
+    width: 50%;
+    height: 20%;
+    border-radius: 1.5em;
+}

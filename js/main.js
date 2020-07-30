@@ -72,13 +72,17 @@ $(function () {
     let unfollowTimeoutInput = $("#unfollowTimeout");
     let timeoutRandomizationInput = $("#timeoutRandomization");
 
+    //Popup
+    let popup = $("#popup");
+    let popupConfirmBtn = $("#popupConfirmBtn");
+    let popupCancelBtn = $("#popupCancelBtn");
+
     // Other Elements
     let currentUserProfilePicture = $("#currentUserProfilePicture");
     let usernameField = $("#username");
     let scrollableArea = $(".scrollable-area");
     let userElement = $("div.userElement");
     let loadQueueFileInput = $("#loadQueueFileSelector");
-    let lastCheckedField = $(".lastChecked");
     let messageField = $("#message");
     let queueSizeField = $("#queueSize");
     let loadingBarElement = $("#loadingBar");
@@ -142,8 +146,9 @@ $(function () {
 
         $(loadNotFollowingBackBtn).on("click", onLoadNotFollowingBackBtnClicked);
         $(loadUnfollowedBtn).on("click", onLoadUnfollowedBtnClicked);
-        $(loadUnfollowedBtn).on("mouseenter", onLoadUnfollowedBtnMouseEnter);
-        $(loadUnfollowedBtn).on("mouseleave", onLoadUnfollowedBtnMouseLeave);
+
+        $(popupConfirmBtn).on("click", onPopupConfirmBtnClicked);
+        $(popupCancelBtn).on("click", hidePopup);
 
         $(loadQueueBtn).on("click", onLoadQueueBtnClicked);
         $(loadQueueFileInput).on("change", onLoadQueueFileInputChange);
@@ -159,6 +164,7 @@ $(function () {
         }
 
         hideSettingsPage();
+        hidePopup();
     }
 
     function onSettingsBtnClicked() {
@@ -229,25 +235,21 @@ $(function () {
     }
 
     function onLoadUnfollowedBtnClicked() {
+        //TODO add custom text;
+        $(overlay).css("display", "flex");
+        $(popup).show();
+
         loadFollowers(loadUnfollowed, 0, "");
     }
 
-    function onLoadUnfollowedBtnMouseEnter() {
-        if (lastChecked) {
-            $(loadUnfollowedBtn).html(
-                "<span class=\"jam jam-calendar\"></span>" +
-                "<span>" + lastChecked.timestamp + "</span>");
-        } else {
-            $(loadUnfollowedBtn).html(
-                "<span class=\"jam jam-calendar\"></span>" +
-                "<span>Never Checked</span>");
-        }
+    function onPopupConfirmBtnClicked() {
+        hidePopup();
+        loadFollowers(loadUnfollowed, 0, "");
     }
 
-    function onLoadUnfollowedBtnMouseLeave() {
-        $(loadUnfollowedBtn).html(
-            "<span class=\"jam jam-user\"></span>" +
-            "<span>Load Unfollowed</span>");
+    function hidePopup() {
+        $(overlay).hide();
+        $(popup).hide();
     }
 
     function loadUnfollowed() {
