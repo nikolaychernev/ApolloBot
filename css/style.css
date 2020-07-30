@@ -291,6 +291,10 @@ img {
     cursor: pointer;
 }
 
+.selection:hover {
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
 .jam {
     margin-right: 0.2em;
 }
@@ -346,6 +350,10 @@ input {
     border-radius: 1.5em;
     cursor: pointer;
     margin-right: 1.5em;
+}
+
+.storyElement:hover {
+    filter: brightness(50%);
 }
 
 #storyListCancelBtn {
