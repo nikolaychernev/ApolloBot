@@ -32,10 +32,17 @@ body {
 .dropdown-content {
     display: none;
     position: absolute;
-    right: 0;
     width: 15em;
     z-index: 1;
     border-radius: 1.5em;
+}
+
+.left {
+    right: 0;
+}
+
+.top {
+    bottom: 100%;
 }
 
 .dropdown-content .button {
