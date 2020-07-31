@@ -78,6 +78,7 @@ $(function () {
 
     //Popup
     let popup = $("#popup");
+    let popupMessage = $("#popupMessage");
     let popupConfirmBtn = $("#popupConfirmBtn");
     let popupCancelBtn = $("#popupCancelBtn");
 
@@ -155,11 +156,7 @@ $(function () {
 
     function initializeLastCheckedField() {
         chrome.storage.local.get(currentUserId, function (item) {
-            let lastCheckedItem = item[currentUserId];
-
-            if (lastCheckedItem) {
-                lastChecked = lastCheckedItem;
-            }
+            lastChecked = item[currentUserId];
         });
     }
 
@@ -310,8 +307,9 @@ $(function () {
 
     function onLoadUnfollowedBtnClicked() {
         if (lastChecked) {
-            $(popup).find("h2").text(
-                "Clicking confirm will load all users who have unfollowed since " + lastChecked.timestamp + ".");
+            $(popupMessage).text("Clicking confirm will load all users who have unfollowed since " + lastChecked.timestamp + ".");
+        } else {
+            $(popupMessage).text("There is no data for this account's followers. Click confirm to load them for the first time.");
         }
 
         $(overlay).css("display", "flex");
@@ -693,7 +691,7 @@ $(function () {
                 if (users.length === 0) {
                     $(stopUnfollowingBtn).hide();
                     $(startUnfollowingBtn).show();
-                    
+
                     enableSearchAndDropdowns();
                     return;
                 }
