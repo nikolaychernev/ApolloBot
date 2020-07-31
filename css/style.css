@@ -357,6 +357,11 @@ input {
     padding: 0.8em 1.2em;
 }
 
+input:hover {
+    border: 0.1em solid darkgray;
+    transition: all 0.3s;
+}
+
 input:focus {
     outline: none;
 }
