@@ -5,6 +5,7 @@ let settings;
 let loadUsersTimeoutObject;
 let unfollowUsersTimeoutObject;
 let lastChecked;
+let searchBarTimeout;
 
 // Constants
 let defaultSettings = {
@@ -205,6 +206,7 @@ $(function () {
         $(startUnfollowingBtn).on("click", onStartUnfollowingBtnClicked);
         $(stopUnfollowingBtn).on("click", onStopUnfollowingBtnClicked);
         $(stopLoadingBtn).on("click", onStopLoadingBtnClicked);
+        $(searchBarInput).on("keyup", onSearchBarInputKeyUp);
     }
 
     function onOverlayClicked(e) {
@@ -750,6 +752,18 @@ $(function () {
     function onStopLoadingBtnClicked() {
         clearTimeout(loadUsersTimeoutObject);
         $(loadingBarElement).hide();
+    }
+
+    function onSearchBarInputKeyUp(event) {
+        clearTimeout(searchBarInput);
+
+        searchBarInput = setTimeout(function () {
+            searchUsers($(event.currentTarget).val())
+        }, 500);
+    }
+
+    function searchUsers(value) {
+        console.log("Searching by: " + value);
     }
 
     function disableSearchAndDropdowns() {
