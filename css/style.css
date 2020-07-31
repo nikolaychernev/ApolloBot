@@ -267,7 +267,7 @@ img {
     top: 0;
 }
 
-#loadingBar div {
+#loadingBarContent {
     position: absolute;
     text-align: center;
 }
@@ -297,6 +297,7 @@ img {
 }
 
 .jam {
+    display: block;
     margin-right: 0.2em;
 }
 
@@ -304,7 +305,7 @@ img {
     margin: 0 0.5em;
 }
 
-#settingsBtn .jam, #reloadUserBtn .jam {
+#settingsBtn .jam, #reloadUserBtn .jam, #stopLoadingBtn {
     font-size: 3em;
     margin: 0;
     cursor: pointer;
@@ -312,6 +313,10 @@ img {
 
 #reloadUserBtn .jam {
     font-size: 1.5em;
+}
+
+#stopLoadingBtn {
+    color: indianred;
 }
 
 #settingsBtn:hover, #reloadUserBtn:hover {

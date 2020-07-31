@@ -55,6 +55,7 @@ $(function () {
     let saveQueueBtn = $("#saveQueueBtn");
     let startUnfollowingBtn = $("#startUnfollowingBtn");
     let stopUnfollowingBtn = $("#stopUnfollowingBtn");
+    let stopLoadingBtn = $("#stopLoadingBtn");
 
     // Settings Page
     let overlay = $(".overlay");
@@ -200,6 +201,7 @@ $(function () {
         $(saveQueueBtn).on("click", onSaveQueueBtnClicked);
         $(startUnfollowingBtn).on("click", onStartUnfollowingBtnClicked);
         $(stopUnfollowingBtn).on("click", onStopUnfollowingBtnClicked);
+        $(stopLoadingBtn).on("click", onStopLoadingBtnClicked);
     }
 
     function onOverlayClicked(e) {
@@ -734,5 +736,10 @@ $(function () {
 
         $(stopUnfollowingBtn).hide();
         $(startUnfollowingBtn).show();
+    }
+
+    function onStopLoadingBtnClicked() {
+        clearTimeout(loadUsersTimeoutObject);
+        $(loadingBarElement).hide();
     }
 });
