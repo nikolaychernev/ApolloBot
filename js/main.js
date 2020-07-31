@@ -6,6 +6,7 @@ let loadUsersTimeoutObject;
 let unfollowUsersTimeoutObject;
 let lastChecked;
 let searchBarTimeout;
+let visibleUsersCount = 0;
 
 // Constants
 let defaultSettings = {
@@ -91,7 +92,6 @@ $(function () {
     let scrollableArea = $(".scrollable-area");
     let userElement = $("div.userElement");
     let loadQueueFileInput = $("#loadQueueFileSelector");
-    let messageField = $("#message");
     let queueTotalUsersCount = $("#queueTotalUsersCount");
     let queueSelectedUsersCount = $("#queueSelectedUsersCount");
     let loadingBarElement = $("#loadingBar");
@@ -297,9 +297,10 @@ $(function () {
         for (let selectedUser of selectedUsers) {
             $(selectedUser).remove();
             usersQueue.delete($(selectedUser).attr("id"));
+            visibleUsersCount--;
         }
 
-        updateQueueTotalUsersCounter(usersQueue.size);
+        updateQueueTotalUsersCounter(visibleUsersCount);
         updateQueueSelectedUsersCounter();
     }
 
@@ -402,17 +403,18 @@ $(function () {
         updateLastChecked();
 
         let previousFollowers = lastChecked.followers;
-        let unfollowed = [];
+        usersQueue.clear();
 
         for (let previousFollower of previousFollowers) {
             if (followersMap.has(previousFollower.id)) {
                 continue;
             }
 
-            unfollowed.push(previousFollower);
+            previousFollower.visible = true;
+            usersQueue.set(previousFollower.id, previousFollower);
         }
 
-        drawUsers(unfollowed, "Users Unfollowed Since " + lastChecked.timestamp);
+        drawUsers();
     }
 
     function updateLastChecked() {
@@ -449,7 +451,14 @@ $(function () {
             reader.readAsText(file);
             reader.onload = function (e) {
                 let users = JSON.parse(e.target.result);
-                drawUsers(users, "Users Queue");
+                usersQueue.clear();
+
+                for (let user of users) {
+                    user.visible = true;
+                    usersQueue.set(user.id, user);
+                }
+
+                drawUsers();
             };
         }
     }
@@ -569,25 +578,30 @@ $(function () {
     }
 
     function loadNotFollowingBack() {
-        let notFollowingBack = [];
+        usersQueue.clear();
 
         for (let userFollowing of followingMap.values()) {
             if (followersMap.has(userFollowing.id)) {
                 continue;
             }
 
-            notFollowingBack.push(userFollowing);
+            userFollowing.visible = true;
+            usersQueue.set(userFollowing.id, userFollowing);
         }
 
-        drawUsers(notFollowingBack, "Users Not Following Back");
+        drawUsers();
     }
 
-    function drawUsers(users, message) {
+    function drawUsers() {
         let simpleBarContent = $(".scrollable-area .simplebar-content");
         $(simpleBarContent).empty();
-        usersQueue.clear();
+        visibleUsersCount = 0;
 
-        for (let user of users) {
+        for (let user of usersQueue.values()) {
+            if (!user.visible) {
+                continue;
+            }
+
             let userElementClone = $(userElement).clone().show();
             let profilePicture = $(userElementClone).find("img.profilePicture");
 
@@ -603,13 +617,10 @@ $(function () {
                 .text(user.username);
 
             $(simpleBarContent).append($(userElementClone));
-
-            user.visible = true;
-            usersQueue.set(user.id, user);
+            visibleUsersCount++;
         }
 
-        $(messageField).text(message);
-        updateQueueTotalUsersCounter(users.length);
+        updateQueueTotalUsersCounter(visibleUsersCount);
         updateQueueSelectedUsersCounter();
 
         $(".selection").on("click", onProfilePictureClicked);
@@ -763,7 +774,12 @@ $(function () {
     }
 
     function searchUsers(value) {
-        console.log("Searching by: " + value);
+        for (let user of usersQueue.values()) {
+            user.visible = user.username.toLowerCase().startsWith(value.toLowerCase()) ||
+                user.full_name.toLowerCase().startsWith(value.toLowerCase());
+        }
+
+        drawUsers();
     }
 
     function disableSearchAndDropdowns() {
