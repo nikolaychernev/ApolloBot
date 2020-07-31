@@ -755,9 +755,9 @@ $(function () {
     }
 
     function onSearchBarInputKeyUp(event) {
-        clearTimeout(searchBarInput);
+        clearTimeout(searchBarTimeout);
 
-        searchBarInput = setTimeout(function () {
+        searchBarTimeout = setTimeout(function () {
             searchUsers($(event.currentTarget).val())
         }, 500);
     }
