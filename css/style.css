@@ -357,7 +357,7 @@ input {
     padding: 0.8em 1.2em;
 }
 
-input:hover {
+input:hover, .slider:hover {
     border: 0.1em solid darkgray;
     transition: all 0.3s;
 }
@@ -424,6 +424,7 @@ input:focus {
     right: 0;
     bottom: 0;
     border: 0.1em solid #FFFFFF;
+    border-radius: 34px;
     transition: .4s;
 }
 
@@ -435,17 +436,10 @@ input:focus {
     top: 0.15em;
     left: 0.1em;
     background-color: white;
+    border-radius: 50%;
     transition: .4s;
 }
 
 input:checked + .slider:before {
     transform: translateX(2em);
-}
-
-.slider.round {
-    border-radius: 34px;
-}
-
-.slider.round:before {
-    border-radius: 50%;
 }
