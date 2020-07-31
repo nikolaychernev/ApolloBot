@@ -117,10 +117,6 @@ a {
     text-decoration: none;
 }
 
-#username {
-    margin-left: 0.5em;
-}
-
 img {
     border-radius: 50%;
 }
@@ -304,17 +300,21 @@ img {
     margin-right: 0.2em;
 }
 
-#selectionBtn {
+#username, #selectionBtn {
     margin: 0 0.5em;
 }
 
-#settingsBtn .jam {
+#settingsBtn .jam, #reloadUserBtn .jam {
     font-size: 3em;
     margin: 0;
     cursor: pointer;
 }
 
-#settingsBtn:hover {
+#reloadUserBtn .jam {
+    font-size: 1.5em;
+}
+
+#settingsBtn:hover, #reloadUserBtn:hover {
     animation: rotation 2s infinite linear;
 }
 

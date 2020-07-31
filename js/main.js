@@ -20,6 +20,8 @@ let defaultSettings = {
 
 let selectedClass = "selected";
 let processedClass = "processed";
+let disabledClass = "disabled";
+let storyElementClass = "storyElement";
 
 // In-Memory Collections
 let followersMap = new Map();
@@ -37,23 +39,20 @@ chrome.cookies.get({
 
 $(function () {
     // Buttons
+    let reloadUserBtn = $("#reloadUserBtn");
     let settingsBtn = $("#settingsBtn");
     let cancelSettingsBtn = $("#cancelSettingsBtn");
     let saveSettingsBtn = $("#saveSettingsBtn");
     let resetSettingsBtn = $("#resetSettingsBtn");
-
     let selectAllBtn = $("#selectAllBtn");
     let selectNoneBtn = $("#selectNoneBtn");
     let removeSelectedBtn = $("#removeSelectedBtn");
-
     let loadUsersDropdown = $("#loadUsersDropdown");
     let loadNotFollowingBackBtn = $("#loadNotFollowingBackBtn");
     let loadUnfollowedBtn = $("#loadUnfollowedBtn");
     let loadStoryViewersBtn = $("#loadStoryViewersBtn");
-
     let loadQueueBtn = $("#loadQueueBtn");
     let saveQueueBtn = $("#saveQueueBtn");
-
     let startUnfollowingBtn = $("#startUnfollowingBtn");
     let stopUnfollowingBtn = $("#stopUnfollowingBtn");
 
@@ -128,15 +127,19 @@ $(function () {
 
             $.ajax(currentUrl + "?__a=1").done(function (data) {
                 if (Object.keys(data).length === 0) {
+                    $(currentUserProfilePicture).attr("src", "../images/blank.png");
+                    $(usernameField).text("Not On Profile Page");
+
+                    disableLoadUsersDropdown();
                     return;
                 }
 
                 currentUserId = data.graphql.user.id;
 
                 let currentUserProfilePictureUrl = data.graphql.user.profile_pic_url;
-                $(currentUserProfilePicture).attr("src", currentUserProfilePictureUrl);
-
                 let currentUsername = currentUrl.split("/")[3];
+
+                $(currentUserProfilePicture).attr("src", currentUserProfilePictureUrl);
                 $(usernameField).text(currentUsername);
 
                 initializeLastCheckedField();
@@ -156,7 +159,11 @@ $(function () {
     }
 
     function enableLoadUsersDropdown() {
-        $(loadUsersDropdown).removeClass("disabled");
+        $(loadUsersDropdown).removeClass(disabledClass);
+    }
+
+    function disableLoadUsersDropdown() {
+        $(loadUsersDropdown).addClass(disabledClass);
     }
 
     function initializeSettings() {
@@ -173,29 +180,24 @@ $(function () {
 
     function initializeEventListeners() {
         $(overlay).on("click", onOverlayClicked);
+        $(reloadUserBtn).on("click", onReloadUserBtnClicked);
         $(settingsBtn).on("click", onSettingsBtnClicked);
         $(settingsToggle).on("change", onSettingsToggle);
         $(cancelSettingsBtn).on("click", hideSettingsPage);
         $(saveSettingsBtn).on("click", onSaveSettingsBtnClicked);
         $(resetSettingsBtn).on("click", onResetSettingsBtnClicked);
-
         $(selectAllBtn).on("click", onSelectAllBtnClicked);
         $(selectNoneBtn).on("click", onSelectNoneBtnClicked);
         $(removeSelectedBtn).on("click", onRemoveSelectedBtnClicked);
-
         $(loadNotFollowingBackBtn).on("click", onLoadNotFollowingBackBtnClicked);
         $(loadUnfollowedBtn).on("click", onLoadUnfollowedBtnClicked);
-
         $(loadStoryViewersBtn).on("click", onLoadStoryViewersBtnClicked);
         $(storyListCancelBtn).on("click", hideStoryList);
-
         $(popupConfirmBtn).on("click", onPopupConfirmBtnClicked);
         $(popupCancelBtn).on("click", hidePopup);
-
         $(loadQueueBtn).on("click", onLoadQueueBtnClicked);
         $(loadQueueFileInput).on("change", onLoadQueueFileInputChange);
         $(saveQueueBtn).on("click", onSaveQueueBtnClicked);
-
         $(startUnfollowingBtn).on("click", onStartUnfollowingBtnClicked);
         $(stopUnfollowingBtn).on("click", onStopUnfollowingBtnClicked);
     }
@@ -208,6 +210,10 @@ $(function () {
         hideSettingsPage();
         hidePopup();
         hideStoryList();
+    }
+
+    function onReloadUserBtnClicked() {
+        extractUserInfo();
     }
 
     function onSettingsBtnClicked() {
@@ -340,7 +346,7 @@ $(function () {
             let storyElement = $("<img>");
             $(storyElement).attr("id", story.id);
             $(storyElement).attr("src", story.display_url);
-            $(storyElement).addClass("storyElement");
+            $(storyElement).addClass(storyElementClass);
 
             $(storyElement).on("click", onStoryElementClicked);
             $(simpleBarContent).append($(storyElement));
