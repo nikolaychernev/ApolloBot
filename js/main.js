@@ -771,6 +771,7 @@ $(function () {
         $(loadUsersDropdown).addClass(disabledClass);
         $(queueActionsDropdown).addClass(disabledClass);
         $(selectionDropdown).addClass(disabledClass);
+        $(".selection").addClass(disabledClass);
     }
 
     function enableSearchAndDropdowns() {
@@ -781,5 +782,6 @@ $(function () {
         $(searchBarInput).removeClass(disabledClass);
         $(queueActionsDropdown).removeClass(disabledClass);
         $(selectionDropdown).removeClass(disabledClass);
+        $(".selection").removeClass(disabledClass);
     }
 });
