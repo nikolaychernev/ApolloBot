@@ -48,6 +48,8 @@ $(function () {
     let selectNoneBtn = $("#selectNoneBtn");
     let removeSelectedBtn = $("#removeSelectedBtn");
     let loadUsersDropdown = $("#loadUsersDropdown");
+    let queueActionsDropdown = $("#queueActionsDropdown");
+    let selectionDropdown = $("#selectionDropdown");
     let loadNotFollowingBackBtn = $("#loadNotFollowingBackBtn");
     let loadUnfollowedBtn = $("#loadUnfollowedBtn");
     let loadStoryViewersBtn = $("#loadStoryViewersBtn");
@@ -93,6 +95,7 @@ $(function () {
     let queueSelectedUsersCount = $("#queueSelectedUsersCount");
     let loadingBarElement = $("#loadingBar");
     let loadingMessageField = $("#loadingMessage");
+    let searchBarInput = $("#searchBarInput");
 
     initializeCustomScrollBar();
     extractUserInfo();
@@ -598,6 +601,8 @@ $(function () {
                 .text(user.username);
 
             $(simpleBarContent).append($(userElementClone));
+
+            user.visible = true;
             usersQueue.set(user.id, user);
         }
 
@@ -636,6 +641,7 @@ $(function () {
 
         let usersToUnfollowIterator = usersQueue.values();
         unfollowUsers(usersToUnfollowIterator);
+        disableSearchAndDropdowns();
     }
 
     function unfollowUsers(usersIterator) {
@@ -734,6 +740,7 @@ $(function () {
         clearTimeout(unfollowUsersTimeoutObject);
         $(".countdown").hide();
 
+        enableSearchAndDropdowns();
         $(stopUnfollowingBtn).hide();
         $(startUnfollowingBtn).show();
     }
@@ -741,5 +748,22 @@ $(function () {
     function onStopLoadingBtnClicked() {
         clearTimeout(loadUsersTimeoutObject);
         $(loadingBarElement).hide();
+    }
+
+    function disableSearchAndDropdowns() {
+        $(searchBarInput).addClass(disabledClass);
+        $(loadUsersDropdown).addClass(disabledClass);
+        $(queueActionsDropdown).addClass(disabledClass);
+        $(selectionDropdown).addClass(disabledClass);
+    }
+
+    function enableSearchAndDropdowns() {
+        if (currentUserId) {
+            $(loadUsersDropdown).removeClass(disabledClass);
+        }
+
+        $(searchBarInput).removeClass(disabledClass);
+        $(queueActionsDropdown).removeClass(disabledClass);
+        $(selectionDropdown).removeClass(disabledClass);
     }
 });

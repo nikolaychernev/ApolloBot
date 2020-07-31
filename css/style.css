@@ -181,8 +181,9 @@ img {
     margin-bottom: 1.5em;
 }
 
-#loadUsersDropdown.disabled {
+.disabled {
     opacity: 0.5;
+    pointer-events: none;
 }
 
 .loadUsersButton {
