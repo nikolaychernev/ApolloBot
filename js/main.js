@@ -655,15 +655,24 @@ $(function () {
         disableSearchAndDropdowns();
         onSelectNoneBtnClicked();
 
-        let usersToUnfollowIterator = usersQueue.values();
-        unfollowUsers(usersToUnfollowIterator);
+        let usersToUnfollow = [];
+
+        for (let user of usersQueue.values()) {
+            if (!user.visible) {
+                continue;
+            }
+
+            usersToUnfollow.push(user);
+        }
+
+        unfollowUsers(usersToUnfollow);
     }
 
-    function unfollowUsers(usersIterator) {
+    function unfollowUsers(users) {
         $(startUnfollowingBtn).hide();
         $(stopUnfollowingBtn).css("display", "inline-flex");
 
-        let user = usersIterator.next().value;
+        let user = users.shift();
 
         $.ajax({
             url: "https://www.instagram.com/web/friendships/" + user.id + "/unfollow/",
@@ -681,19 +690,20 @@ $(function () {
 
                 usersQueue.delete(user.id);
 
-                if (usersQueue.size === 0) {
+                if (users.length === 0) {
                     $(stopUnfollowingBtn).hide();
                     $(startUnfollowingBtn).show();
-
+                    
+                    enableSearchAndDropdowns();
                     return;
                 }
 
-                let nextElementProfilePictureContainer = $(userElement).next().find(".profilePictureContainer");
-                let nextElementCountdownElement = $(nextElementProfilePictureContainer).find(".countdown");
+                let nextUser = users.shift();
+                let nextElementCountdownElement = $("div#" + nextUser.id).find(".countdown");
                 $(nextElementCountdownElement).show();
 
                 let secondsRemaining = randomizeTimeout(settings.unfollowTimeout, settings.timeoutRandomization);
-                unfollowUsersTimeout(secondsRemaining, secondsRemaining, nextElementCountdownElement, usersIterator);
+                unfollowUsersTimeout(secondsRemaining, secondsRemaining, nextElementCountdownElement, users);
             });
     }
 
@@ -708,15 +718,15 @@ $(function () {
         return Math.floor(Math.random() * (max - min + 1) + min);
     }
 
-    function unfollowUsersTimeout(totalSeconds, secondsRemaining, countdownElement, usersIterator) {
+    function unfollowUsersTimeout(totalSeconds, secondsRemaining, countdownElement, users) {
         if (secondsRemaining > 0) {
             updateCountdownElement(totalSeconds, secondsRemaining, countdownElement);
 
             unfollowUsersTimeoutObject = setTimeout(function () {
-                unfollowUsersTimeout(totalSeconds, secondsRemaining - 1, countdownElement, usersIterator);
+                unfollowUsersTimeout(totalSeconds, secondsRemaining - 1, countdownElement, users);
             }, 1000);
         } else {
-            unfollowUsers(usersIterator);
+            unfollowUsers(users);
         }
     }
 
