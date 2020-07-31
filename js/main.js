@@ -84,6 +84,7 @@ $(function () {
 
     //Story List
     let storyList = $("#storyList");
+    let storyListHeading = $("#storyListHeading");
     let storyListContent = $("#storyListContent");
     let storyListCancelBtn = $("#storyListCancelBtn");
 
@@ -339,12 +340,18 @@ $(function () {
 
         $.ajax("https://www.instagram.com/graphql/query/?query_hash=" + settings.loadStoryListQueryHash + "&variables=" + encodedJsonVars)
             .done(function (data) {
-                let stories = data.data.reels_media[0].items;
+                let stories = data.data.reels_media[0] ? data.data.reels_media[0].items : [];
                 drawStoryList(stories);
             });
     }
 
     function drawStoryList(stories) {
+        if (stories.length === 0) {
+            $(storyListHeading).text("No Stories");
+        } else {
+            $(storyListHeading).text("Select Story");
+        }
+
         let simpleBarContent = $("#storyListContent .simplebar-content");
         $(simpleBarContent).empty();
 
@@ -650,7 +657,7 @@ $(function () {
             return;
         }
 
-        disableSearchAndDropdowns();
+        disableElements();
         onSelectNoneBtnClicked();
 
         let usersToUnfollow = [];
@@ -692,7 +699,7 @@ $(function () {
                     $(stopUnfollowingBtn).hide();
                     $(startUnfollowingBtn).show();
 
-                    enableSearchAndDropdowns();
+                    enableElements();
                     return;
                 }
 
@@ -763,7 +770,7 @@ $(function () {
         clearTimeout(unfollowUsersTimeoutObject);
         $(".countdown").hide();
 
-        enableSearchAndDropdowns();
+        enableElements();
         $(stopUnfollowingBtn).hide();
         $(startUnfollowingBtn).show();
     }
@@ -790,7 +797,7 @@ $(function () {
         drawUsers();
     }
 
-    function disableSearchAndDropdowns() {
+    function disableElements() {
         $(searchBarInput).addClass(disabledClass);
         $(loadUsersDropdown).addClass(disabledClass);
         $(queueActionsDropdown).addClass(disabledClass);
@@ -798,7 +805,7 @@ $(function () {
         $(".selection").addClass(disabledClass);
     }
 
-    function enableSearchAndDropdowns() {
+    function enableElements() {
         if (currentUserId) {
             $(loadUsersDropdown).removeClass(disabledClass);
         }
