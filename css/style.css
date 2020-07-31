@@ -182,8 +182,11 @@ img {
 }
 
 .disabled {
-    opacity: 0.5;
     pointer-events: none;
+}
+
+.disabled#searchBarInput, .disabled.dropdown {
+    opacity: 0.5;
 }
 
 .loadUsersButton {
