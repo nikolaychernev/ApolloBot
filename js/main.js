@@ -639,9 +639,11 @@ $(function () {
             return;
         }
 
+        disableSearchAndDropdowns();
+        onSelectNoneBtnClicked();
+
         let usersToUnfollowIterator = usersQueue.values();
         unfollowUsers(usersToUnfollowIterator);
-        disableSearchAndDropdowns();
     }
 
     function unfollowUsers(usersIterator) {

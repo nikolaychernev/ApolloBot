@@ -143,12 +143,12 @@ img {
     height: 6em;
 }
 
-.selected {
-    box-shadow: inset 0 0 0 4px lightgreen;
-}
-
 .processed {
     box-shadow: inset 0 0 0 4px indianred;
+}
+
+.selected {
+    box-shadow: inset 0 0 0 4px lightgreen;
 }
 
 .spaceBetween {
