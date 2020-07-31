@@ -53,7 +53,7 @@ body {
     background-color: #313c49;;
 }
 
-.dropdown:hover .dropdown-content {
+.dropdown:not(.disabled):hover .dropdown-content {
     display: block;
 }
 
@@ -183,6 +183,10 @@ img {
 
 .setting {
     margin-bottom: 1.5em;
+}
+
+#loadUsersDropdown.disabled {
+    opacity: 0.5;
 }
 
 .loadUsersButton {

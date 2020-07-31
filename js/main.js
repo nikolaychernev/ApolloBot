@@ -1,5 +1,4 @@
 // Global Variables
-let currentUrl;
 let csrfToken;
 let currentUserId;
 let settings;
@@ -27,21 +26,13 @@ let followersMap = new Map();
 let followingMap = new Map();
 let usersQueue = new Map();
 
-chrome.tabs.query({
-    'active': true,
-    'lastFocusedWindow': true,
-    'currentWindow': true
-}, function (tabs) {
-    currentUrl = tabs[0].url;
-
-    chrome.cookies.get({
-        url: currentUrl,
-        name: 'csrftoken'
-    }, function (cookie) {
-        if (cookie) {
-            csrfToken = cookie.value;
-        }
-    });
+chrome.cookies.get({
+    url: 'https://www.instagram.com',
+    name: 'csrftoken'
+}, function (cookie) {
+    if (cookie) {
+        csrfToken = cookie.value;
+    }
 });
 
 $(function () {
@@ -55,6 +46,7 @@ $(function () {
     let selectNoneBtn = $("#selectNoneBtn");
     let removeSelectedBtn = $("#removeSelectedBtn");
 
+    let loadUsersDropdown = $("#loadUsersDropdown");
     let loadNotFollowingBackBtn = $("#loadNotFollowingBackBtn");
     let loadUnfollowedBtn = $("#loadUnfollowedBtn");
     let loadStoryViewersBtn = $("#loadStoryViewersBtn");
@@ -127,16 +119,29 @@ $(function () {
     }
 
     function extractUserInfo() {
-        $.ajax(currentUrl + "?__a=1").done(function (data) {
-            currentUserId = data.graphql.user.id;
+        chrome.tabs.query({
+            'active': true,
+            'lastFocusedWindow': true,
+            'currentWindow': true
+        }, function (tabs) {
+            let currentUrl = tabs[0].url;
 
-            let currentUserProfilePictureUrl = data.graphql.user.profile_pic_url;
-            $(currentUserProfilePicture).attr("src", currentUserProfilePictureUrl);
+            $.ajax(currentUrl + "?__a=1").done(function (data) {
+                if (Object.keys(data).length === 0) {
+                    return;
+                }
 
-            let currentUsername = currentUrl.split("/")[3];
-            $(usernameField).text(currentUsername);
+                currentUserId = data.graphql.user.id;
 
-            initializeLastCheckedField();
+                let currentUserProfilePictureUrl = data.graphql.user.profile_pic_url;
+                $(currentUserProfilePicture).attr("src", currentUserProfilePictureUrl);
+
+                let currentUsername = currentUrl.split("/")[3];
+                $(usernameField).text(currentUsername);
+
+                initializeLastCheckedField();
+                enableLoadUsersDropdown();
+            });
         });
     }
 
@@ -148,6 +153,10 @@ $(function () {
                 lastChecked = lastCheckedItem;
             }
         });
+    }
+
+    function enableLoadUsersDropdown() {
+        $(loadUsersDropdown).removeClass("disabled");
     }
 
     function initializeSettings() {
