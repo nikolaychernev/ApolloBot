@@ -2,11 +2,9 @@ injectIcon();
 injectWrapper();
 
 function injectIcon() {
-    let iconParentElement = $("._47KiJ");
     let icon = $('<div class="injectedIcon">');
-
     $(icon).on("click", toggleWrapper);
-    $(iconParentElement).prepend(icon);
+    $("body").prepend(icon);
 }
 
 function injectWrapper() {

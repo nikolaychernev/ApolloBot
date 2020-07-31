@@ -68,6 +68,9 @@ $(function () {
     // Settings Page
     let overlay = $(".overlay");
     let settingsPage = $(".settingsPage");
+    let settingsToggle = $("#settingsToggle");
+    let basicSettings = $("#basicSettings");
+    let advancedSettings = $("#advancedSettings");
     let loadFollowersQueryHashInput = $("#loadFollowersQueryHash");
     let loadFollowingQueryHashInput = $("#loadFollowingQueryHash");
     let loadStoryListQueryHashInput = $("#loadStoryListQueryHash");
@@ -162,6 +165,7 @@ $(function () {
     function initializeEventListeners() {
         $(overlay).on("click", onOverlayClicked);
         $(settingsBtn).on("click", onSettingsBtnClicked);
+        $(settingsToggle).on("change", onSettingsToggle);
         $(cancelSettingsBtn).on("click", hideSettingsPage);
         $(saveSettingsBtn).on("click", onSaveSettingsBtnClicked);
         $(resetSettingsBtn).on("click", onResetSettingsBtnClicked);
@@ -202,6 +206,16 @@ $(function () {
 
         $(overlay).css("display", "flex");
         $(settingsPage).show();
+    }
+
+    function onSettingsToggle() {
+        if ($(this).is(":checked")) {
+            $(basicSettings).hide();
+            $(advancedSettings).show();
+        } else {
+            $(basicSettings).show();
+            $(advancedSettings).hide();
+        }
     }
 
     function onSaveSettingsBtnClicked() {
