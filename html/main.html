@@ -117,8 +117,14 @@
 </div>
 <div class="overlay">
     <div class="settingsPage">
-        <h1>Settings</h1>
-        <div>
+        <div class="spaceBetween">
+            <h1>Settings</h1>
+            <label class="switch">
+                <input type="checkbox">
+                <span class="slider round"></span>
+            </label>
+        </div>
+        <div id="advancedSettings">
             <div class="setting">
                 <label for="loadFollowersQueryHash">Load Followers Query Hash:</label>
                 <input type="text" id="loadFollowersQueryHash" name="loadFollowersQueryHash">
@@ -135,6 +141,8 @@
                 <label for="loadStoryViewersQueryHash">Load Story Viewers Query Hash:</label>
                 <input type="text" id="loadStoryViewersQueryHash" name="loadStoryViewersQueryHash">
             </div>
+        </div>
+        <div id="basicSettings">
             <div class="setting">
                 <label for="unfollowTimeout">Unfollow Timeout (seconds):</label>
                 <input type="number" id="unfollowTimeout" name="unfollowTimeout">
