@@ -301,7 +301,7 @@ img {
 }
 
 #selectionBtn {
-    margin-right: 0.5em;
+    margin: 0 0.5em;
 }
 
 #settingsBtn .jam {
@@ -346,6 +346,13 @@ input {
     border-radius: 0.5em;
     color: white;
     padding: 0.8em 1.2em;
+}
+
+input:focus {
+    outline: none;
+}
+
+.setting input {
     margin-top: 0.5em;
 }
 
