@@ -698,7 +698,7 @@ $(function () {
                     return;
                 }
 
-                let nextUser = users.shift();
+                let nextUser = users[0];
                 let nextElementCountdownElement = $("div#" + nextUser.id).find(".countdown");
                 $(nextElementCountdownElement).show();
 
