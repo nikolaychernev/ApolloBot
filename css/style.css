@@ -391,8 +391,8 @@ input:focus {
     margin-right: 1.5em;
 }
 
-.storyElement:hover {
-    filter: brightness(70%);
+.storyElement:hover, #stopLoadingBtn:hover {
+    opacity: 0.5;
     transition: all 0.3s;
 }
 
