@@ -20,7 +20,7 @@ let defaultSettings = {
     "timeoutRandomization": 50
 };
 
-let extractUsernameRegex = /(.*instagram\.com\/[^\/]+)/;
+let extractUsernameRegex = /.*instagram\.com\/[^\/]+/;
 
 let selectedClass = "selected";
 let processedClass = "processed";
@@ -149,7 +149,7 @@ $(function () {
                 return;
             }
 
-            $.ajax(matches[1] + "/?__a=1").done(function (data) {
+            $.ajax(matches[0] + "/?__a=1").done(function (data) {
                 if (Object.keys(data).length === 0 || !data.graphql) {
                     $(usernameField).text("Not On Profile Page");
                     return;
