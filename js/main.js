@@ -99,6 +99,8 @@ $(function () {
     let loadingBarElement = $("#loadingBar");
     let loadingMessageField = $("#loadingMessage");
     let searchBarInput = $("#searchBarInput");
+    let emptyQueueMessage = $("#emptyQueueMessage");
+    let simpleBarContent;
 
     initializeCustomScrollBar();
     extractUserInfo();
@@ -106,7 +108,9 @@ $(function () {
     initializeEventListeners();
 
     function initializeCustomScrollBar() {
-        new SimpleBar($(scrollableArea)[0]);
+        simpleBarContent = new SimpleBar($(scrollableArea)[0]).getContentElement();
+        appendEmptyQueueMessage();
+
         let storyListContentScrollElement = new SimpleBar($(storyListContent)[0]).getScrollElement();
         storyListContentScrollElement.onwheel = onStoryListContentScroll;
     }
@@ -280,7 +284,7 @@ $(function () {
     }
 
     function onSelectAllBtnClicked() {
-        $(".selection").addClass(selectedClass);
+        $(".scrollable-area .selection").addClass(selectedClass);
         updateQueueSelectedUsersCounter();
     }
 
@@ -598,7 +602,6 @@ $(function () {
     }
 
     function drawUsers() {
-        let simpleBarContent = $(".scrollable-area .simplebar-content");
         $(simpleBarContent).empty();
         visibleUsersCount = 0;
 
@@ -632,7 +635,16 @@ $(function () {
     }
 
     function updateQueueTotalUsersCounter(count) {
+        if (count === 0) {
+            appendEmptyQueueMessage();
+        }
+
         $(queueTotalUsersCount).text(count + " Users");
+    }
+
+    function appendEmptyQueueMessage() {
+        let emptyQueueMessageClone = $(emptyQueueMessage).clone().show();
+        $(simpleBarContent).append($(emptyQueueMessageClone));
     }
 
     function updateQueueSelectedUsersCounter() {

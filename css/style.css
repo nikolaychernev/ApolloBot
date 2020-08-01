@@ -456,3 +456,12 @@ input:focus {
 input:checked + .slider:before {
     transform: translateX(2em);
 }
+
+#emptyQueueMessage {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 3em;
+    opacity: 0.2;
+}
