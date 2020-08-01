@@ -20,6 +20,8 @@ let defaultSettings = {
     "timeoutRandomization": 50
 };
 
+let extractUsernameRegex = /(.*instagram\.com\/[^\/]+)/;
+
 let selectedClass = "selected";
 let processedClass = "processed";
 let disabledClass = "disabled";
@@ -134,14 +136,22 @@ $(function () {
             'lastFocusedWindow': true,
             'currentWindow': true
         }, function (tabs) {
+            $(currentUserProfilePicture).attr("src", "../images/blank.png");
+            $(usernameField).text("Loading");
+
+            disableLoadUsersDropdown();
+
             let currentUrl = tabs[0].url;
+            let matches = extractUsernameRegex.exec(currentUrl);
 
-            $.ajax(currentUrl + "?__a=1").done(function (data) {
-                if (Object.keys(data).length === 0) {
-                    $(currentUserProfilePicture).attr("src", "../images/blank.png");
+            if (!matches) {
+                $(usernameField).text("Not On Profile Page");
+                return;
+            }
+
+            $.ajax(matches[1] + "/?__a=1").done(function (data) {
+                if (Object.keys(data).length === 0 || !data.graphql) {
                     $(usernameField).text("Not On Profile Page");
-
-                    disableLoadUsersDropdown();
                     return;
                 }
 
