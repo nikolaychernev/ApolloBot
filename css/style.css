@@ -465,3 +465,15 @@ input:checked + .slider:before {
     font-size: 3em;
     opacity: 0.2;
 }
+
+input, .button {
+    box-shadow: 0 0 25px 5px rgba(0, 0, 0, 0.25);
+}
+
+.storyElement {
+    box-shadow: 15px 5px 25px 1px rgba(0, 0, 0, 0.1);
+}
+
+.settingsPage, #popup, #storyList {
+    box-shadow: 0 0 25px 10px rgba(0, 0, 0, 1);
+}
