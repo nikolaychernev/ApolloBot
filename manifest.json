@@ -28,11 +28,11 @@
   "browser_action": {
     "default_title": "InstaBot",
     "default_icon": {
-      "32": "icons/icon32.png"
+      "32": "images/rocket32.png"
     }
   },
   "web_accessible_resources": [
-    "icons/icon32.png",
+    "images/rocket32.png",
     "html/main.html"
   ]
 }
