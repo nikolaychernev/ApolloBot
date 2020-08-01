@@ -97,6 +97,10 @@ body {
     justify-content: space-between;
 }
 
+.simplebar-content::after {
+    flex: auto;
+}
+
 .simplebar-scrollbar::before {
     background-color: white;
 }
