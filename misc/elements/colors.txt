@@ -1,0 +1,3 @@
+#CECECE -> #808080
+#20003d -> #000033
+Logo font: Century Gothic
