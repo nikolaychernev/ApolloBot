@@ -2,7 +2,13 @@
   "manifest_version": 2,
   "name": "ApolloBot",
   "version": "1.0.0",
-  "description": "ApolloBot simplifies many of the mundane tasks people perform on Instagram. It has a distinct feature set made really easy to use with many configurable options. You can easily see who is not following you back, who has unfollowed you since the last time you checked and even search if specific people have viewed your stories. You also can unfollow people in batch.",
+  "icons": {
+    "16": "icons/icon16.png",
+    "32": "icons/icon32.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "description": "ApolloBot simplifies many of the mundane tasks people perform on Instagram. It has a distinct feature set made really easy to use with many configurable options.",
   "permissions": [
     "activeTab",
     "declarativeContent",
@@ -25,12 +31,6 @@
       ]
     }
   ],
-  "browser_action": {
-    "default_title": "ApolloBot",
-    "default_icon": {
-      "32": "images/rocket32.png"
-    }
-  },
   "web_accessible_resources": [
     "images/rocket32.png",
     "html/main.html"
