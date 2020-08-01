@@ -10,8 +10,6 @@
   },
   "description": "ApolloBot simplifies many of the mundane tasks people perform on Instagram. It has a distinct feature set made really easy to use.",
   "permissions": [
-    "activeTab",
-    "declarativeContent",
     "storage",
     "downloads",
     "cookies",
