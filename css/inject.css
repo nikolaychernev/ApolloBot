@@ -5,9 +5,14 @@
     z-index: 1;
     background-image: url('chrome-extension://__MSG_@@extension_id__/images/rocket32.png');
     background-size: contain;
-    width: 22px;
-    height: 22px;
+    width: 2em;
+    height: 2em;
     cursor: pointer;
+}
+
+.injectedIcon:hover {
+    opacity: 0.5;
+    transition: all 0.3s;
 }
 
 .injectedWrapper {
