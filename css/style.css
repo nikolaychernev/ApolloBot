@@ -363,7 +363,6 @@ img {
 input {
     width: 100%;
     box-sizing: border-box;
-    font-size: 1em;
     background: none;
     border: 0.1em solid #FFFFFF;
     border-radius: 0.5em;
