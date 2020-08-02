@@ -68,7 +68,7 @@ body {
 }
 
 .container {
-    flex: 1;
+    flex: auto;
     position: relative;
     background-color: rgba(0, 0, 0, 0.5);
     border-radius: 1.5em;
@@ -363,11 +363,13 @@ img {
 input {
     width: 100%;
     box-sizing: border-box;
+    font-size: 1em;
     background: none;
     border: 0.1em solid #FFFFFF;
     border-radius: 0.5em;
     color: white;
     padding: 0.8em 1.2em;
+    -moz-appearance: textfield;
 }
 
 input:hover, .slider:hover {
