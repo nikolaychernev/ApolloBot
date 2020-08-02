@@ -32,13 +32,8 @@ let followersMap = new Map();
 let followingMap = new Map();
 let usersQueue = new Map();
 
-chrome.cookies.get({
-    url: 'https://www.instagram.com',
-    name: 'csrftoken'
-}, function (cookie) {
-    if (cookie) {
-        csrfToken = cookie.value;
-    }
+chrome.runtime.sendMessage({csrfToken: true}, function (response) {
+    csrfToken = response;
 });
 
 $(function () {
@@ -131,17 +126,13 @@ $(function () {
     }
 
     function extractUserInfo() {
-        chrome.tabs.query({
-            'active': true,
-            'lastFocusedWindow': true,
-            'currentWindow': true
-        }, function (tabs) {
+        chrome.runtime.sendMessage({currentUrl: true}, function (response) {
             $(currentUserProfilePicture).attr("src", "../images/blank.png");
             $(usernameField).text("Loading");
 
             disableLoadUsersDropdown();
 
-            let currentUrl = tabs[0].url;
+            let currentUrl = response;
             let matches = extractUsernameRegex.exec(currentUrl);
 
             if (!matches) {
@@ -488,10 +479,7 @@ $(function () {
         let blob = new Blob([JSON.stringify(queue)], {type: "text/plain"});
         let url = URL.createObjectURL(blob);
 
-        chrome.downloads.download({
-            url: url,
-            filename: "queue.txt"
-        });
+        chrome.runtime.sendMessage({download: {url: url, filename: "queue.txt"}})
     }
 
     function loadFollowers(callback, loadedFollowersCount, after) {

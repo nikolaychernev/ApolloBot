@@ -12,9 +12,16 @@
   "permissions": [
     "storage",
     "downloads",
+    "tabs",
     "cookies",
     "*://*.instagram.com/*"
   ],
+  "background": {
+    "scripts": [
+      "js/background.js"
+    ],
+    "persistent": false
+  },
   "content_scripts": [
     {
       "matches": [
