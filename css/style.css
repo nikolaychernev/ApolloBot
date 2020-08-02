@@ -265,7 +265,7 @@ img {
 #loadingBar canvas {
     background-color: rgba(0, 0, 0, 0.5);
     border-radius: 50%;
-    width: 40%;
+    width: 30em;
 }
 
 #loadingBar {
@@ -462,7 +462,7 @@ input:checked + .slider:before {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    font-size: 3em;
+    font-size: 2em;
     opacity: 0.2;
 }
 
