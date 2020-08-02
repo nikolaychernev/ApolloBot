@@ -1,4 +1,5 @@
 # ApolloBot
+![Logo](misc/promotional/promotional.png)
 
 The main features of ApolloBot are:
 
