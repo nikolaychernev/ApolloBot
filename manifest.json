@@ -12,7 +12,7 @@
   "permissions": [
     "storage",
     "downloads",
-    "tabs",
+    "activeTab",
     "cookies",
     "*://*.instagram.com/*"
   ],
