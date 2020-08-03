@@ -38,13 +38,13 @@ chrome.runtime.sendMessage({csrfToken: true}, function (response) {
 
 $(function () {
     // Buttons
-    let reloadUserBtn = $("#reloadUserBtn");
     let settingsBtn = $("#settingsBtn");
     let cancelSettingsBtn = $("#cancelSettingsBtn");
     let saveSettingsBtn = $("#saveSettingsBtn");
     let resetSettingsBtn = $("#resetSettingsBtn");
     let selectAllBtn = $("#selectAllBtn");
     let selectNoneBtn = $("#selectNoneBtn");
+    let revertSelectionBtn = $("#revertSelectionBtn");
     let removeSelectedBtn = $("#removeSelectedBtn");
     let loadUsersDropdown = $("#loadUsersDropdown");
     let queueActionsDropdown = $("#queueActionsDropdown");
@@ -100,17 +100,8 @@ $(function () {
     let simpleBarContent;
 
     initializeCustomScrollBar();
-    extractUserInfo();
     initializeSettings();
     initializeEventListeners();
-
-    function initializeCustomScrollBar() {
-        simpleBarContent = new SimpleBar($(scrollableArea)[0]).getContentElement();
-        appendEmptyQueueMessage();
-
-        let storyListContentScrollElement = new SimpleBar($(storyListContent)[0]).getScrollElement();
-        storyListContentScrollElement.onwheel = onStoryListContentScroll;
-    }
 
     function onStoryListContentScroll(event) {
         let elementToScroll = event.currentTarget;
@@ -124,6 +115,13 @@ $(function () {
 
         event.preventDefault();
     }
+
+    chrome.runtime.onMessage.addListener(
+        function (request) {
+            if (request.extractUserInfo) {
+                extractUserInfo();
+            }
+        });
 
     function extractUserInfo() {
         chrome.runtime.sendMessage({currentUrl: true}, function (response) {
@@ -174,6 +172,14 @@ $(function () {
         $(loadUsersDropdown).addClass(disabledClass);
     }
 
+    function initializeCustomScrollBar() {
+        simpleBarContent = new SimpleBar($(scrollableArea)[0]).getContentElement();
+        appendEmptyQueueMessage();
+
+        let storyListContentScrollElement = new SimpleBar($(storyListContent)[0]).getScrollElement();
+        storyListContentScrollElement.onwheel = onStoryListContentScroll;
+    }
+
     function initializeSettings() {
         chrome.storage.local.get("settings", function (item) {
             let loadedSettings = item["settings"];
@@ -188,7 +194,6 @@ $(function () {
 
     function initializeEventListeners() {
         $(overlay).on("click", onOverlayClicked);
-        $(reloadUserBtn).on("click", onReloadUserBtnClicked);
         $(settingsBtn).on("click", onSettingsBtnClicked);
         $(settingsToggle).on("change", onSettingsToggle);
         $(cancelSettingsBtn).on("click", hideSettingsPage);
@@ -196,6 +201,7 @@ $(function () {
         $(resetSettingsBtn).on("click", onResetSettingsBtnClicked);
         $(selectAllBtn).on("click", onSelectAllBtnClicked);
         $(selectNoneBtn).on("click", onSelectNoneBtnClicked);
+        $(revertSelectionBtn).on("click", onRevertSelectionBtnClicked);
         $(removeSelectedBtn).on("click", onRemoveSelectedBtnClicked);
         $(loadNotFollowingBackBtn).on("click", onLoadNotFollowingBackBtnClicked);
         $(loadUnfollowedBtn).on("click", onLoadUnfollowedBtnClicked);
@@ -220,10 +226,6 @@ $(function () {
         hideSettingsPage();
         hidePopup();
         hideStoryList();
-    }
-
-    function onReloadUserBtnClicked() {
-        extractUserInfo();
     }
 
     function onSettingsBtnClicked() {
@@ -291,6 +293,11 @@ $(function () {
 
     function onSelectNoneBtnClicked() {
         $(".selection").removeClass(selectedClass);
+        updateQueueSelectedUsersCounter();
+    }
+
+    function onRevertSelectionBtnClicked() {
+        $(".selection").toggleClass(selectedClass);
         updateQueueSelectedUsersCounter();
     }
 

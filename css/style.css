@@ -320,21 +320,17 @@ img {
     margin: 0 0.5em;
 }
 
-#settingsBtn .jam, #reloadUserBtn .jam, #stopLoadingBtn {
+#settingsBtn .jam, #stopLoadingBtn {
     font-size: 3em;
     margin: 0;
     cursor: pointer;
-}
-
-#reloadUserBtn .jam {
-    font-size: 1.5em;
 }
 
 #stopLoadingBtn {
     color: indianred;
 }
 
-#settingsBtn:hover, #reloadUserBtn:hover {
+#settingsBtn:hover {
     animation: rotation 2s infinite linear;
 }
 

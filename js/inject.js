@@ -17,5 +17,12 @@ function injectWrapper() {
 }
 
 function toggleWrapper() {
-    $(".injectedWrapper").toggle();
+    let injectedWrapper = $(".injectedWrapper");
+
+    if ($(injectedWrapper).is(":visible")) {
+        $(injectedWrapper).hide();
+    } else {
+        $(injectedWrapper).show();
+        chrome.runtime.sendMessage({extractUserInfo: true});
+    }
 }
