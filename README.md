@@ -15,3 +15,10 @@ The main features of ApolloBot are:
 To use the extension just open Instagram and a new icon will appear on the top right corner. Go to your profile page and click the refresh icon.
 
 Enjoy!
+
+![Screenshot](misc/screenshots/1.png)
+![Screenshot](misc/screenshots/2.png)
+![Screenshot](misc/screenshots/3.png)
+![Screenshot](misc/screenshots/4.png)
+![Screenshot](misc/screenshots/5.png)
+![Screenshot](misc/screenshots/6.png)
