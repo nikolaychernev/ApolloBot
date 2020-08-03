@@ -42,7 +42,7 @@
                 </div>
                 <div id="removeSelectedBtn" class="button">
                     <span class="jam jam-close-circle"></span>
-                    <span>Remove</span>
+                    <span>Remove Selected</span>
                 </div>
             </div>
         </div>
@@ -65,9 +65,17 @@
             <span>Load Users</span>
         </div>
         <div class="dropdown-content top">
+            <div id="loadFollowersBtn" class="button">
+                <span class="jam jam-users"></span>
+                <span>Load Followers</span>
+            </div>
+            <div id="loadFollowingBtn" class="button">
+                <span class="jam jam-users"></span>
+                <span>Load Following</span>
+            </div>
             <div id="loadNotFollowingBackBtn" class="button">
                 <span class="jam jam-user-minus"></span>
-                <span>Not Following Back</span>
+                <span>Load Not Following</span>
             </div>
             <div id="loadUnfollowedBtn" class="button">
                 <span class="jam jam-user-remove"></span>
@@ -110,7 +118,7 @@
 <div class="overlay">
     <div class="settingsPage">
         <div class="spaceBetween">
-            <h1>Settings</h1>
+            <h1 id="settingsHeading">Settings</h1>
             <label class="switch">
                 <input id="settingsToggle" type="checkbox">
                 <span class="slider round"></span>
@@ -150,6 +158,10 @@
             <div class="setting">
                 <label for="timeoutRandomization">Timeout Randomization (%):</label>
                 <input type="number" id="timeoutRandomization" name="timeoutRandomization">
+            </div>
+            <div class="setting">
+                <label for="likePhotosCount">Like Photos When Following:</label>
+                <input type="number" id="likePhotosCount" name="likePhotosCount">
             </div>
         </div>
         <div class="spaceBetween setting">

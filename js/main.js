@@ -17,7 +17,8 @@ let defaultSettings = {
     "loadingUsersBatchSize": 48,
     "loadingUsersTimeout": 3,
     "unfollowTimeout": 60,
-    "timeoutRandomization": 50
+    "timeoutRandomization": 50,
+    "likePhotosCount": 0
 };
 
 let extractUsernameRegex = /.*instagram\.com\/[^\/]+/;
@@ -61,6 +62,7 @@ $(function () {
     // Settings Page
     let overlay = $(".overlay");
     let settingsPage = $(".settingsPage");
+    let settingsHeading = $("#settingsHeading");
     let settingsToggle = $("#settingsToggle");
     let basicSettings = $("#basicSettings");
     let advancedSettings = $("#advancedSettings");
@@ -72,6 +74,7 @@ $(function () {
     let loadingUsersTimeoutInput = $("#loadingUsersTimeout");
     let unfollowTimeoutInput = $("#unfollowTimeout");
     let timeoutRandomizationInput = $("#timeoutRandomization");
+    let likePhotosCountInput = $("#likePhotosCount");
 
     //Popup
     let popup = $("#popup");
@@ -237,11 +240,13 @@ $(function () {
 
     function onSettingsToggle() {
         if ($(this).is(":checked")) {
+            $(settingsHeading).text("Advanced Settings");
             $(basicSettings).hide();
             $(advancedSettings).show();
         } else {
-            $(basicSettings).show();
+            $(settingsHeading).text("Settings");
             $(advancedSettings).hide();
+            $(basicSettings).show();
         }
     }
 
@@ -254,7 +259,8 @@ $(function () {
             "loadingUsersBatchSize": parseInt($(loadingUsersBatchSizeInput).val()),
             "loadingUsersTimeout": parseInt($(loadingUsersTimeoutInput).val()),
             "unfollowTimeout": parseInt($(unfollowTimeoutInput).val()),
-            "timeoutRandomization": parseInt($(timeoutRandomizationInput).val())
+            "timeoutRandomization": parseInt($(timeoutRandomizationInput).val()),
+            "likePhotosCount": parseInt($(likePhotosCountInput).val())
         };
 
         chrome.storage.local.set({"settings": settings}, function () {
@@ -279,6 +285,7 @@ $(function () {
         $(loadingUsersTimeoutInput).val(settings.loadingUsersTimeout);
         $(unfollowTimeoutInput).val(settings.unfollowTimeout);
         $(timeoutRandomizationInput).val(settings.timeoutRandomization);
+        $(likePhotosCountInput).val(settings.likePhotosCount);
     }
 
     function hideSettingsPage() {
@@ -292,12 +299,12 @@ $(function () {
     }
 
     function onSelectNoneBtnClicked() {
-        $(".selection").removeClass(selectedClass);
+        $(".scrollable-area .selection").removeClass(selectedClass);
         updateQueueSelectedUsersCounter();
     }
 
     function onRevertSelectionBtnClicked() {
-        $(".selection").toggleClass(selectedClass);
+        $(".scrollable-area .selection").toggleClass(selectedClass);
         updateQueueSelectedUsersCounter();
     }
 

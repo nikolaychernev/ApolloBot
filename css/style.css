@@ -27,6 +27,7 @@ body {
     justify-content: center;
     align-items: center;
     font-size: 1.2em;
+    user-select: none;
 }
 
 .dropdown {
@@ -130,6 +131,7 @@ a {
 
 img {
     border-radius: 50%;
+    user-select: none;
 }
 
 .profilePicture {
@@ -159,7 +161,7 @@ img {
 }
 
 .selected {
-    box-shadow: inset 0 0 0 4px lightgreen;
+    box-shadow: inset 0 0 0 4px #4ac5f8;
 }
 
 .spaceBetween {
@@ -475,4 +477,8 @@ input, .button {
 
 .settingsPage, #popup, #storyList {
     box-shadow: 0 0 25px 10px rgba(0, 0, 0, 1);
+}
+
+#resetSettingsBtn, #popupCancelBtn {
+    margin-left: 0.2em;
 }
