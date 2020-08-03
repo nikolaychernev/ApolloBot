@@ -105,6 +105,7 @@ body {
 
 .simplebar-content::after {
     flex: auto;
+    display: block;
 }
 
 .simplebar-scrollbar::before {
