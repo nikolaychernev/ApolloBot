@@ -27,7 +27,7 @@
                 <span class="jam jam-circle"></span>
                 <span>Selection</span>
             </div>
-            <div class="dropdown-content left">
+            <div class="dropdown-content left hidden">
                 <div id="selectAllBtn" class="button">
                     <span class="jam jam-plus-circle"></span>
                     <span>Select All</span>
@@ -64,7 +64,7 @@
             <span class="jam jam-user-plus"></span>
             <span>Load Users</span>
         </div>
-        <div class="dropdown-content top">
+        <div class="dropdown-content top hidden">
             <div id="loadFollowersBtn" class="button">
                 <span class="jam jam-users"></span>
                 <span>Load Followers</span>
@@ -87,12 +87,20 @@
             </div>
         </div>
     </div>
-    <div class="startStopUnfollowingButtons">
-        <div id="startUnfollowingBtn" class="button greenButton">
+    <div class="grow">
+        <div id="dots">
+            <span id="topDot" class="dot greenDot"></span>
+            <span id="bottomDot" class="dot"></span>
+        </div>
+        <div id="startFollowingBtn" class="button greenButton">
+            <span class="jam jam-play"></span>
+            <span>Start Following</span>
+        </div>
+        <div id="startUnfollowingBtn" class="button redButton hidden">
             <span class="jam jam-play"></span>
             <span>Start Unfollowing</span>
         </div>
-        <div id="stopUnfollowingBtn" class="button redButton">
+        <div id="stopUnfollowingBtn" class="button redButton hidden">
             <span class="jam jam-stop"></span>
             <span>Stop Unfollowing</span>
         </div>
@@ -102,7 +110,7 @@
             <span class="jam jam-users"></span>
             <span>Queue Actions</span>
         </div>
-        <div class="dropdown-content left top">
+        <div class="dropdown-content left top hidden">
             <div id="loadQueueBtn" class="button">
                 <span class="jam jam-upload"></span>
                 <span>Load Queue</span>
@@ -115,8 +123,8 @@
     </div>
 </div>
 </div>
-<div class="overlay">
-    <div class="settingsPage">
+<div class="overlay hidden">
+    <div class="settingsPage hidden">
         <div class="spaceBetween">
             <h1 id="settingsHeading">Settings</h1>
             <label class="switch">
@@ -124,7 +132,7 @@
                 <span class="slider round"></span>
             </label>
         </div>
-        <div id="advancedSettings">
+        <div id="advancedSettings" class="hidden">
             <div class="setting">
                 <label for="loadFollowersQueryHash">Load Followers Query Hash:</label>
                 <input type="text" id="loadFollowersQueryHash" name="loadFollowersQueryHash">
@@ -164,7 +172,7 @@
                 <input type="number" id="likePhotosCount" name="likePhotosCount">
             </div>
         </div>
-        <div class="spaceBetween setting">
+        <div id="settingsButtons" class="spaceBetween">
             <div id="cancelSettingsBtn" class="button">
                 <span class="jam jam-close"></span>
                 <span>Cancel</span>
@@ -181,7 +189,7 @@
             </div>
         </div>
     </div>
-    <div id="popup">
+    <div id="popup" class="hidden">
         <span id="popupMessage"></span>
         <div>
             <div id="popupConfirmBtn" class="button greenButton">
@@ -194,7 +202,7 @@
             </div>
         </div>
     </div>
-    <div id="storyList">
+    <div id="storyList" class="hidden">
         <h1 id="storyListHeading"></h1>
         <div id="storyListContent"></div>
         <div id="storyListCancelBtn" class="button">
@@ -203,8 +211,8 @@
         </div>
     </div>
 </div>
-<input type="file" id="loadQueueFileSelector" accept=".txt">
-<div id="loadingBar">
+<input type="file" id="loadQueueFileSelector" class="hidden" accept=".txt">
+<div id="loadingBar" class="hidden">
     <div id="loadingBarContent">
         <div class="alignCenter">
             <div id="stopLoadingBtn">
@@ -219,7 +227,7 @@
     <div class="profilePictureContainer">
         <img class="profilePicture" src="" alt="Profile Picture"/>
         <div class="selection stackedElement"></div>
-        <div class="countdown stackedElement">
+        <div class="countdown stackedElement hidden">
             <strong class="stackedElement"></strong>
         </div>
     </div>

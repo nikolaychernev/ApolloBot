@@ -17,6 +17,11 @@ body {
     height: 100%;
 }
 
+h1 {
+    margin-top: 0;
+    margin-bottom: 1.5em;
+}
+
 .button {
     display: inline-flex;
     padding: 0.6em 1.2em;
@@ -36,10 +41,9 @@ body {
 }
 
 .dropdown-content {
-    display: none;
     position: absolute;
     padding-top: 1em;
-    width: 15em;
+    width: 16em;
     z-index: 1;
     border-radius: 1.5em;
 }
@@ -156,7 +160,7 @@ img {
     height: 6em;
 }
 
-.processed {
+.unfollowed {
     box-shadow: inset 0 0 0 4px indianred;
 }
 
@@ -167,11 +171,9 @@ img {
 .spaceBetween {
     display: flex;
     justify-content: space-between;
-    align-items: center;
 }
 
 .overlay {
-    display: none;
     justify-content: center;
     align-items: center;
     background-color: rgba(0, 0, 0, 0.5);
@@ -183,7 +185,6 @@ img {
 }
 
 .settingsPage {
-    display: none;
     background-color: #313c49;
     width: 40%;
     border-radius: 1.5em;
@@ -194,11 +195,15 @@ img {
     margin-bottom: 1.5em;
 }
 
+#settingsButtons {
+    margin-top: 3em;
+}
+
 .disabled {
     pointer-events: none;
 }
 
-.disabled#searchBarInput, .disabled.dropdown {
+.disabled#searchBarInput, .disabled.dropdown, .disabled#dots {
     opacity: 0.5;
 }
 
@@ -206,9 +211,10 @@ img {
     flex-grow: 1;
 }
 
-.startStopUnfollowingButtons {
+.grow {
+    display: flex;
+    justify-content: center;
     flex-grow: 10;
-    text-align: center;
 }
 
 .queueActionsButton {
@@ -234,29 +240,24 @@ img {
     background-color: indianred;
 }
 
-#startUnfollowingBtn {
+#startFollowingBtn, #startUnfollowingBtn {
     width: 50%;
     border-width: 0.15em;
+}
+
+.hidden {
+    display: none;
 }
 
 #stopUnfollowingBtn {
     width: 50%;
     border-width: 0.15em;
-    display: none;
-}
-
-#loadQueueFileSelector {
-    display: none;
 }
 
 .countdown canvas {
     background-color: rgba(0, 0, 0, 0.5);
     border-radius: 50%;
     width: 100%;
-}
-
-.countdown {
-    display: none;
 }
 
 .countdown strong {
@@ -273,7 +274,6 @@ img {
 }
 
 #loadingBar {
-    display: none;
     align-items: center;
     justify-content: center;
     background-color: rgba(0, 0, 0, 0.5);
@@ -346,7 +346,6 @@ img {
 }
 
 #popup {
-    display: none;
     text-align: center;
     background-color: #313c49;
     width: 40%;
@@ -385,7 +384,6 @@ input:focus {
 }
 
 #storyList {
-    display: none;
     background-color: #313c49;
     border-radius: 1.5em;
     padding: 2em;
@@ -404,17 +402,13 @@ input:focus {
     margin-right: 1.5em;
 }
 
-.storyElement:hover, #stopLoadingBtn:hover {
+.storyElement:hover, #stopLoadingBtn:hover, .dot:hover {
     opacity: 0.5;
     transition: all 0.3s;
 }
 
 #storyListCancelBtn {
     margin-top: 2em;
-}
-
-#advancedSettings {
-    display: none;
 }
 
 .switch {
@@ -481,4 +475,27 @@ input, .button {
 
 #resetSettingsBtn, #popupCancelBtn {
     margin-left: 0.2em;
+}
+
+.dot {
+    height: 1.1em;
+    width: 1.1em;
+    background-color: grey;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+.greenDot {
+    background-color: lightgreen;
+}
+
+.redDot {
+    background-color: indianred;
+}
+
+#dots {
+    display: inline-flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    margin-right: 0.5em;
 }

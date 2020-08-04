@@ -24,9 +24,11 @@ let defaultSettings = {
 let extractUsernameRegex = /.*instagram\.com\/[^\/]+/;
 
 let selectedClass = "selected";
-let processedClass = "processed";
+let unfollowedClass = "unfollowed";
 let disabledClass = "disabled";
 let storyElementClass = "storyElement";
+let greenDotClass = "greenDot";
+let redDotClass = "redDot";
 
 // In-Memory Collections
 let followersMap = new Map();
@@ -55,6 +57,7 @@ $(function () {
     let loadStoryViewersBtn = $("#loadStoryViewersBtn");
     let loadQueueBtn = $("#loadQueueBtn");
     let saveQueueBtn = $("#saveQueueBtn");
+    let startFollowingBtn = $("#startFollowingBtn");
     let startUnfollowingBtn = $("#startUnfollowingBtn");
     let stopUnfollowingBtn = $("#stopUnfollowingBtn");
     let stopLoadingBtn = $("#stopLoadingBtn");
@@ -100,6 +103,9 @@ $(function () {
     let loadingMessageField = $("#loadingMessage");
     let searchBarInput = $("#searchBarInput");
     let emptyQueueMessage = $("#emptyQueueMessage");
+    let dots = $("#dots");
+    let topDot = $("#topDot");
+    let bottomDot = $("#bottomDot");
     let simpleBarContent;
 
     initializeCustomScrollBar();
@@ -129,7 +135,7 @@ $(function () {
     function extractUserInfo() {
         chrome.runtime.sendMessage({currentUrl: true}, function (response) {
             $(currentUserProfilePicture).attr("src", "../images/blank.png");
-            $(usernameField).text("Loading");
+            $(usernameField).text("Loading...");
 
             disableLoadUsersDropdown();
 
@@ -219,6 +225,8 @@ $(function () {
         $(stopUnfollowingBtn).on("click", onStopUnfollowingBtnClicked);
         $(stopLoadingBtn).on("click", onStopLoadingBtnClicked);
         $(searchBarInput).on("keyup", onSearchBarInputKeyUp);
+        $(topDot).on("click", onTopDotClicked);
+        $(bottomDot).on("click", onBottomDotClicked);
     }
 
     function onOverlayClicked(e) {
@@ -714,7 +722,7 @@ $(function () {
                 let userElement = $("div#" + user.id);
                 let profilePictureContainer = $(userElement).find(".profilePictureContainer");
 
-                $(profilePictureContainer).find(".selection").addClass(processedClass);
+                $(profilePictureContainer).find(".selection").addClass(unfollowedClass);
                 $(profilePictureContainer).find(".countdown").hide();
 
                 usersQueue.delete(user.id);
@@ -821,11 +829,28 @@ $(function () {
         drawUsers();
     }
 
+    function onTopDotClicked() {
+        $(bottomDot).removeClass(redDotClass);
+        $(topDot).addClass(greenDotClass);
+
+        $(startUnfollowingBtn).hide();
+        $(startFollowingBtn).css("display", "inline-flex");
+    }
+
+    function onBottomDotClicked() {
+        $(topDot).removeClass(greenDotClass);
+        $(bottomDot).addClass(redDotClass);
+
+        $(startFollowingBtn).hide();
+        $(startUnfollowingBtn).css("display", "inline-flex");
+    }
+
     function disableElements() {
         $(searchBarInput).addClass(disabledClass);
         $(loadUsersDropdown).addClass(disabledClass);
         $(queueActionsDropdown).addClass(disabledClass);
         $(selectionDropdown).addClass(disabledClass);
+        $(dots).addClass(disabledClass);
         $(".selection").addClass(disabledClass);
     }
 
@@ -837,6 +862,7 @@ $(function () {
         $(searchBarInput).removeClass(disabledClass);
         $(queueActionsDropdown).removeClass(disabledClass);
         $(selectionDropdown).removeClass(disabledClass);
+        $(dots).removeClass(disabledClass);
         $(".selection").removeClass(disabledClass);
     }
 });
