@@ -481,7 +481,7 @@ input, .button {
 .dot {
     height: 1.1em;
     width: 1.1em;
-    background-color: grey;
+    background-color: #454f5b;
     border-radius: 50%;
     cursor: pointer;
 }
@@ -517,7 +517,7 @@ input, .button {
 }
 
 .noUi-connect {
-    background-color: #4ac5f8;
+    background-color: #454f5b;
 }
 
 .noUi-horizontal .noUi-handle {
