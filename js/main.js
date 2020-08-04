@@ -73,11 +73,11 @@ $(function () {
     let loadFollowingQueryHashInput = $("#loadFollowingQueryHash");
     let loadStoryListQueryHashInput = $("#loadStoryListQueryHash");
     let loadStoryViewersQueryHashInput = $("#loadStoryViewersQueryHash");
-    let loadingUsersBatchSizeInput = $("#loadingUsersBatchSize");
-    let loadingUsersTimeoutInput = $("#loadingUsersTimeout");
-    let unfollowTimeoutInput = $("#unfollowTimeout");
-    let timeoutRandomizationInput = $("#timeoutRandomization");
-    let likePhotosCountInput = $("#likePhotosCount");
+    let unfollowTimeout = $("#unfollowTimeout");
+    let loadingUsersBatchSize = $("#loadingUsersBatchSize");
+    let loadingUsersTimeout = $("#loadingUsersTimeout");
+    let timeoutRandomization = $("#timeoutRandomization");
+    let likePhotosCount = $("#likePhotosCount");
 
     //Popup
     let popup = $("#popup");
@@ -199,6 +199,28 @@ $(function () {
                 settings = defaultSettings;
             }
         });
+
+        noUiSlider.create($(unfollowTimeout)[0], getSliderConfiguration(0, 240, " Sec"));
+        noUiSlider.create($(loadingUsersBatchSize)[0], getSliderConfiguration(12, 96, " Users"));
+        noUiSlider.create($(loadingUsersTimeout)[0], getSliderConfiguration(0, 60, " Sec"));
+        noUiSlider.create($(timeoutRandomization)[0], getSliderConfiguration(0, 100, "%"));
+        noUiSlider.create($(likePhotosCount)[0], getSliderConfiguration(0, 10, " Photos"));
+    }
+
+    function getSliderConfiguration(min, max, suffix) {
+        return {
+            start: 0,
+            connect: 'lower',
+            range: {
+                'min': min,
+                'max': max
+            },
+            step: 1,
+            tooltips: wNumb({
+                decimals: 0,
+                suffix: suffix
+            })
+        }
     }
 
     function initializeEventListeners() {
@@ -264,11 +286,11 @@ $(function () {
             "loadFollowingQueryHash": $(loadFollowingQueryHashInput).val(),
             "loadStoryListQueryHash": $(loadStoryListQueryHashInput).val(),
             "loadStoryViewersQueryHash": $(loadStoryViewersQueryHashInput).val(),
-            "loadingUsersBatchSize": parseInt($(loadingUsersBatchSizeInput).val()),
-            "loadingUsersTimeout": parseInt($(loadingUsersTimeoutInput).val()),
-            "unfollowTimeout": parseInt($(unfollowTimeoutInput).val()),
-            "timeoutRandomization": parseInt($(timeoutRandomizationInput).val()),
-            "likePhotosCount": parseInt($(likePhotosCountInput).val())
+            "unfollowTimeout": parseInt($(unfollowTimeout)[0].noUiSlider.get()),
+            "loadingUsersBatchSize": parseInt($(loadingUsersBatchSize)[0].noUiSlider.get()),
+            "loadingUsersTimeout": parseInt($(loadingUsersTimeout)[0].noUiSlider.get()),
+            "timeoutRandomization": parseInt($(timeoutRandomization)[0].noUiSlider.get()),
+            "likePhotosCount": parseInt($(likePhotosCount)[0].noUiSlider.get())
         };
 
         chrome.storage.local.set({"settings": settings}, function () {
@@ -289,11 +311,11 @@ $(function () {
         $(loadFollowingQueryHashInput).val(settings.loadFollowingQueryHash);
         $(loadStoryListQueryHashInput).val(settings.loadStoryListQueryHash);
         $(loadStoryViewersQueryHashInput).val(settings.loadStoryViewersQueryHash);
-        $(loadingUsersBatchSizeInput).val(settings.loadingUsersBatchSize);
-        $(loadingUsersTimeoutInput).val(settings.loadingUsersTimeout);
-        $(unfollowTimeoutInput).val(settings.unfollowTimeout);
-        $(timeoutRandomizationInput).val(settings.timeoutRandomization);
-        $(likePhotosCountInput).val(settings.likePhotosCount);
+        $(unfollowTimeout)[0].noUiSlider.set(settings.unfollowTimeout);
+        $(loadingUsersBatchSize)[0].noUiSlider.set(settings.loadingUsersBatchSize);
+        $(loadingUsersTimeout)[0].noUiSlider.set(settings.loadingUsersTimeout);
+        $(timeoutRandomization)[0].noUiSlider.set(settings.timeoutRandomization);
+        $(likePhotosCount)[0].noUiSlider.set(settings.likePhotosCount);
     }
 
     function hideSettingsPage() {

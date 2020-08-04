@@ -22,6 +22,11 @@ h1 {
     margin-bottom: 1.5em;
 }
 
+h3 {
+    margin-top: 0;
+    margin-bottom: 0.3em;
+}
+
 .button {
     display: inline-flex;
     padding: 0.6em 1.2em;
@@ -199,7 +204,7 @@ img {
     margin-top: 3em;
 }
 
-.disabled {
+.disabled, .greenDot, .redDot {
     pointer-events: none;
 }
 
@@ -379,10 +384,6 @@ input:focus {
     outline: none;
 }
 
-.setting input {
-    margin-top: 0.5em;
-}
-
 #storyList {
     background-color: #313c49;
     border-radius: 1.5em;
@@ -498,4 +499,49 @@ input, .button {
     flex-direction: column;
     justify-content: space-evenly;
     margin-right: 0.5em;
+}
+
+.noUi-target {
+    background: none;
+    height: 2em;
+    padding: 0 1em;
+    margin-bottom: 3em;
+    border: 0.1em solid #FFFFFF;
+    border-radius: 0.5em;
+}
+
+.noUi-connects {
+    border-radius: 0.5em;
+    margin: 0 -1em;
+    width: calc(100% + 1em);
+}
+
+.noUi-connect {
+    background-color: #4ac5f8;
+}
+
+.noUi-horizontal .noUi-handle {
+    width: 2em;
+    height: 2em;
+    top: -1px;
+    right: -1em;
+    box-shadow: none;
+    border-radius: 0.5em;
+    cursor: pointer;
+}
+
+.noUi-handle:after, .noUi-handle:before {
+    display: none;
+}
+
+.noUi-handle:focus {
+    outline: none;
+}
+
+.noUi-horizontal .noUi-tooltip {
+    bottom: -125%;
+    background: none;
+    color: white;
+    border: none;
+    font-size: 1.1em;
 }

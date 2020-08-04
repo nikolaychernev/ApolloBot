@@ -5,10 +5,13 @@
     <link rel="stylesheet" href="../css/background.css">
     <link rel="stylesheet" href="../css/jam.min.css">
     <link rel="stylesheet" href="../css/simplebar.css">
+    <link rel="stylesheet" href="../css/nouislider.min.css">
     <link rel="stylesheet" href="../css/style.css">
     <script src="../js/jquery-3.5.1.min.js"></script>
     <script src="../js/circle-progress.min.js"></script>
     <script src="../js/simplebar.min.js"></script>
+    <script src="../js/wNumb.min.js"></script>
+    <script src="../js/nouislider.min.js"></script>
     <script src="../js/main.js"></script>
     <title></title>
 </head>
@@ -134,42 +137,42 @@
         </div>
         <div id="advancedSettings" class="hidden">
             <div class="setting">
-                <label for="loadFollowersQueryHash">Load Followers Query Hash:</label>
+                <h3>Load Followers Query Hash</h3>
                 <input type="text" id="loadFollowersQueryHash" name="loadFollowersQueryHash">
             </div>
             <div class="setting">
-                <label for="loadFollowingQueryHash">Load Following Query Hash:</label>
+                <h3>Load Following Query Hash</h3>
                 <input type="text" id="loadFollowingQueryHash" name="loadFollowingQueryHash">
             </div>
             <div class="setting">
-                <label for="loadStoryListQueryHash">Load Story List Query Hash:</label>
+                <h3>Load Story List Query Hash</h3>
                 <input type="text" id="loadStoryListQueryHash" name="loadStoryListQueryHash">
             </div>
             <div class="setting">
-                <label for="loadStoryViewersQueryHash">Load Story Viewers Query Hash:</label>
+                <h3>Load Story Viewers Query Hash</h3>
                 <input type="text" id="loadStoryViewersQueryHash" name="loadStoryViewersQueryHash">
             </div>
         </div>
         <div id="basicSettings">
             <div class="setting">
-                <label for="unfollowTimeout">Unfollow Timeout (seconds):</label>
-                <input type="number" id="unfollowTimeout" name="unfollowTimeout">
+                <h3>Follow/Unfollow Timeout</h3>
+                <div id="unfollowTimeout"></div>
             </div>
             <div class="setting">
-                <label for="loadingUsersBatchSize">Loading Users Batch Size (users):</label>
-                <input type="number" id="loadingUsersBatchSize" name="loadingUsersBatchSize">
+                <h3>Loading Users Batch Size</h3>
+                <div id="loadingUsersBatchSize"></div>
             </div>
             <div class="setting">
-                <label for="loadingUsersTimeout">Loading Users Timeout (seconds):</label>
-                <input type="number" id="loadingUsersTimeout" name="loadingUsersTimeout">
+                <h3>Loading Users Timeout</h3>
+                <div id="loadingUsersTimeout"></div>
             </div>
             <div class="setting">
-                <label for="timeoutRandomization">Timeout Randomization (%):</label>
-                <input type="number" id="timeoutRandomization" name="timeoutRandomization">
+                <h3>Timeout Randomization</h3>
+                <div id="timeoutRandomization"></div>
             </div>
             <div class="setting">
-                <label for="likePhotosCount">Like Photos When Following:</label>
-                <input type="number" id="likePhotosCount" name="likePhotosCount">
+                <h3>Like Photos When Following</h3>
+                <div id="likePhotosCount"></div>
             </div>
         </div>
         <div id="settingsButtons" class="spaceBetween">
