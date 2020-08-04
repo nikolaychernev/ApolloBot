@@ -193,7 +193,7 @@ img {
     top: 0;
 }
 
-.settingsPage {
+.settingsPage, #usersRange {
     background-color: #313c49;
     width: 40%;
     border-radius: 1.5em;
@@ -424,11 +424,11 @@ input, .button, .noUi-target {
     box-shadow: 15px 5px 25px 1px rgba(0, 0, 0, 0.1);
 }
 
-.settingsPage, #popup, #storyList {
+.settingsPage, #popup, #storyList, #usersRange {
     box-shadow: 0 0 25px 10px rgba(0, 0, 0, 1);
 }
 
-#resetSettingsBtn, #popupCancelBtn {
+#resetSettingsBtn, #popupCancelBtn, #usersRangeCancelBtn {
     margin-left: 0.2em;
 }
 
@@ -493,7 +493,7 @@ input, .button, .noUi-target {
 }
 
 .noUi-horizontal .noUi-tooltip {
-    bottom: -125%;
+    bottom: -120%;
     background: none;
     color: white;
     border: none;

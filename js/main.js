@@ -1,6 +1,6 @@
 // Global Variables
 let csrfToken;
-let currentUserId;
+let currentUser;
 let settings;
 let loadUsersTimeoutObject;
 let processUsersTimeoutObject;
@@ -42,6 +42,15 @@ const PROCESS_TYPE = {
     },
 };
 
+const USERS_TYPE = {
+    FOLLOWERS: {
+        HEADING: "Select Followers Range To Load"
+    },
+    FOLLOWING: {
+        HEADING: "Select Following Range To Load"
+    },
+};
+
 // In-Memory Collections
 let followersMap = new Map();
 let followingMap = new Map();
@@ -64,6 +73,8 @@ $(function () {
     let loadUsersDropdown = $("#loadUsersDropdown");
     let queueActionsDropdown = $("#queueActionsDropdown");
     let selectionDropdown = $("#selectionDropdown");
+    let loadFollowersBtn = $("#loadFollowersBtn");
+    let loadFollowingBtn = $("#loadFollowingBtn");
     let loadNotFollowingBackBtn = $("#loadNotFollowingBackBtn");
     let loadUnfollowedBtn = $("#loadUnfollowedBtn");
     let loadStoryViewersBtn = $("#loadStoryViewersBtn");
@@ -91,6 +102,13 @@ $(function () {
     let loadingUsersTimeout = $("#loadingUsersTimeout");
     let timeoutRandomization = $("#timeoutRandomization");
     let likePhotosCount = $("#likePhotosCount");
+
+    //Users Range
+    let usersRange = $("#usersRange");
+    let usersRangeHeading = $("#usersRangeHeading");
+    let usersRangeSlider = $("#usersRangeSlider");
+    let usersRangeConfirmBtn = $("#usersRangeConfirmBtn");
+    let usersRangeCancelBtn = $("#usersRangeCancelBtn");
 
     //Popup
     let popup = $("#popup");
@@ -166,7 +184,11 @@ $(function () {
                     return;
                 }
 
-                currentUserId = data.graphql.user.id;
+                currentUser = {
+                    id: data.graphql.user.id,
+                    followersCount: data.graphql.user.edge_followed_by.count,
+                    followingCount: data.graphql.user.edge_follow.count
+                };
 
                 let currentUserProfilePictureUrl = data.graphql.user.profile_pic_url;
                 let currentUsername = currentUrl.split("/")[3];
@@ -181,8 +203,8 @@ $(function () {
     }
 
     function initializeLastCheckedField() {
-        chrome.storage.local.get(currentUserId, function (item) {
-            lastChecked = item[currentUserId];
+        chrome.storage.local.get(currentUser.id, function (item) {
+            lastChecked = item[currentUser.id];
         });
     }
 
@@ -213,19 +235,20 @@ $(function () {
             }
         });
 
-        noUiSlider.create($(settingsToggle)[0], getSliderConfiguration(0, 1, null));
+        noUiSlider.create($(settingsToggle)[0], getSliderConfiguration(0, 0, 1, null));
 
-        noUiSlider.create($(followUnfollowTimeout)[0], getSliderConfiguration(0, 240, " Sec"));
-        noUiSlider.create($(loadingUsersBatchSize)[0], getSliderConfiguration(12, 96, " Users"));
-        noUiSlider.create($(loadingUsersTimeout)[0], getSliderConfiguration(0, 60, " Sec"));
-        noUiSlider.create($(timeoutRandomization)[0], getSliderConfiguration(0, 100, "%"));
-        noUiSlider.create($(likePhotosCount)[0], getSliderConfiguration(0, 10, " Photos"));
+        noUiSlider.create($(followUnfollowTimeout)[0], getSliderConfiguration(0, 0, 240, " Sec"));
+        noUiSlider.create($(loadingUsersBatchSize)[0], getSliderConfiguration(0, 12, 96, " Users"));
+        noUiSlider.create($(loadingUsersTimeout)[0], getSliderConfiguration(0, 0, 60, " Sec"));
+        noUiSlider.create($(timeoutRandomization)[0], getSliderConfiguration(0, 0, 100, "%"));
+        noUiSlider.create($(likePhotosCount)[0], getSliderConfiguration(0, 0, 10, " Photos"));
     }
 
-    function getSliderConfiguration(min, max, suffix) {
+    function getSliderConfiguration(start, min, max, suffix) {
         return {
-            start: 0,
-            connect: 'lower',
+            start: start,
+            connect: Array.isArray(start) ? true : "lower",
+            behaviour: Array.isArray(start) ? "drag" : "tap",
             range: {
                 'min': min,
                 'max': max
@@ -250,10 +273,13 @@ $(function () {
         $(selectNoneBtn).on("click", onSelectNoneBtnClicked);
         $(revertSelectionBtn).on("click", onRevertSelectionBtnClicked);
         $(removeSelectedBtn).on("click", onRemoveSelectedBtnClicked);
+        $(loadFollowersBtn).on("click", onLoadFollowersBtnClicked);
+        $(loadFollowingBtn).on("click", onLoadFollowingBtnClicked);
         $(loadNotFollowingBackBtn).on("click", onLoadNotFollowingBackBtnClicked);
         $(loadUnfollowedBtn).on("click", onLoadUnfollowedBtnClicked);
         $(loadStoryViewersBtn).on("click", onLoadStoryViewersBtnClicked);
         $(storyListCancelBtn).on("click", hideStoryList);
+        $(usersRangeCancelBtn).on("click", hideUsersRange);
         $(popupConfirmBtn).on("click", onPopupConfirmBtnClicked);
         $(popupCancelBtn).on("click", hidePopup);
         $(loadQueueBtn).on("click", onLoadQueueBtnClicked);
@@ -275,6 +301,7 @@ $(function () {
         }
 
         hideSettingsPage();
+        hideUsersRange();
         hidePopup();
         hideStoryList();
     }
@@ -369,6 +396,42 @@ $(function () {
         updateQueueSelectedUsersCounter();
     }
 
+    function onLoadFollowersBtnClicked() {
+        loadUsersRange(USERS_TYPE.FOLLOWERS);
+    }
+
+    function onLoadFollowingBtnClicked() {
+        loadUsersRange(USERS_TYPE.FOLLOWING);
+    }
+
+    function loadUsersRange(usersType) {
+        $(usersRangeHeading).text(usersType.HEADING);
+
+        let start;
+        let end;
+
+        if (usersType === USERS_TYPE.FOLLOWERS) {
+            end = currentUser.followersCount;
+        } else {
+            end = currentUser.followingCount;
+        }
+
+        start = end - 2048;
+
+        if (start < 0) {
+            start = 0;
+        }
+
+        if ($(usersRangeSlider)[0].noUiSlider) {
+            $(usersRangeSlider)[0].noUiSlider.destroy();
+        }
+
+        noUiSlider.create($(usersRangeSlider)[0], getSliderConfiguration([start, end], 0, end, " "));
+
+        $(overlay).css("display", "flex");
+        $(usersRange).show();
+    }
+
     function onLoadNotFollowingBackBtnClicked() {
         loadFollowers(loadFollowing, 0, "");
     }
@@ -394,7 +457,7 @@ $(function () {
     function loadStoryList() {
         let jsonVars = {
             "reel_ids": [
-                currentUserId
+                currentUser.id
             ],
             "tag_names": [],
             "location_ids": [],
@@ -461,6 +524,11 @@ $(function () {
         $(storyList).hide();
     }
 
+    function hideUsersRange() {
+        $(overlay).hide();
+        $(usersRange).hide();
+    }
+
     function onPopupConfirmBtnClicked() {
         hidePopup();
         loadFollowers(loadUnfollowed, 0, "");
@@ -495,7 +563,7 @@ $(function () {
             "timestamp": getCurrentTimestamp()
         };
 
-        chrome.storage.local.set({[currentUserId]: lastCheckedUpdated}, function () {
+        chrome.storage.local.set({[currentUser.id]: lastCheckedUpdated}, function () {
             initializeLastCheckedField();
         });
     }
@@ -546,7 +614,7 @@ $(function () {
 
     function loadFollowers(callback, loadedFollowersCount, after) {
         let jsonVars = {
-            id: currentUserId,
+            id: currentUser.id,
             first: settings.loadingUsersBatchSize,
             after: after
         };
@@ -594,7 +662,7 @@ $(function () {
 
     function loadFollowing(callback, loadedFollowingCount, after) {
         let jsonVars = {
-            id: currentUserId,
+            id: currentUser.id,
             first: settings.loadingUsersBatchSize,
             after: after
         };
@@ -924,7 +992,7 @@ $(function () {
     }
 
     function enableElements() {
-        if (currentUserId) {
+        if (currentUser) {
             $(loadUsersDropdown).removeClass(disabledClass);
         }
 
