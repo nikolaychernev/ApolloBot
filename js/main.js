@@ -200,6 +200,8 @@ $(function () {
             }
         });
 
+        noUiSlider.create($(settingsToggle)[0], getSliderConfiguration(0, 1, null));
+
         noUiSlider.create($(unfollowTimeout)[0], getSliderConfiguration(0, 240, " Sec"));
         noUiSlider.create($(loadingUsersBatchSize)[0], getSliderConfiguration(12, 96, " Users"));
         noUiSlider.create($(loadingUsersTimeout)[0], getSliderConfiguration(0, 60, " Sec"));
@@ -216,17 +218,18 @@ $(function () {
                 'max': max
             },
             step: 1,
-            tooltips: wNumb({
-                decimals: 0,
-                suffix: suffix
-            })
+            format: wNumb({
+                suffix: suffix ? suffix : "",
+                decimals: 0
+            }),
+            tooltips: !!suffix
         }
     }
 
     function initializeEventListeners() {
-        $(overlay).on("click", onOverlayClicked);
+        $(overlay).on("mousedown", onOverlayClicked);
         $(settingsBtn).on("click", onSettingsBtnClicked);
-        $(settingsToggle).on("change", onSettingsToggle);
+        $(settingsToggle)[0].noUiSlider.on('update', onSettingsToggle);
         $(cancelSettingsBtn).on("click", hideSettingsPage);
         $(saveSettingsBtn).on("click", onSaveSettingsBtnClicked);
         $(resetSettingsBtn).on("click", onResetSettingsBtnClicked);
@@ -268,8 +271,8 @@ $(function () {
         $(settingsPage).show();
     }
 
-    function onSettingsToggle() {
-        if ($(this).is(":checked")) {
+    function onSettingsToggle(values, handle) {
+        if (values[handle] === '1') {
             $(settingsHeading).text("Advanced Settings");
             $(basicSettings).hide();
             $(advancedSettings).show();
