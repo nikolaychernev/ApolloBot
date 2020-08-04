@@ -3,7 +3,7 @@ let csrfToken;
 let currentUserId;
 let settings;
 let loadUsersTimeoutObject;
-let unfollowUsersTimeoutObject;
+let processUsersTimeoutObject;
 let lastChecked;
 let searchBarTimeout;
 let visibleUsersCount = 0;
@@ -14,21 +14,33 @@ let defaultSettings = {
     "loadFollowingQueryHash": "d04b0a864b4b54837c0d870b0e77e076",
     "loadStoryListQueryHash": "90709b530ea0969f002c86a89b4f2b8d",
     "loadStoryViewersQueryHash": "42c6ec100f5e57a1fe09be16cd3a7021",
+    "followUnfollowTimeout": 60,
     "loadingUsersBatchSize": 48,
     "loadingUsersTimeout": 3,
-    "unfollowTimeout": 60,
     "timeoutRandomization": 50,
-    "likePhotosCount": 0
+    "likePhotosCount": 1
 };
 
 let extractUsernameRegex = /.*instagram\.com\/[^\/]+/;
 
 let selectedClass = "selected";
+let followedClass = "followed";
 let unfollowedClass = "unfollowed";
 let disabledClass = "disabled";
 let storyElementClass = "storyElement";
 let greenDotClass = "greenDot";
 let redDotClass = "redDot";
+
+const PROCESS_TYPE = {
+    FOLLOWING: {
+        ENDPOINT: "/follow/",
+        PROCESSED_CLASS: followedClass
+    },
+    UNFOLLOWING: {
+        ENDPOINT: "/unfollow/",
+        PROCESSED_CLASS: unfollowedClass
+    },
+};
 
 // In-Memory Collections
 let followersMap = new Map();
@@ -59,6 +71,7 @@ $(function () {
     let saveQueueBtn = $("#saveQueueBtn");
     let startFollowingBtn = $("#startFollowingBtn");
     let startUnfollowingBtn = $("#startUnfollowingBtn");
+    let stopFollowingBtn = $("#stopFollowingBtn");
     let stopUnfollowingBtn = $("#stopUnfollowingBtn");
     let stopLoadingBtn = $("#stopLoadingBtn");
 
@@ -73,7 +86,7 @@ $(function () {
     let loadFollowingQueryHashInput = $("#loadFollowingQueryHash");
     let loadStoryListQueryHashInput = $("#loadStoryListQueryHash");
     let loadStoryViewersQueryHashInput = $("#loadStoryViewersQueryHash");
-    let unfollowTimeout = $("#unfollowTimeout");
+    let followUnfollowTimeout = $("#followUnfollowTimeout");
     let loadingUsersBatchSize = $("#loadingUsersBatchSize");
     let loadingUsersTimeout = $("#loadingUsersTimeout");
     let timeoutRandomization = $("#timeoutRandomization");
@@ -202,7 +215,7 @@ $(function () {
 
         noUiSlider.create($(settingsToggle)[0], getSliderConfiguration(0, 1, null));
 
-        noUiSlider.create($(unfollowTimeout)[0], getSliderConfiguration(0, 240, " Sec"));
+        noUiSlider.create($(followUnfollowTimeout)[0], getSliderConfiguration(0, 240, " Sec"));
         noUiSlider.create($(loadingUsersBatchSize)[0], getSliderConfiguration(12, 96, " Users"));
         noUiSlider.create($(loadingUsersTimeout)[0], getSliderConfiguration(0, 60, " Sec"));
         noUiSlider.create($(timeoutRandomization)[0], getSliderConfiguration(0, 100, "%"));
@@ -246,7 +259,9 @@ $(function () {
         $(loadQueueBtn).on("click", onLoadQueueBtnClicked);
         $(loadQueueFileInput).on("change", onLoadQueueFileInputChange);
         $(saveQueueBtn).on("click", onSaveQueueBtnClicked);
+        $(startFollowingBtn).on("click", onStartFollowingBtnClicked);
         $(startUnfollowingBtn).on("click", onStartUnfollowingBtnClicked);
+        $(stopFollowingBtn).on("click", onStopFollowingBtnClicked);
         $(stopUnfollowingBtn).on("click", onStopUnfollowingBtnClicked);
         $(stopLoadingBtn).on("click", onStopLoadingBtnClicked);
         $(searchBarInput).on("keyup", onSearchBarInputKeyUp);
@@ -289,7 +304,7 @@ $(function () {
             "loadFollowingQueryHash": $(loadFollowingQueryHashInput).val(),
             "loadStoryListQueryHash": $(loadStoryListQueryHashInput).val(),
             "loadStoryViewersQueryHash": $(loadStoryViewersQueryHashInput).val(),
-            "unfollowTimeout": parseInt($(unfollowTimeout)[0].noUiSlider.get()),
+            "followUnfollowTimeout": parseInt($(followUnfollowTimeout)[0].noUiSlider.get()),
             "loadingUsersBatchSize": parseInt($(loadingUsersBatchSize)[0].noUiSlider.get()),
             "loadingUsersTimeout": parseInt($(loadingUsersTimeout)[0].noUiSlider.get()),
             "timeoutRandomization": parseInt($(timeoutRandomization)[0].noUiSlider.get()),
@@ -314,7 +329,7 @@ $(function () {
         $(loadFollowingQueryHashInput).val(settings.loadFollowingQueryHash);
         $(loadStoryListQueryHashInput).val(settings.loadStoryListQueryHash);
         $(loadStoryViewersQueryHashInput).val(settings.loadStoryViewersQueryHash);
-        $(unfollowTimeout)[0].noUiSlider.set(settings.unfollowTimeout);
+        $(followUnfollowTimeout)[0].noUiSlider.set(settings.followUnfollowTimeout);
         $(loadingUsersBatchSize)[0].noUiSlider.set(settings.loadingUsersBatchSize);
         $(loadingUsersTimeout)[0].noUiSlider.set(settings.loadingUsersTimeout);
         $(timeoutRandomization)[0].noUiSlider.set(settings.timeoutRandomization);
@@ -709,35 +724,40 @@ $(function () {
         updateQueueSelectedUsersCounter();
     }
 
+    function onStartFollowingBtnClicked() {
+        startProcessingQueue(PROCESS_TYPE.FOLLOWING);
+    }
+
     function onStartUnfollowingBtnClicked() {
+        startProcessingQueue(PROCESS_TYPE.UNFOLLOWING);
+    }
+
+    function startProcessingQueue(processType) {
         if (usersQueue.size === 0) {
             return;
         }
 
-        disableElements();
+        disableElements(processType);
         onSelectNoneBtnClicked();
 
-        let usersToUnfollow = [];
+        let usersToProcess = [];
 
         for (let user of usersQueue.values()) {
             if (!user.visible) {
                 continue;
             }
 
-            usersToUnfollow.push(user);
+            usersToProcess.push(user);
         }
 
-        unfollowUsers(usersToUnfollow);
+        processUsers(usersToProcess, processType);
     }
 
-    function unfollowUsers(users) {
-        $(startUnfollowingBtn).hide();
-        $(stopUnfollowingBtn).css("display", "inline-flex");
-
+    function processUsers(users, processType) {
         let user = users.shift();
 
         $.ajax({
-            url: "https://www.instagram.com/web/friendships/" + user.id + "/unfollow/",
+            url: "https://www.instagram.com/web/friendships/" + user.id + processType.ENDPOINT,
             method: "POST",
             beforeSend: function (xhr) {
                 xhr.setRequestHeader('x-csrftoken', csrfToken);
@@ -747,14 +767,20 @@ $(function () {
                 let userElement = $("div#" + user.id);
                 let profilePictureContainer = $(userElement).find(".profilePictureContainer");
 
-                $(profilePictureContainer).find(".selection").addClass(unfollowedClass);
                 $(profilePictureContainer).find(".countdown").hide();
+                $(profilePictureContainer).find(".selection").addClass(processType.PROCESSED_CLASS);
 
                 usersQueue.delete(user.id);
 
                 if (users.length === 0) {
+                    $(stopFollowingBtn).hide();
                     $(stopUnfollowingBtn).hide();
-                    $(startUnfollowingBtn).show();
+
+                    if (processType === PROCESS_TYPE.FOLLOWING) {
+                        $(startFollowingBtn).show();
+                    } else {
+                        $(startUnfollowingBtn).show();
+                    }
 
                     enableElements();
                     return;
@@ -764,8 +790,8 @@ $(function () {
                 let nextElementCountdownElement = $("div#" + nextUser.id).find(".countdown");
                 $(nextElementCountdownElement).show();
 
-                let secondsRemaining = randomizeTimeout(settings.unfollowTimeout, settings.timeoutRandomization);
-                unfollowUsersTimeout(secondsRemaining, secondsRemaining, nextElementCountdownElement, users);
+                let secondsRemaining = randomizeTimeout(settings.followUnfollowTimeout, settings.timeoutRandomization);
+                processUsersTimeout(secondsRemaining, secondsRemaining, nextElementCountdownElement, users);
             });
     }
 
@@ -780,15 +806,15 @@ $(function () {
         return Math.floor(Math.random() * (max - min + 1) + min);
     }
 
-    function unfollowUsersTimeout(totalSeconds, secondsRemaining, countdownElement, users) {
+    function processUsersTimeout(totalSeconds, secondsRemaining, countdownElement, users, processType) {
         if (secondsRemaining > 0) {
             updateCountdownElement(totalSeconds, secondsRemaining, countdownElement);
 
-            unfollowUsersTimeoutObject = setTimeout(function () {
-                unfollowUsersTimeout(totalSeconds, secondsRemaining - 1, countdownElement, users);
+            processUsersTimeoutObject = setTimeout(function () {
+                processUsersTimeout(totalSeconds, secondsRemaining - 1, countdownElement, users, processType);
             }, 1000);
         } else {
-            unfollowUsers(users);
+            processUsers(users, processType);
         }
     }
 
@@ -823,8 +849,17 @@ $(function () {
         $(countdownElement).find("strong").text(secondsRemaining);
     }
 
+    function onStopFollowingBtnClicked() {
+        clearTimeout(processUsersTimeoutObject);
+        $(".countdown").hide();
+
+        enableElements();
+        $(stopFollowingBtn).hide();
+        $(startFollowingBtn).show();
+    }
+
     function onStopUnfollowingBtnClicked() {
-        clearTimeout(unfollowUsersTimeoutObject);
+        clearTimeout(processUsersTimeoutObject);
         $(".countdown").hide();
 
         enableElements();
@@ -870,7 +905,16 @@ $(function () {
         $(startUnfollowingBtn).css("display", "inline-flex");
     }
 
-    function disableElements() {
+    function disableElements(processType) {
+        $(startFollowingBtn).hide();
+        $(startUnfollowingBtn).hide();
+
+        if (processType === PROCESS_TYPE.FOLLOWING) {
+            $(stopFollowingBtn).css("display", "inline-flex");
+        } else {
+            $(stopUnfollowingBtn).css("display", "inline-flex");
+        }
+
         $(searchBarInput).addClass(disabledClass);
         $(loadUsersDropdown).addClass(disabledClass);
         $(queueActionsDropdown).addClass(disabledClass);
