@@ -256,7 +256,8 @@ $(function () {
             step: 1,
             format: wNumb({
                 suffix: suffix ? suffix : "",
-                decimals: 0
+                decimals: 0,
+                thousand: " "
             }),
             tooltips: !!suffix
         }
@@ -427,6 +428,7 @@ $(function () {
         }
 
         noUiSlider.create($(usersRangeSlider)[0], getSliderConfiguration([start, end], 0, end, " "));
+        mergeTooltips($(usersRangeSlider)[0], 20, " - ");
 
         $(overlay).css("display", "flex");
         $(usersRange).show();
@@ -1001,5 +1003,74 @@ $(function () {
         $(selectionDropdown).removeClass(disabledClass);
         $(dots).removeClass(disabledClass);
         $(".selection").removeClass(disabledClass);
+    }
+
+    function mergeTooltips(slider, threshold, separator) {
+        let textIsRtl = getComputedStyle(slider).direction === 'rtl';
+        let isRtl = slider.noUiSlider.options.direction === 'rtl';
+        let isVertical = slider.noUiSlider.options.orientation === 'vertical';
+        let tooltips = slider.noUiSlider.getTooltips();
+        let origins = slider.noUiSlider.getOrigins();
+
+        tooltips.forEach(function (tooltip, index) {
+            if (tooltip) {
+                origins[index].appendChild(tooltip);
+            }
+        });
+
+        slider.noUiSlider.on('update', function (values, handle, unencoded, tap, positions) {
+            let pools = [[]];
+            let poolPositions = [[]];
+            let poolValues = [[]];
+            let atPool = 0;
+
+            if (tooltips[0]) {
+                pools[0][0] = 0;
+                poolPositions[0][0] = positions[0];
+                poolValues[0][0] = values[0];
+            }
+
+            for (let i = 1; i < positions.length; i++) {
+                if (!tooltips[i] || (positions[i] - positions[i - 1]) > threshold) {
+                    atPool++;
+                    pools[atPool] = [];
+                    poolValues[atPool] = [];
+                    poolPositions[atPool] = [];
+                }
+
+                if (tooltips[i]) {
+                    pools[atPool].push(i);
+                    poolValues[atPool].push(values[i]);
+                    poolPositions[atPool].push(positions[i]);
+                }
+            }
+
+            pools.forEach(function (pool, poolIndex) {
+                let handlesInPool = pool.length;
+
+                for (let j = 0; j < handlesInPool; j++) {
+                    let handleNumber = pool[j];
+
+                    if (j === handlesInPool - 1) {
+                        let offset = 0;
+
+                        poolPositions[poolIndex].forEach(function (value) {
+                            offset += 1000 - 10 * value;
+                        });
+
+                        let direction = isVertical ? 'bottom' : 'right';
+                        let last = isRtl ? 0 : handlesInPool - 1;
+                        let lastOffset = 1000 - 10 * poolPositions[poolIndex][last];
+                        offset = (textIsRtl && !isVertical ? 100 : 0) + (offset / handlesInPool) - lastOffset;
+
+                        tooltips[handleNumber].innerHTML = poolValues[poolIndex].join(separator);
+                        tooltips[handleNumber].style.display = 'block';
+                        tooltips[handleNumber].style[direction] = offset + '%';
+                    } else {
+                        tooltips[handleNumber].style.display = 'none';
+                    }
+                }
+            });
+        });
     }
 });
