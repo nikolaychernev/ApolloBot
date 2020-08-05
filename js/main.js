@@ -21,7 +21,7 @@ let defaultSettings = {
     "likePhotosCount": 1
 };
 
-let extractUsernameRegex = /.*instagram\.com\/[^\/]+/;
+let extractUsernameRegex = /.*instagram\.com\/([^\/]+)/;
 
 let selectedClass = "selected";
 let followedClass = "followed";
@@ -169,41 +169,52 @@ $(function () {
 
     function extractUserInfo() {
         chrome.runtime.sendMessage({currentUrl: true}, function (response) {
-            $(currentUserProfilePicture).attr("src", "../images/blank.png");
-            $(usernameField).text("Loading...");
-
-            disableLoadUsersDropdown();
-
-            let currentUrl = response;
-            let matches = extractUsernameRegex.exec(currentUrl);
+            let matches = extractUsernameRegex.exec(response);
 
             if (!matches) {
-                $(usernameField).text("Not On Profile Page");
+                notOnProfilePage();
                 return;
             }
 
-            $.ajax(matches[0] + "/?__a=1").done(function (data) {
+            let currentUrl = matches[0];
+            let username = matches[1];
+
+            if (currentUser && currentUser.username === username) {
+                return;
+            }
+
+            $(currentUserProfilePicture).attr("src", "../images/blank.png");
+            $(usernameField).text("Loading...");
+
+            $.ajax(currentUrl + "/?__a=1").done(function (data) {
                 if (Object.keys(data).length === 0 || !data.graphql) {
-                    $(usernameField).text("Not On Profile Page");
+                    notOnProfilePage();
                     return;
                 }
 
                 currentUser = {
                     id: data.graphql.user.id,
+                    username: username,
                     followersCount: data.graphql.user.edge_followed_by.count,
                     followingCount: data.graphql.user.edge_follow.count
                 };
 
                 let currentUserProfilePictureUrl = data.graphql.user.profile_pic_url;
-                let currentUsername = currentUrl.split("/")[3];
-
                 $(currentUserProfilePicture).attr("src", currentUserProfilePictureUrl);
-                $(usernameField).text(currentUsername);
+                $(usernameField).text(username);
 
                 initializeLastCheckedField();
                 enableLoadUsersDropdown();
             });
         });
+    }
+
+    function notOnProfilePage() {
+        $(currentUserProfilePicture).attr("src", "../images/blank.png");
+        $(usernameField).text("Not On Profile Page");
+
+        currentUser = {};
+        disableLoadUsersDropdown();
     }
 
     function initializeLastCheckedField() {
