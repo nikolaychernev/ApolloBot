@@ -98,7 +98,6 @@ $(function () {
     let loadStoryListQueryHashInput = $("#loadStoryListQueryHash");
     let loadStoryViewersQueryHashInput = $("#loadStoryViewersQueryHash");
     let followUnfollowTimeout = $("#followUnfollowTimeout");
-    let loadingUsersBatchSize = $("#loadingUsersBatchSize");
     let loadingUsersTimeout = $("#loadingUsersTimeout");
     let timeoutRandomization = $("#timeoutRandomization");
 
@@ -243,7 +242,6 @@ $(function () {
         noUiSlider.create($(settingsToggle)[0], getSliderConfiguration(0, 0, 1, null));
 
         noUiSlider.create($(followUnfollowTimeout)[0], getSliderConfiguration(0, 0, 240, " Sec"));
-        noUiSlider.create($(loadingUsersBatchSize)[0], getSliderConfiguration(0, 12, 96, " Users"));
         noUiSlider.create($(loadingUsersTimeout)[0], getSliderConfiguration(0, 0, 60, " Sec"));
         noUiSlider.create($(timeoutRandomization)[0], getSliderConfiguration(0, 0, 100, "%"));
         noUiSlider.create($(likePhotosCount)[0], getSliderConfiguration(0, 0, 10, " Photos"));
@@ -342,7 +340,6 @@ $(function () {
             "loadStoryListQueryHash": $(loadStoryListQueryHashInput).val(),
             "loadStoryViewersQueryHash": $(loadStoryViewersQueryHashInput).val(),
             "followUnfollowTimeout": parseInt($(followUnfollowTimeout)[0].noUiSlider.get()),
-            "loadingUsersBatchSize": parseInt($(loadingUsersBatchSize)[0].noUiSlider.get()),
             "loadingUsersTimeout": parseInt($(loadingUsersTimeout)[0].noUiSlider.get()),
             "timeoutRandomization": parseInt($(timeoutRandomization)[0].noUiSlider.get()),
         };
@@ -366,7 +363,6 @@ $(function () {
         $(loadStoryListQueryHashInput).val(settings.loadStoryListQueryHash);
         $(loadStoryViewersQueryHashInput).val(settings.loadStoryViewersQueryHash);
         $(followUnfollowTimeout)[0].noUiSlider.set(settings.followUnfollowTimeout);
-        $(loadingUsersBatchSize)[0].noUiSlider.set(settings.loadingUsersBatchSize);
         $(loadingUsersTimeout)[0].noUiSlider.set(settings.loadingUsersTimeout);
         $(timeoutRandomization)[0].noUiSlider.set(settings.timeoutRandomization);
     }
@@ -633,15 +629,9 @@ $(function () {
     }
 
     function loadFollowers(callback, loadedFollowersCount, endCursor, limit) {
-        let batchSize = settings.loadingUsersBatchSize;
-
-        if (limit && loadedFollowersCount + batchSize > limit) {
-            batchSize = limit - loadedFollowersCount;
-        }
-
         let jsonVars = {
             id: currentUser.id,
-            first: batchSize,
+            first: settings.loadingUsersBatchSize,
             after: endCursor
         };
 
@@ -651,8 +641,14 @@ $(function () {
             .done(function (data) {
                 let followers = data.data.user.edge_followed_by.edges;
                 let totalFollowersCount = data.data.user.edge_followed_by.count;
+                let limitReached = false;
 
                 for (let follower of followers) {
+                    if (limit && loadedFollowersCount >= limit) {
+                        limitReached = true;
+                        break;
+                    }
+
                     let user = {
                         id: follower.node.id,
                         username: follower.node.username,
@@ -669,7 +665,7 @@ $(function () {
 
                 let pageInfo = data.data.user.edge_followed_by.page_info;
 
-                if (!pageInfo.has_next_page || (limit && loadedFollowersCount >= limit)) {
+                if (!pageInfo.has_next_page || limitReached) {
                     if (!lastChecked) {
                         updateLastChecked();
                     }
@@ -687,15 +683,9 @@ $(function () {
     }
 
     function loadFollowing(callback, loadedFollowingCount, endCursor, limit) {
-        let batchSize = settings.loadingUsersBatchSize;
-
-        if (limit && loadedFollowingCount + batchSize > limit) {
-            batchSize = limit - loadedFollowingCount;
-        }
-
         let jsonVars = {
             id: currentUser.id,
-            first: batchSize,
+            first: settings.loadingUsersBatchSize,
             after: endCursor
         };
 
@@ -705,8 +695,14 @@ $(function () {
             .done(function (data) {
                 let usersFollowing = data.data.user.edge_follow.edges;
                 let totalFollowingCount = data.data.user.edge_follow.count;
+                let limitReached = false;
 
                 for (let userFollowing of usersFollowing) {
+                    if (limit && loadedFollowingCount >= limit) {
+                        limitReached = true;
+                        break;
+                    }
+
                     let user = {
                         id: userFollowing.node.id,
                         username: userFollowing.node.username,
@@ -723,7 +719,7 @@ $(function () {
 
                 let pageInfo = data.data.user.edge_follow.page_info;
 
-                if (!pageInfo.has_next_page || (limit && loadedFollowingCount >= limit)) {
+                if (!pageInfo.has_next_page || limitReached) {
                     $(loadingBarElement).hide();
                     callback();
                 } else {
