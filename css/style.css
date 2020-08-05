@@ -173,6 +173,10 @@ img {
     box-shadow: inset 0 0 0 4px indianred;
 }
 
+.skipped {
+    box-shadow: inset 0 0 0 4px white;
+}
+
 .selected {
     box-shadow: inset 0 0 0 4px #4ac5f8;
 }

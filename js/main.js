@@ -27,6 +27,7 @@ let extractUsernameRegex = /.*instagram\.com\/([^\/]+)/;
 let selectedClass = "selected";
 let followedClass = "followed";
 let unfollowedClass = "unfollowed";
+let skippedClass = "skipped";
 let disabledClass = "disabled";
 let storyElementClass = "storyElement";
 let greenDotClass = "greenDot";
@@ -669,7 +670,8 @@ $(function () {
                         id: follower.node.id,
                         username: follower.node.username,
                         full_name: follower.node.full_name,
-                        profile_pic_url: follower.node.profile_pic_url
+                        profile_pic_url: follower.node.profile_pic_url,
+                        is_private: follower.node.is_private
                     };
 
                     followersMap.set(follower.node.id, user);
@@ -723,7 +725,8 @@ $(function () {
                         id: userFollowing.node.id,
                         username: userFollowing.node.username,
                         full_name: userFollowing.node.full_name,
-                        profile_pic_url: userFollowing.node.profile_pic_url
+                        profile_pic_url: userFollowing.node.profile_pic_url,
+                        is_private: userFollowing.node.is_private
                     };
 
                     followingMap.set(userFollowing.node.id, user);
@@ -919,6 +922,10 @@ $(function () {
     function processUsers(users, processType) {
         let user = users.shift();
 
+        if (processType === PROCESS_TYPE.FOLLOWING && settings.skipPrivateAccounts === 1 && user.is_private) {
+            onUserProcessed(user, users, processType, true);
+        }
+
         $.ajax({
             url: "https://www.instagram.com/web/friendships/" + user.id + processType.ENDPOINT,
             method: "POST",
@@ -927,26 +934,34 @@ $(function () {
             }
         })
             .done(function () {
-                let userElement = $("div#" + user.id);
-                let profilePictureContainer = $(userElement).find(".profilePictureContainer");
-
-                $(profilePictureContainer).find(".countdown").hide();
-                $(profilePictureContainer).find(".selection").addClass(processType.PROCESSED_CLASS);
-
-                usersQueue.delete(user.id);
-
-                if (users.length === 0) {
-                    enableElements(processType);
-                    return;
-                }
-
-                let nextUser = users[0];
-                let nextElementCountdownElement = $("div#" + nextUser.id).find(".countdown");
-                $(nextElementCountdownElement).show();
-
-                let secondsRemaining = randomizeTimeout(settings.followUnfollowTimeout, settings.timeoutRandomization);
-                processUsersTimeout(secondsRemaining, secondsRemaining, nextElementCountdownElement, users);
+                onUserProcessed(user, users, processType, false);
             });
+    }
+
+    function onUserProcessed(user, users, processType, skipped) {
+        let userElement = $("div#" + user.id);
+        let profilePictureContainer = $(userElement).find(".profilePictureContainer");
+        $(profilePictureContainer).find(".countdown").hide();
+
+        if (skipped) {
+            $(profilePictureContainer).find(".selection").addClass(skippedClass);
+        } else {
+            $(profilePictureContainer).find(".selection").addClass(processType.PROCESSED_CLASS);
+        }
+
+        usersQueue.delete(user.id);
+
+        if (users.length === 0) {
+            enableElements(processType);
+            return;
+        }
+
+        let nextUser = users[0];
+        let nextElementCountdownElement = $("div#" + nextUser.id).find(".countdown");
+        $(nextElementCountdownElement).show();
+
+        let secondsRemaining = randomizeTimeout(settings.followUnfollowTimeout, settings.timeoutRandomization);
+        processUsersTimeout(secondsRemaining, secondsRemaining, nextElementCountdownElement, users);
     }
 
     function randomizeTimeout(timeout, timeoutRandomization) {
