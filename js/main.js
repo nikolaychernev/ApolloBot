@@ -253,7 +253,7 @@ $(function () {
         return {
             start: start,
             connect: Array.isArray(start) ? true : "lower",
-            behaviour: Array.isArray(start) ? "drag" : "tap",
+            behaviour: "tap",
             range: {
                 'min': min,
                 'max': max
@@ -436,6 +436,12 @@ $(function () {
 
         noUiSlider.create($(usersRangeSlider)[0], getSliderConfiguration([start, end], 0, end, " "));
         mergeTooltips($(usersRangeSlider)[0], 20, " - ");
+
+        let endHandleOrigin = $($(usersRangeSlider)[0]).find('.noUi-origin')[1];
+        $(endHandleOrigin).attr("disabled", "true");
+
+        let endHandle = $(endHandleOrigin).find('.noUi-handle');
+        $(endHandle).addClass(disabledClass);
 
         $(overlay).css("display", "flex");
         $(usersRange).show();
@@ -626,17 +632,17 @@ $(function () {
         chrome.runtime.sendMessage({download: {url: url, filename: "queue.txt"}})
     }
 
-    function loadFollowers(callback, loadedFollowersCount, after, limit) {
+    function loadFollowers(callback, loadedFollowersCount, endCursor, limit) {
         let batchSize = settings.loadingUsersBatchSize;
 
         if (limit && loadedFollowersCount + batchSize > limit) {
-            batchSize = limit - loadedFollowersCount + batchSize;
+            batchSize = limit - loadedFollowersCount;
         }
 
         let jsonVars = {
             id: currentUser.id,
             first: batchSize,
-            after: after
+            after: endCursor
         };
 
         let encodedJsonVars = encodeURIComponent(JSON.stringify(jsonVars));
@@ -659,11 +665,11 @@ $(function () {
                 }
 
                 $(loadingBarElement).css("display", "flex");
-                updateLoadingBarElement(totalFollowersCount, loadedFollowersCount, "Loading Followers");
+                updateLoadingBarElement(limit ? limit : totalFollowersCount, loadedFollowersCount, "Loading Followers");
 
                 let pageInfo = data.data.user.edge_followed_by.page_info;
 
-                if (!pageInfo.has_next_page || (limit && loadedFollowersCount < limit)) {
+                if (!pageInfo.has_next_page || (limit && loadedFollowersCount >= limit)) {
                     if (!lastChecked) {
                         updateLastChecked();
                     }
@@ -680,17 +686,17 @@ $(function () {
             });
     }
 
-    function loadFollowing(callback, loadedFollowingCount, after, limit) {
+    function loadFollowing(callback, loadedFollowingCount, endCursor, limit) {
         let batchSize = settings.loadingUsersBatchSize;
 
         if (limit && loadedFollowingCount + batchSize > limit) {
-            batchSize = limit - loadedFollowingCount + batchSize;
+            batchSize = limit - loadedFollowingCount;
         }
 
         let jsonVars = {
             id: currentUser.id,
             first: batchSize,
-            after: after
+            after: endCursor
         };
 
         let encodedJsonVars = encodeURIComponent(JSON.stringify(jsonVars));
@@ -713,11 +719,11 @@ $(function () {
                 }
 
                 $(loadingBarElement).css("display", "flex");
-                updateLoadingBarElement(totalFollowingCount, loadedFollowingCount, "Loading Following");
+                updateLoadingBarElement(limit ? limit : totalFollowingCount, loadedFollowingCount, "Loading Following");
 
                 let pageInfo = data.data.user.edge_follow.page_info;
 
-                if (!pageInfo.has_next_page || (limit && loadedFollowingCount < limit)) {
+                if (!pageInfo.has_next_page || (limit && loadedFollowingCount >= limit)) {
                     $(loadingBarElement).hide();
                     callback();
                 } else {
@@ -829,22 +835,37 @@ $(function () {
         let values = $(usersRangeSlider)[0].noUiSlider.get();
 
         let start = parseInt(values[0]);
-        let end = parseInt(values[1]);
-        console.log(start);
-        console.log(end);
+        let limit = parseInt(values[1]) - start;
 
-        // usersQueue.clear();
-        //
-        // for (let userFollowing of followingMap.values()) {
-        //     if (followersMap.has(userFollowing.id)) {
-        //         continue;
-        //     }
-        //
-        //     userFollowing.visible = true;
-        //     usersQueue.set(userFollowing.id, userFollowing);
-        // }
-        //
-        // drawUsers();
+        hideUsersRange();
+
+        if ($(usersRangeHeading).text() === USERS_TYPE.FOLLOWERS.HEADING) {
+            loadFollowers(drawFollowers, 0, "", limit);
+        } else {
+            loadFollowing(drawFollowing, 0, "", limit);
+        }
+    }
+
+    function drawFollowers() {
+        usersQueue.clear();
+
+        for (let follower of followersMap.values()) {
+            follower.visible = true;
+            usersQueue.set(follower.id, follower);
+        }
+
+        drawUsers();
+    }
+
+    function drawFollowing() {
+        usersQueue.clear();
+
+        for (let userFollowing of followingMap.values()) {
+            userFollowing.visible = true;
+            usersQueue.set(userFollowing.id, userFollowing);
+        }
+
+        drawUsers();
     }
 
     function onFollowingOptionsConfirmBtnClicked() {
