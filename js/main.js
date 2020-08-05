@@ -922,6 +922,7 @@ $(function () {
 
         if (processType === PROCESS_TYPE.FOLLOWING && settings.skipPrivateAccounts === 1 && user.is_private) {
             onUserProcessed(user, users, processType, true);
+            return;
         }
 
         $.ajax({
