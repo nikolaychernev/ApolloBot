@@ -286,6 +286,7 @@ $(function () {
         $(loadStoryViewersBtn).on("click", onLoadStoryViewersBtnClicked);
         $(storyListCancelBtn).on("click", hideStoryList);
         $(usersRangeCancelBtn).on("click", hideUsersRange);
+        $(followingOptionsConfirmBtn).on("click", onFollowingOptionsConfirmBtnClicked);
         $(followingOptionsCancelBtn).on("click", hideFollowingOptions);
         $(popupConfirmBtn).on("click", onPopupConfirmBtnClicked);
         $(popupCancelBtn).on("click", hidePopup);
@@ -811,6 +812,11 @@ $(function () {
         $(followingOptions).show();
     }
 
+    function onFollowingOptionsConfirmBtnClicked() {
+        hideFollowingOptions();
+        startProcessingQueue(PROCESS_TYPE.FOLLOWING);
+    }
+
     function onStartUnfollowingBtnClicked() {
         startProcessingQueue(PROCESS_TYPE.UNFOLLOWING);
     }
@@ -856,16 +862,7 @@ $(function () {
                 usersQueue.delete(user.id);
 
                 if (users.length === 0) {
-                    $(stopFollowingBtn).hide();
-                    $(stopUnfollowingBtn).hide();
-
-                    if (processType === PROCESS_TYPE.FOLLOWING) {
-                        $(startFollowingBtn).show();
-                    } else {
-                        $(startUnfollowingBtn).show();
-                    }
-
-                    enableElements();
+                    enableElements(processType);
                     return;
                 }
 
@@ -936,18 +933,14 @@ $(function () {
         clearTimeout(processUsersTimeoutObject);
         $(".countdown").hide();
 
-        enableElements();
-        $(stopFollowingBtn).hide();
-        $(startFollowingBtn).show();
+        enableElements(PROCESS_TYPE.FOLLOWING);
     }
 
     function onStopUnfollowingBtnClicked() {
         clearTimeout(processUsersTimeoutObject);
         $(".countdown").hide();
 
-        enableElements();
-        $(stopUnfollowingBtn).hide();
-        $(startUnfollowingBtn).show();
+        enableElements(PROCESS_TYPE.UNFOLLOWING);
     }
 
     function onStopLoadingBtnClicked() {
@@ -994,6 +987,7 @@ $(function () {
 
         if (processType === PROCESS_TYPE.FOLLOWING) {
             $(stopFollowingBtn).css("display", "inline-flex");
+            $(topDot).addClass(redDotClass);
         } else {
             $(stopUnfollowingBtn).css("display", "inline-flex");
         }
@@ -1006,7 +1000,17 @@ $(function () {
         $(".selection").addClass(disabledClass);
     }
 
-    function enableElements() {
+    function enableElements(processType) {
+        $(stopFollowingBtn).hide();
+        $(stopUnfollowingBtn).hide();
+
+        if (processType === PROCESS_TYPE.FOLLOWING) {
+            $(startFollowingBtn).show();
+            $(topDot).removeClass(redDotClass);
+        } else {
+            $(startUnfollowingBtn).show();
+        }
+
         if (currentUser) {
             $(loadUsersDropdown).removeClass(disabledClass);
         }
