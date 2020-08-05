@@ -348,18 +348,14 @@ $(function () {
     }
 
     function onSaveSettingsBtnClicked() {
-        settings = {
-            "loadFollowersQueryHash": $(loadFollowersQueryHashInput).val(),
-            "loadFollowingQueryHash": $(loadFollowingQueryHashInput).val(),
-            "loadStoryListQueryHash": $(loadStoryListQueryHashInput).val(),
-            "loadStoryViewersQueryHash": $(loadStoryViewersQueryHashInput).val(),
-            "followUnfollowTimeout": parseInt($(followUnfollowTimeout)[0].noUiSlider.get()),
-            "loadingUsersBatchSize": defaultSettings.loadingUsersBatchSize,
-            "loadingUsersTimeout": parseInt($(loadingUsersTimeout)[0].noUiSlider.get()),
-            "timeoutRandomization": parseInt($(timeoutRandomization)[0].noUiSlider.get()),
-            "likePhotosCount": parseInt($(likePhotosCount)[0].noUiSlider.get()),
-            "skipPrivateAccounts": parseInt($(skipPrivateAccounts)[0].noUiSlider.get())
-        };
+        settings.loadFollowersQueryHash = $(loadFollowersQueryHashInput).val();
+        settings.loadFollowingQueryHash = $(loadFollowingQueryHashInput).val();
+        settings.loadStoryListQueryHash = $(loadStoryListQueryHashInput).val();
+        settings.loadStoryViewersQueryHash = $(loadStoryViewersQueryHashInput).val();
+        settings.followUnfollowTimeout = parseInt($(followUnfollowTimeout)[0].noUiSlider.get());
+        settings.loadingUsersBatchSize = defaultSettings.loadingUsersBatchSize;
+        settings.loadingUsersTimeout = parseInt($(loadingUsersTimeout)[0].noUiSlider.get());
+        settings.timeoutRandomization = parseInt($(timeoutRandomization)[0].noUiSlider.get());
 
         chrome.storage.local.set({"settings": settings}, function () {
             hideSettingsPage();
@@ -888,9 +884,12 @@ $(function () {
     }
 
     function onFollowingOptionsConfirmBtnClicked() {
-        onSaveSettingsBtnClicked();
-        hideFollowingOptions();
+        settings.skipPrivateAccounts = parseInt($(skipPrivateAccounts)[0].noUiSlider.get());
+        settings.likePhotosCount = parseInt($(likePhotosCount)[0].noUiSlider.get());
 
+        chrome.storage.local.set({"settings": settings});
+
+        hideFollowingOptions();
         startProcessingQueue(PROCESS_TYPE.FOLLOWING);
     }
 
@@ -961,7 +960,7 @@ $(function () {
         $(nextElementCountdownElement).show();
 
         let secondsRemaining = randomizeTimeout(settings.followUnfollowTimeout, settings.timeoutRandomization);
-        processUsersTimeout(secondsRemaining, secondsRemaining, nextElementCountdownElement, users);
+        processUsersTimeout(secondsRemaining, secondsRemaining, nextElementCountdownElement, users, processType);
     }
 
     function randomizeTimeout(timeout, timeoutRandomization) {
