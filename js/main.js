@@ -249,7 +249,7 @@ $(function () {
             if (loadedSettings) {
                 settings = loadedSettings;
             } else {
-                settings = defaultSettings;
+                settings = Object.assign({}, defaultSettings);
             }
         });
 
@@ -353,7 +353,6 @@ $(function () {
         settings.loadStoryListQueryHash = $(loadStoryListQueryHashInput).val();
         settings.loadStoryViewersQueryHash = $(loadStoryViewersQueryHashInput).val();
         settings.followUnfollowTimeout = parseInt($(followUnfollowTimeout)[0].noUiSlider.get());
-        settings.loadingUsersBatchSize = defaultSettings.loadingUsersBatchSize;
         settings.loadingUsersTimeout = parseInt($(loadingUsersTimeout)[0].noUiSlider.get());
         settings.timeoutRandomization = parseInt($(timeoutRandomization)[0].noUiSlider.get());
 
@@ -363,7 +362,7 @@ $(function () {
     }
 
     function onResetSettingsBtnClicked() {
-        settings = defaultSettings;
+        settings = Object.assign({}, defaultSettings);
 
         chrome.storage.local.set({"settings": settings}, function () {
             populateSettings();
