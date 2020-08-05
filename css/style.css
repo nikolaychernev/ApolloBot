@@ -507,3 +507,7 @@ input, .button, .noUi-target {
 #settingsToggle {
     width: 4.5em
 }
+
+.marginTop {
+    margin-top: 4.5em;
+}
