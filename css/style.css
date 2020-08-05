@@ -195,7 +195,7 @@ img {
 
 .settingsPage, #usersRange, #followingOptions {
     background-color: #313c49;
-    width: 40%;
+    width: 35%;
     border-radius: 1.5em;
     padding: 2em;
 }
@@ -352,7 +352,7 @@ img {
 #popup {
     text-align: center;
     background-color: #313c49;
-    width: 40%;
+    width: 35%;
     border-radius: 1.5em;
     padding: 2em;
 }
@@ -504,7 +504,7 @@ input, .button, .noUi-target {
     font-size: 1.1em;
 }
 
-#settingsToggle {
+#settingsToggle, #skipPrivateAccounts {
     width: 4.5em
 }
 

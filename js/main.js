@@ -18,7 +18,8 @@ let defaultSettings = {
     "loadingUsersBatchSize": 48,
     "loadingUsersTimeout": 3,
     "timeoutRandomization": 50,
-    "likePhotosCount": 1
+    "likePhotosCount": 1,
+    "skipPrivateAccounts": 1
 };
 
 let extractUsernameRegex = /.*instagram\.com\/([^\/]+)/;
@@ -110,6 +111,7 @@ $(function () {
 
     //Following Options
     let followingOptions = $("#followingOptions");
+    let skipPrivateAccounts = $("#skipPrivateAccounts");
     let likePhotosCount = $("#likePhotosCount");
     let followingOptionsConfirmBtn = $("#followingOptionsConfirmBtn");
     let followingOptionsCancelBtn = $("#followingOptionsCancelBtn");
@@ -251,10 +253,10 @@ $(function () {
         });
 
         noUiSlider.create($(settingsToggle)[0], getSliderConfiguration(0, 0, 1, null));
-
         noUiSlider.create($(followUnfollowTimeout)[0], getSliderConfiguration(0, 0, 240, " Sec"));
         noUiSlider.create($(loadingUsersTimeout)[0], getSliderConfiguration(0, 0, 60, " Sec"));
         noUiSlider.create($(timeoutRandomization)[0], getSliderConfiguration(0, 0, 100, "%"));
+        noUiSlider.create($(skipPrivateAccounts)[0], getSliderConfiguration(0, 0, 1, null));
         noUiSlider.create($(likePhotosCount)[0], getSliderConfiguration(0, 0, 10, " Photos"));
     }
 
@@ -354,6 +356,8 @@ $(function () {
             "loadingUsersBatchSize": defaultSettings.loadingUsersBatchSize,
             "loadingUsersTimeout": parseInt($(loadingUsersTimeout)[0].noUiSlider.get()),
             "timeoutRandomization": parseInt($(timeoutRandomization)[0].noUiSlider.get()),
+            "likePhotosCount": parseInt($(likePhotosCount)[0].noUiSlider.get()),
+            "skipPrivateAccounts": parseInt($(skipPrivateAccounts)[0].noUiSlider.get())
         };
 
         chrome.storage.local.set({"settings": settings}, function () {
@@ -837,6 +841,7 @@ $(function () {
 
     function onStartFollowingBtnClicked() {
         $(likePhotosCount)[0].noUiSlider.set(settings.likePhotosCount);
+        $(skipPrivateAccounts)[0].noUiSlider.set(settings.skipPrivateAccounts);
 
         $(overlay).css("display", "flex");
         $(followingOptions).show();
@@ -880,7 +885,9 @@ $(function () {
     }
 
     function onFollowingOptionsConfirmBtnClicked() {
+        onSaveSettingsBtnClicked();
         hideFollowingOptions();
+
         startProcessingQueue(PROCESS_TYPE.FOLLOWING);
     }
 
