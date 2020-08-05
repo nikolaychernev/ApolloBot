@@ -101,7 +101,6 @@ $(function () {
     let loadingUsersBatchSize = $("#loadingUsersBatchSize");
     let loadingUsersTimeout = $("#loadingUsersTimeout");
     let timeoutRandomization = $("#timeoutRandomization");
-    let likePhotosCount = $("#likePhotosCount");
 
     //Users Range
     let usersRange = $("#usersRange");
@@ -109,6 +108,12 @@ $(function () {
     let usersRangeSlider = $("#usersRangeSlider");
     let usersRangeConfirmBtn = $("#usersRangeConfirmBtn");
     let usersRangeCancelBtn = $("#usersRangeCancelBtn");
+
+    //Following Options
+    let followingOptions = $("#followingOptions");
+    let likePhotosCount = $("#likePhotosCount");
+    let followingOptionsConfirmBtn = $("#followingOptionsConfirmBtn");
+    let followingOptionsCancelBtn = $("#followingOptionsCancelBtn");
 
     //Popup
     let popup = $("#popup");
@@ -281,6 +286,7 @@ $(function () {
         $(loadStoryViewersBtn).on("click", onLoadStoryViewersBtnClicked);
         $(storyListCancelBtn).on("click", hideStoryList);
         $(usersRangeCancelBtn).on("click", hideUsersRange);
+        $(followingOptionsCancelBtn).on("click", hideFollowingOptions);
         $(popupConfirmBtn).on("click", onPopupConfirmBtnClicked);
         $(popupCancelBtn).on("click", hidePopup);
         $(loadQueueBtn).on("click", onLoadQueueBtnClicked);
@@ -303,6 +309,7 @@ $(function () {
 
         hideSettingsPage();
         hideUsersRange();
+        hideFollowingOptions();
         hidePopup();
         hideStoryList();
     }
@@ -336,7 +343,6 @@ $(function () {
             "loadingUsersBatchSize": parseInt($(loadingUsersBatchSize)[0].noUiSlider.get()),
             "loadingUsersTimeout": parseInt($(loadingUsersTimeout)[0].noUiSlider.get()),
             "timeoutRandomization": parseInt($(timeoutRandomization)[0].noUiSlider.get()),
-            "likePhotosCount": parseInt($(likePhotosCount)[0].noUiSlider.get())
         };
 
         chrome.storage.local.set({"settings": settings}, function () {
@@ -361,7 +367,6 @@ $(function () {
         $(loadingUsersBatchSize)[0].noUiSlider.set(settings.loadingUsersBatchSize);
         $(loadingUsersTimeout)[0].noUiSlider.set(settings.loadingUsersTimeout);
         $(timeoutRandomization)[0].noUiSlider.set(settings.timeoutRandomization);
-        $(likePhotosCount)[0].noUiSlider.set(settings.likePhotosCount);
     }
 
     function hideSettingsPage() {
@@ -529,6 +534,11 @@ $(function () {
     function hideUsersRange() {
         $(overlay).hide();
         $(usersRange).hide();
+    }
+
+    function hideFollowingOptions() {
+        $(overlay).hide();
+        $(followingOptions).hide();
     }
 
     function onPopupConfirmBtnClicked() {
@@ -795,7 +805,10 @@ $(function () {
     }
 
     function onStartFollowingBtnClicked() {
-        startProcessingQueue(PROCESS_TYPE.FOLLOWING);
+        $(likePhotosCount)[0].noUiSlider.set(settings.likePhotosCount);
+
+        $(overlay).css("display", "flex");
+        $(followingOptions).show();
     }
 
     function onStartUnfollowingBtnClicked() {
