@@ -340,6 +340,7 @@ $(function () {
             "loadStoryListQueryHash": $(loadStoryListQueryHashInput).val(),
             "loadStoryViewersQueryHash": $(loadStoryViewersQueryHashInput).val(),
             "followUnfollowTimeout": parseInt($(followUnfollowTimeout)[0].noUiSlider.get()),
+            "loadingUsersBatchSize": defaultSettings.loadingUsersBatchSize,
             "loadingUsersTimeout": parseInt($(loadingUsersTimeout)[0].noUiSlider.get()),
             "timeoutRandomization": parseInt($(timeoutRandomization)[0].noUiSlider.get()),
         };
@@ -666,7 +667,7 @@ $(function () {
                 let pageInfo = data.data.user.edge_followed_by.page_info;
 
                 if (!pageInfo.has_next_page || limitReached) {
-                    if (!lastChecked) {
+                    if (!limitReached && !lastChecked) {
                         updateLastChecked();
                     }
 
@@ -758,6 +759,9 @@ $(function () {
     }
 
     function drawUsers() {
+        followersMap.clear();
+        followingMap.clear();
+
         $(simpleBarContent).empty();
         visibleUsersCount = 0;
 
