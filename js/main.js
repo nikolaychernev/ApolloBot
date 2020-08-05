@@ -834,8 +834,8 @@ $(function () {
     function onUsersRangeConfirmBtnClicked() {
         let values = $(usersRangeSlider)[0].noUiSlider.get();
 
-        let start = parseInt(values[0]);
-        let limit = parseInt(values[1]) - start;
+        let start = parseInt(values[0].replace(/\s+/g, ""));
+        let limit = parseInt(values[1].replace(/\s+/g, "")) - start;
 
         hideUsersRange();
 

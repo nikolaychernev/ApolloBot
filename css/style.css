@@ -295,6 +295,10 @@ img {
     color: white;
 }
 
+#loadingMessage {
+    margin-bottom: 0;
+}
+
 .stackedElement {
     position: absolute;
     top: 0;
