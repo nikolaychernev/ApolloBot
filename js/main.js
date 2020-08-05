@@ -442,7 +442,7 @@ $(function () {
     }
 
     function onLoadNotFollowingBackBtnClicked() {
-        loadFollowers(loadFollowing, 0, "");
+        loadFollowers(loadFollowing, 0, "", null);
     }
 
     function onLoadUnfollowedBtnClicked() {
@@ -545,7 +545,7 @@ $(function () {
 
     function onPopupConfirmBtnClicked() {
         hidePopup();
-        loadFollowers(loadUnfollowed, 0, "");
+        loadFollowers(loadUnfollowed, 0, "", null);
     }
 
     function hidePopup() {
@@ -626,10 +626,16 @@ $(function () {
         chrome.runtime.sendMessage({download: {url: url, filename: "queue.txt"}})
     }
 
-    function loadFollowers(callback, loadedFollowersCount, after) {
+    function loadFollowers(callback, loadedFollowersCount, after, limit) {
+        let batchSize = settings.loadingUsersBatchSize;
+
+        if (limit && loadedFollowersCount + batchSize > limit) {
+            batchSize = limit - loadedFollowersCount + batchSize;
+        }
+
         let jsonVars = {
             id: currentUser.id,
-            first: settings.loadingUsersBatchSize,
+            first: batchSize,
             after: after
         };
 
@@ -657,27 +663,33 @@ $(function () {
 
                 let pageInfo = data.data.user.edge_followed_by.page_info;
 
-                if (pageInfo.has_next_page) {
-                    let secondsRemaining = randomizeTimeout(settings.loadingUsersTimeout, settings.timeoutRandomization);
-
-                    loadUsersTimeout(secondsRemaining, function () {
-                        loadFollowers(callback, loadedFollowersCount, pageInfo.end_cursor);
-                    });
-                } else {
+                if (!pageInfo.has_next_page || (limit && loadedFollowersCount < limit)) {
                     if (!lastChecked) {
                         updateLastChecked();
                     }
 
                     $(loadingBarElement).hide();
-                    callback(loadNotFollowingBack, 0, "");
+                    callback(loadNotFollowingBack, 0, "", limit);
+                } else {
+                    let secondsRemaining = randomizeTimeout(settings.loadingUsersTimeout, settings.timeoutRandomization);
+
+                    loadUsersTimeout(secondsRemaining, function () {
+                        loadFollowers(callback, loadedFollowersCount, pageInfo.end_cursor, limit);
+                    });
                 }
             });
     }
 
-    function loadFollowing(callback, loadedFollowingCount, after) {
+    function loadFollowing(callback, loadedFollowingCount, after, limit) {
+        let batchSize = settings.loadingUsersBatchSize;
+
+        if (limit && loadedFollowingCount + batchSize > limit) {
+            batchSize = limit - loadedFollowingCount + batchSize;
+        }
+
         let jsonVars = {
             id: currentUser.id,
-            first: settings.loadingUsersBatchSize,
+            first: batchSize,
             after: after
         };
 
@@ -705,15 +717,15 @@ $(function () {
 
                 let pageInfo = data.data.user.edge_follow.page_info;
 
-                if (pageInfo.has_next_page) {
+                if (!pageInfo.has_next_page || (limit && loadedFollowingCount < limit)) {
+                    $(loadingBarElement).hide();
+                    callback();
+                } else {
                     let secondsRemaining = randomizeTimeout(settings.loadingUsersTimeout, settings.timeoutRandomization);
 
                     loadUsersTimeout(secondsRemaining, function () {
-                        loadFollowing(callback, loadedFollowingCount, pageInfo.end_cursor);
+                        loadFollowing(callback, loadedFollowingCount, pageInfo.end_cursor, limit);
                     });
-                } else {
-                    $(loadingBarElement).hide();
-                    callback();
                 }
             });
     }
@@ -811,6 +823,28 @@ $(function () {
 
         $(overlay).css("display", "flex");
         $(followingOptions).show();
+    }
+
+    function onUsersRangeConfirmBtnClicked() {
+        let values = $(usersRangeSlider)[0].noUiSlider.get();
+
+        let start = parseInt(values[0]);
+        let end = parseInt(values[1]);
+        console.log(start);
+        console.log(end);
+
+        // usersQueue.clear();
+        //
+        // for (let userFollowing of followingMap.values()) {
+        //     if (followersMap.has(userFollowing.id)) {
+        //         continue;
+        //     }
+        //
+        //     userFollowing.visible = true;
+        //     usersQueue.set(userFollowing.id, userFollowing);
+        // }
+        //
+        // drawUsers();
     }
 
     function onFollowingOptionsConfirmBtnClicked() {
