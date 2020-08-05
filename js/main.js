@@ -216,7 +216,7 @@ $(function () {
         $(currentUserProfilePicture).attr("src", "../images/blank.png");
         $(usernameField).text("Not On Profile Page");
 
-        currentUser = {};
+        currentUser = undefined;
         disableLoadUsersDropdown();
     }
 
@@ -959,7 +959,14 @@ $(function () {
         let nextElementCountdownElement = $("div#" + nextUser.id).find(".countdown");
         $(nextElementCountdownElement).show();
 
-        let secondsRemaining = randomizeTimeout(settings.followUnfollowTimeout, settings.timeoutRandomization);
+        let secondsRemaining;
+
+        if (skipped) {
+            secondsRemaining = 0;
+        } else {
+            secondsRemaining = randomizeTimeout(settings.followUnfollowTimeout, settings.timeoutRandomization);
+        }
+
         processUsersTimeout(secondsRemaining, secondsRemaining, nextElementCountdownElement, users, processType);
     }
 
