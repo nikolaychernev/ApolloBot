@@ -285,6 +285,7 @@ $(function () {
         $(loadUnfollowedBtn).on("click", onLoadUnfollowedBtnClicked);
         $(loadStoryViewersBtn).on("click", onLoadStoryViewersBtnClicked);
         $(storyListCancelBtn).on("click", hideStoryList);
+        $(usersRangeConfirmBtn).on("click", onUsersRangeConfirmBtnClicked);
         $(usersRangeCancelBtn).on("click", hideUsersRange);
         $(followingOptionsConfirmBtn).on("click", onFollowingOptionsConfirmBtnClicked);
         $(followingOptionsCancelBtn).on("click", hideFollowingOptions);
