@@ -4,53 +4,8 @@ let currentUser;
 let settings;
 let timeoutObject;
 let lastChecked;
+let simpleBarContent;
 let visibleUsersCount = 0;
-
-// Constants
-let defaultSettings = {
-    "loadFollowersQueryHash": "c76146de99bb02f6415203be841dd25a",
-    "loadFollowingQueryHash": "d04b0a864b4b54837c0d870b0e77e076",
-    "loadStoryListQueryHash": "90709b530ea0969f002c86a89b4f2b8d",
-    "loadStoryViewersQueryHash": "42c6ec100f5e57a1fe09be16cd3a7021",
-    "followUnfollowTimeout": 60,
-    "loadingUsersBatchSize": 48,
-    "loadingUsersTimeout": 3,
-    "likingPhotosTimeout": 5,
-    "timeoutRandomization": 50,
-    "likePhotosCount": 1,
-    "skipPrivateAccounts": 1
-};
-
-let extractUsernameRegex = /.*instagram\.com\/([^\/]+)/;
-
-let selectedClass = "selected";
-let followedClass = "followed";
-let unfollowedClass = "unfollowed";
-let skippedClass = "skipped";
-let disabledClass = "disabled";
-let storyElementClass = "storyElement";
-let greenDotClass = "greenDot";
-let redDotClass = "redDot";
-
-const PROCESS_TYPE = {
-    FOLLOWING: {
-        ENDPOINT: "/follow/",
-        PROCESSED_CLASS: followedClass
-    },
-    UNFOLLOWING: {
-        ENDPOINT: "/unfollow/",
-        PROCESSED_CLASS: unfollowedClass
-    },
-};
-
-const USERS_TYPE = {
-    FOLLOWERS: {
-        HEADING: "Select Followers Range To Load"
-    },
-    FOLLOWING: {
-        HEADING: "Select Following Range To Load"
-    },
-};
 
 // In-Memory Collections
 let followersMap = new Map();
@@ -61,91 +16,10 @@ chrome.runtime.sendMessage({csrfToken: true}, function (response) {
     csrfToken = response;
 });
 
-$(function () {
-    // Buttons
-    let settingsBtn = $("#settingsBtn");
-    let cancelSettingsBtn = $("#cancelSettingsBtn");
-    let saveSettingsBtn = $("#saveSettingsBtn");
-    let resetSettingsBtn = $("#resetSettingsBtn");
-    let selectAllBtn = $("#selectAllBtn");
-    let selectNoneBtn = $("#selectNoneBtn");
-    let revertSelectionBtn = $("#revertSelectionBtn");
-    let removeSelectedBtn = $("#removeSelectedBtn");
-    let loadUsersDropdown = $("#loadUsersDropdown");
-    let queueActionsDropdown = $("#queueActionsDropdown");
-    let selectionDropdown = $("#selectionDropdown");
-    let loadFollowersBtn = $("#loadFollowersBtn");
-    let loadFollowingBtn = $("#loadFollowingBtn");
-    let loadNotFollowingBackBtn = $("#loadNotFollowingBackBtn");
-    let loadUnfollowedBtn = $("#loadUnfollowedBtn");
-    let loadStoryViewersBtn = $("#loadStoryViewersBtn");
-    let loadQueueBtn = $("#loadQueueBtn");
-    let saveQueueBtn = $("#saveQueueBtn");
-    let startFollowingBtn = $("#startFollowingBtn");
-    let startUnfollowingBtn = $("#startUnfollowingBtn");
-    let stopFollowingBtn = $("#stopFollowingBtn");
-    let stopUnfollowingBtn = $("#stopUnfollowingBtn");
-    let stopLoadingBtn = $("#stopLoadingBtn");
+$($.when(
+    $.getScript(chrome.runtime.getURL("js/buttons.js")),
 
-    // Settings Page
-    let overlay = $(".overlay");
-    let settingsPage = $(".settingsPage");
-    let settingsHeading = $("#settingsHeading");
-    let settingsToggle = $("#settingsToggle");
-    let basicSettings = $("#basicSettings");
-    let advancedSettings = $("#advancedSettings");
-    let loadFollowersQueryHashInput = $("#loadFollowersQueryHash");
-    let loadFollowingQueryHashInput = $("#loadFollowingQueryHash");
-    let loadStoryListQueryHashInput = $("#loadStoryListQueryHash");
-    let loadStoryViewersQueryHashInput = $("#loadStoryViewersQueryHash");
-    let followUnfollowTimeout = $("#followUnfollowTimeout");
-    let loadingUsersTimeout = $("#loadingUsersTimeout");
-    let likingPhotosTimeout = $("#likingPhotosTimeout");
-    let timeoutRandomization = $("#timeoutRandomization");
-
-    //Users Range
-    let usersRange = $("#usersRange");
-    let usersRangeHeading = $("#usersRangeHeading");
-    let usersRangeSlider = $("#usersRangeSlider");
-    let usersRangeConfirmBtn = $("#usersRangeConfirmBtn");
-    let usersRangeCancelBtn = $("#usersRangeCancelBtn");
-
-    //Following Options
-    let followingOptions = $("#followingOptions");
-    let skipPrivateAccounts = $("#skipPrivateAccounts");
-    let likePhotosCount = $("#likePhotosCount");
-    let followingOptionsConfirmBtn = $("#followingOptionsConfirmBtn");
-    let followingOptionsCancelBtn = $("#followingOptionsCancelBtn");
-
-    //Popup
-    let popup = $("#popup");
-    let popupMessage = $("#popupMessage");
-    let popupConfirmBtn = $("#popupConfirmBtn");
-    let popupCancelBtn = $("#popupCancelBtn");
-
-    //Story List
-    let storyList = $("#storyList");
-    let storyListHeading = $("#storyListHeading");
-    let storyListContent = $("#storyListContent");
-    let storyListCancelBtn = $("#storyListCancelBtn");
-
-    // Other Elements
-    let currentUserProfilePicture = $("#currentUserProfilePicture");
-    let usernameField = $("#username");
-    let scrollableArea = $(".scrollable-area");
-    let userElement = $("div.userElement");
-    let loadQueueFileInput = $("#loadQueueFileSelector");
-    let queueTotalUsersCount = $("#queueTotalUsersCount");
-    let queueSelectedUsersCount = $("#queueSelectedUsersCount");
-    let loadingBarElement = $("#loadingBar");
-    let loadingMessageField = $("#loadingMessage");
-    let searchBarInput = $("#searchBarInput");
-    let emptyQueueMessage = $("#emptyQueueMessage");
-    let dots = $("#dots");
-    let topDot = $("#topDot");
-    let bottomDot = $("#bottomDot");
-    let simpleBarContent;
-
+).done(function () {
     initializeCustomScrollBar();
     initializeSettings();
     initializeEventListeners();
@@ -172,7 +46,7 @@ $(function () {
 
     function extractUserInfo() {
         chrome.runtime.sendMessage({currentUrl: true}, function (response) {
-            let matches = extractUsernameRegex.exec(response);
+            let matches = EXTRACT_USERNAME_REGEX.exec(response);
 
             if (!matches) {
                 notOnProfilePage();
@@ -227,11 +101,11 @@ $(function () {
     }
 
     function enableLoadUsersDropdown() {
-        $(loadUsersDropdown).removeClass(disabledClass);
+        $(loadUsersDropdown).removeClass(DISABLED_CLASS);
     }
 
     function disableLoadUsersDropdown() {
-        $(loadUsersDropdown).addClass(disabledClass);
+        $(loadUsersDropdown).addClass(DISABLED_CLASS);
     }
 
     function initializeCustomScrollBar() {
@@ -249,7 +123,7 @@ $(function () {
             if (loadedSettings) {
                 settings = loadedSettings;
             } else {
-                settings = Object.assign({}, defaultSettings);
+                settings = Object.assign({}, DEFAULT_SETTINGS);
             }
         });
 
@@ -364,7 +238,7 @@ $(function () {
     }
 
     function onResetSettingsBtnClicked() {
-        settings = Object.assign({}, defaultSettings);
+        settings = Object.assign({}, DEFAULT_SETTINGS);
 
         chrome.storage.local.set({"settings": settings}, function () {
             populateSettings();
@@ -388,17 +262,17 @@ $(function () {
     }
 
     function onSelectAllBtnClicked() {
-        $(".scrollable-area .selection").addClass(selectedClass);
+        $(".scrollable-area .selection").addClass(SELECTED_CLASS);
         updateQueueSelectedUsersCounter();
     }
 
     function onSelectNoneBtnClicked() {
-        $(".scrollable-area .selection").removeClass(selectedClass);
+        $(".scrollable-area .selection").removeClass(SELECTED_CLASS);
         updateQueueSelectedUsersCounter();
     }
 
     function onRevertSelectionBtnClicked() {
-        $(".scrollable-area .selection").toggleClass(selectedClass);
+        $(".scrollable-area .selection").toggleClass(SELECTED_CLASS);
         updateQueueSelectedUsersCounter();
     }
 
@@ -452,7 +326,7 @@ $(function () {
         $(endHandleOrigin).attr("disabled", "true");
 
         let endHandle = $(endHandleOrigin).find('.noUi-handle');
-        $(endHandle).addClass(disabledClass);
+        $(endHandle).addClass(DISABLED_CLASS);
 
         $(overlay).css("display", "flex");
         $(usersRange).show();
@@ -515,7 +389,7 @@ $(function () {
             let storyElement = $("<img>");
             $(storyElement).attr("id", story.id);
             $(storyElement).attr("src", story.display_url);
-            $(storyElement).addClass(storyElementClass);
+            $(storyElement).addClass(STORY_ELEMENT_CLASS);
 
             $(storyElement).on("click", onStoryElementClicked);
             $(simpleBarContent).append($(storyElement));
@@ -831,10 +705,10 @@ $(function () {
     function onProfilePictureClicked(event) {
         let target = $(event.target);
 
-        if ($(target).hasClass(selectedClass)) {
-            $(target).removeClass(selectedClass);
+        if ($(target).hasClass(SELECTED_CLASS)) {
+            $(target).removeClass(SELECTED_CLASS);
         } else {
-            $(target).addClass(selectedClass);
+            $(target).addClass(SELECTED_CLASS);
         }
 
         updateQueueSelectedUsersCounter();
@@ -951,7 +825,7 @@ $(function () {
         $(profilePictureContainer).find(".countdown").hide();
 
         if (skipped) {
-            $(profilePictureContainer).find(".selection").addClass(skippedClass);
+            $(profilePictureContainer).find(".selection").addClass(SKIPPED_CLASS);
         } else {
             $(profilePictureContainer).find(".selection").addClass(processType.PROCESSED_CLASS);
         }
@@ -1125,16 +999,16 @@ $(function () {
     }
 
     function onTopDotClicked() {
-        $(bottomDot).removeClass(redDotClass);
-        $(topDot).addClass(greenDotClass);
+        $(bottomDot).removeClass(RED_DOT_CLASS);
+        $(topDot).addClass(GREEN_DOT_CLASS);
 
         $(startUnfollowingBtn).hide();
         $(startFollowingBtn).css("display", "inline-flex");
     }
 
     function onBottomDotClicked() {
-        $(topDot).removeClass(greenDotClass);
-        $(bottomDot).addClass(redDotClass);
+        $(topDot).removeClass(GREEN_DOT_CLASS);
+        $(bottomDot).addClass(RED_DOT_CLASS);
 
         $(startFollowingBtn).hide();
         $(startUnfollowingBtn).css("display", "inline-flex");
@@ -1146,17 +1020,17 @@ $(function () {
 
         if (processType === PROCESS_TYPE.FOLLOWING) {
             $(stopFollowingBtn).css("display", "inline-flex");
-            $(topDot).addClass(redDotClass);
+            $(topDot).addClass(RED_DOT_CLASS);
         } else {
             $(stopUnfollowingBtn).css("display", "inline-flex");
         }
 
-        $(searchBarInput).addClass(disabledClass);
-        $(loadUsersDropdown).addClass(disabledClass);
-        $(queueActionsDropdown).addClass(disabledClass);
-        $(selectionDropdown).addClass(disabledClass);
-        $(dots).addClass(disabledClass);
-        $(".selection").addClass(disabledClass);
+        $(searchBarInput).addClass(DISABLED_CLASS);
+        $(loadUsersDropdown).addClass(DISABLED_CLASS);
+        $(queueActionsDropdown).addClass(DISABLED_CLASS);
+        $(selectionDropdown).addClass(DISABLED_CLASS);
+        $(dots).addClass(DISABLED_CLASS);
+        $(".selection").addClass(DISABLED_CLASS);
     }
 
     function enableElements(processType) {
@@ -1165,20 +1039,20 @@ $(function () {
 
         if (processType === PROCESS_TYPE.FOLLOWING) {
             $(startFollowingBtn).show();
-            $(topDot).removeClass(redDotClass);
+            $(topDot).removeClass(RED_DOT_CLASS);
         } else {
             $(startUnfollowingBtn).show();
         }
 
         if (currentUser) {
-            $(loadUsersDropdown).removeClass(disabledClass);
+            $(loadUsersDropdown).removeClass(DISABLED_CLASS);
         }
 
-        $(searchBarInput).removeClass(disabledClass);
-        $(queueActionsDropdown).removeClass(disabledClass);
-        $(selectionDropdown).removeClass(disabledClass);
-        $(dots).removeClass(disabledClass);
-        $(".selection").removeClass(disabledClass);
+        $(searchBarInput).removeClass(DISABLED_CLASS);
+        $(queueActionsDropdown).removeClass(DISABLED_CLASS);
+        $(selectionDropdown).removeClass(DISABLED_CLASS);
+        $(dots).removeClass(DISABLED_CLASS);
+        $(".selection").removeClass(DISABLED_CLASS);
     }
 
     function mergeTooltips(slider, threshold, separator) {
@@ -1249,4 +1123,4 @@ $(function () {
             });
         });
     }
-});
+}));
