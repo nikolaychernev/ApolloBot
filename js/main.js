@@ -939,7 +939,8 @@ $(function () {
         })
             .done(function () {
                 if (processType === PROCESS_TYPE.FOLLOWING && settings.likePhotosCount > 0) {
-                    getLatestPhotosIds(likePhotos, user, users, settings.likePhotosCount);
+                    let countdownElement = $("div#" + user.id).find(".countdown").show();
+                    getLatestPhotosIds(likePhotos, user, users, countdownElement, settings.likePhotosCount);
                 } else {
                     onUserProcessed(user, users, processType, false);
                 }
@@ -965,8 +966,7 @@ $(function () {
         }
 
         let nextUser = users[0];
-        let nextElementCountdownElement = $("div#" + nextUser.id).find(".countdown");
-        $(nextElementCountdownElement).show();
+        let nextElementCountdownElement = $("div#" + nextUser.id).find(".countdown").show();
 
         let secondsRemaining;
 
@@ -979,7 +979,7 @@ $(function () {
         processUsersTimeout(secondsRemaining, secondsRemaining, nextElementCountdownElement, users, processType);
     }
 
-    function getLatestPhotosIds(callback, user, users, count) {
+    function getLatestPhotosIds(callback, user, users, countdownElement, count) {
         let photosIds = [];
 
         $.ajax("https://www.instagram.com/" + user.username + "/?__a=1").done(function (data) {
@@ -995,13 +995,41 @@ $(function () {
                 loadedCount++;
             }
 
-            callback(onUserProcessed, user, users, photosIds);
+            callback(onUserProcessed, user, users, countdownElement, photosIds, photosIds.length);
         });
     }
 
-    function likePhotos(callback, user, users, photosIds) {
-        console.log(photosIds);
-        callback(user, users, PROCESS_TYPE.FOLLOWING, false);
+    function likePhotos(callback, user, users, countdownElement, photosIds, totalPhotosCount) {
+        if (photosIds.length === 0) {
+            callback(user, users, PROCESS_TYPE.FOLLOWING, false);
+        }
+
+        let photoId = photosIds.shift();
+
+        $.ajax({
+            url: "https://www.instagram.com/web/likes/" + photoId + "/like/",
+            method: "POST",
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader('x-csrftoken', csrfToken);
+            }
+        })
+            .done(function () {
+                let text = (totalPhotosCount - photosIds.length) + "/" + totalPhotosCount;
+                updateCountdownElement(totalPhotosCount, photosIds.length, text, countdownElement);
+
+                let secondsRemaining = randomizeTimeout(settings.likingPhotosTimeout, settings.timeoutRandomization);
+                likePhotosTimeout(secondsRemaining, secondsRemaining, callback, user, users, countdownElement, photosIds, totalPhotosCount);
+            });
+    }
+
+    function likePhotosTimeout(totalSeconds, secondsRemaining, callback, user, users, countdownElement, photosIds, totalPhotosCount) {
+        if (secondsRemaining > 0) {
+            processUsersTimeoutObject = setTimeout(function () {
+                likePhotosTimeout(totalSeconds, secondsRemaining - 1, callback, user, users, countdownElement, photosIds, totalPhotosCount);
+            }, 1000);
+        } else {
+            likePhotos(callback, user, users, countdownElement, photosIds, totalPhotosCount);
+        }
     }
 
     function randomizeTimeout(timeout, timeoutRandomization) {
@@ -1017,7 +1045,7 @@ $(function () {
 
     function processUsersTimeout(totalSeconds, secondsRemaining, countdownElement, users, processType) {
         if (secondsRemaining > 0) {
-            updateCountdownElement(totalSeconds, secondsRemaining, countdownElement);
+            updateCountdownElement(totalSeconds, secondsRemaining, secondsRemaining, countdownElement);
 
             processUsersTimeoutObject = setTimeout(function () {
                 processUsersTimeout(totalSeconds, secondsRemaining - 1, countdownElement, users, processType);
@@ -1043,9 +1071,9 @@ $(function () {
         $(loadingBarElement).find("strong").text(loaded + "/" + total);
     }
 
-    function updateCountdownElement(totalSeconds, secondsRemaining, countdownElement) {
+    function updateCountdownElement(total, remaining, text, countdownElement) {
         $(countdownElement).circleProgress({
-            value: (totalSeconds - secondsRemaining) / totalSeconds,
+            value: (total - remaining) / total,
             startAngle: -Math.PI / 2,
             reverse: true,
             thickness: "4px",
@@ -1055,7 +1083,7 @@ $(function () {
             animation: false
         });
 
-        $(countdownElement).find("strong").text(secondsRemaining);
+        $(countdownElement).find("strong").text(text);
     }
 
     function onStopFollowingBtnClicked() {
