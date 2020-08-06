@@ -1,5 +1,5 @@
 $($.when(
-    $.getScript(chrome.runtime.getURL("js/buttons.js")),
+    $.getScript(chrome.runtime.getURL("js/elements.js")),
 ).done(function () {
     initializeCsrfToken();
     initializeCustomScrollBar();
@@ -858,6 +858,9 @@ $($.when(
             if (photosIds.length === 0) {
                 onUserProcessed(user, users, PROCESS_TYPE.FOLLOWING, false);
             } else {
+                let text = "0/" + photosIds.length;
+                updateCountdownElement(photosIds.length, photosIds.length, text, countdownElement);
+
                 likePhotos(user, users, countdownElement, photosIds, photosIds.length);
             }
         });
