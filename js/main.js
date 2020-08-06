@@ -2,10 +2,8 @@
 let csrfToken;
 let currentUser;
 let settings;
-let loadUsersTimeoutObject;
-let processUsersTimeoutObject;
+let timeoutObject;
 let lastChecked;
-let searchBarTimeout;
 let visibleUsersCount = 0;
 
 // Constants
@@ -753,7 +751,7 @@ $(function () {
 
     function loadUsersTimeout(secondsRemaining, callback) {
         if (secondsRemaining > 0) {
-            loadUsersTimeoutObject = setTimeout(function () {
+            timeoutObject = setTimeout(function () {
                 loadUsersTimeout(secondsRemaining - 1, callback);
             }, 1000);
         } else {
@@ -940,7 +938,7 @@ $(function () {
             .done(function () {
                 if (processType === PROCESS_TYPE.FOLLOWING && settings.likePhotosCount > 0) {
                     let countdownElement = $("div#" + user.id).find(".countdown").show();
-                    getLatestPhotosIds(likePhotos, user, users, countdownElement, settings.likePhotosCount);
+                    getLatestPhotosIds(user, users, countdownElement, settings.likePhotosCount);
                 } else {
                     onUserProcessed(user, users, processType, false);
                 }
@@ -979,7 +977,7 @@ $(function () {
         processUsersTimeout(secondsRemaining, secondsRemaining, nextElementCountdownElement, users, processType);
     }
 
-    function getLatestPhotosIds(callback, user, users, countdownElement, count) {
+    function getLatestPhotosIds(user, users, countdownElement, count) {
         let photosIds = [];
 
         $.ajax("https://www.instagram.com/" + user.username + "/?__a=1").done(function (data) {
@@ -995,15 +993,15 @@ $(function () {
                 loadedCount++;
             }
 
-            callback(onUserProcessed, user, users, countdownElement, photosIds, photosIds.length);
+            if (photosIds.length === 0) {
+                onUserProcessed(user, users, PROCESS_TYPE.FOLLOWING, false);
+            } else {
+                likePhotos(onUserProcessed, user, users, countdownElement, photosIds, photosIds.length);
+            }
         });
     }
 
-    function likePhotos(callback, user, users, countdownElement, photosIds, totalPhotosCount) {
-        if (photosIds.length === 0) {
-            callback(user, users, PROCESS_TYPE.FOLLOWING, false);
-        }
-
+    function likePhotos(user, users, countdownElement, photosIds, totalPhotosCount) {
         let photoId = photosIds.shift();
 
         $.ajax({
@@ -1014,21 +1012,25 @@ $(function () {
             }
         })
             .done(function () {
+                if (photosIds.length === 0) {
+                    onUserProcessed(user, users, PROCESS_TYPE.FOLLOWING, false);
+                }
+
                 let text = (totalPhotosCount - photosIds.length) + "/" + totalPhotosCount;
                 updateCountdownElement(totalPhotosCount, photosIds.length, text, countdownElement);
 
                 let secondsRemaining = randomizeTimeout(settings.likingPhotosTimeout, settings.timeoutRandomization);
-                likePhotosTimeout(secondsRemaining, secondsRemaining, callback, user, users, countdownElement, photosIds, totalPhotosCount);
+                likePhotosTimeout(secondsRemaining, secondsRemaining, user, users, countdownElement, photosIds, totalPhotosCount);
             });
     }
 
-    function likePhotosTimeout(totalSeconds, secondsRemaining, callback, user, users, countdownElement, photosIds, totalPhotosCount) {
+    function likePhotosTimeout(totalSeconds, secondsRemaining, user, users, countdownElement, photosIds, totalPhotosCount) {
         if (secondsRemaining > 0) {
-            processUsersTimeoutObject = setTimeout(function () {
-                likePhotosTimeout(totalSeconds, secondsRemaining - 1, callback, user, users, countdownElement, photosIds, totalPhotosCount);
+            timeoutObject = setTimeout(function () {
+                likePhotosTimeout(totalSeconds, secondsRemaining - 1, user, users, countdownElement, photosIds, totalPhotosCount);
             }, 1000);
         } else {
-            likePhotos(callback, user, users, countdownElement, photosIds, totalPhotosCount);
+            likePhotos(user, users, countdownElement, photosIds, totalPhotosCount);
         }
     }
 
@@ -1047,7 +1049,7 @@ $(function () {
         if (secondsRemaining > 0) {
             updateCountdownElement(totalSeconds, secondsRemaining, secondsRemaining, countdownElement);
 
-            processUsersTimeoutObject = setTimeout(function () {
+            timeoutObject = setTimeout(function () {
                 processUsersTimeout(totalSeconds, secondsRemaining - 1, countdownElement, users, processType);
             }, 1000);
         } else {
@@ -1087,28 +1089,28 @@ $(function () {
     }
 
     function onStopFollowingBtnClicked() {
-        clearTimeout(processUsersTimeoutObject);
+        clearTimeout(timeoutObject);
         $(".countdown").hide();
 
         enableElements(PROCESS_TYPE.FOLLOWING);
     }
 
     function onStopUnfollowingBtnClicked() {
-        clearTimeout(processUsersTimeoutObject);
+        clearTimeout(timeoutObject);
         $(".countdown").hide();
 
         enableElements(PROCESS_TYPE.UNFOLLOWING);
     }
 
     function onStopLoadingBtnClicked() {
-        clearTimeout(loadUsersTimeoutObject);
+        clearTimeout(timeoutObject);
         $(loadingBarElement).hide();
     }
 
     function onSearchBarInputKeyUp(event) {
-        clearTimeout(searchBarTimeout);
+        clearTimeout(timeoutObject);
 
-        searchBarTimeout = setTimeout(function () {
+        timeoutObject = setTimeout(function () {
             searchUsers($(event.currentTarget).val())
         }, 500);
     }
