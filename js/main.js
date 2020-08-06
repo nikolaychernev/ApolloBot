@@ -17,6 +17,7 @@ let defaultSettings = {
     "followUnfollowTimeout": 60,
     "loadingUsersBatchSize": 48,
     "loadingUsersTimeout": 3,
+    "likingPhotosTimeout": 5,
     "timeoutRandomization": 50,
     "likePhotosCount": 1,
     "skipPrivateAccounts": 1
@@ -101,6 +102,7 @@ $(function () {
     let loadStoryViewersQueryHashInput = $("#loadStoryViewersQueryHash");
     let followUnfollowTimeout = $("#followUnfollowTimeout");
     let loadingUsersTimeout = $("#loadingUsersTimeout");
+    let likingPhotosTimeout = $("#likingPhotosTimeout");
     let timeoutRandomization = $("#timeoutRandomization");
 
     //Users Range
@@ -255,10 +257,11 @@ $(function () {
 
         noUiSlider.create($(settingsToggle)[0], getSliderConfiguration(0, 0, 1, null));
         noUiSlider.create($(followUnfollowTimeout)[0], getSliderConfiguration(0, 0, 240, " Sec"));
-        noUiSlider.create($(loadingUsersTimeout)[0], getSliderConfiguration(0, 0, 60, " Sec"));
+        noUiSlider.create($(loadingUsersTimeout)[0], getSliderConfiguration(0, 0, 30, " Sec"));
+        noUiSlider.create($(likingPhotosTimeout)[0], getSliderConfiguration(0, 0, 30, " Sec"));
         noUiSlider.create($(timeoutRandomization)[0], getSliderConfiguration(0, 0, 100, "%"));
         noUiSlider.create($(skipPrivateAccounts)[0], getSliderConfiguration(0, 0, 1, null));
-        noUiSlider.create($(likePhotosCount)[0], getSliderConfiguration(0, 0, 10, " Photos"));
+        noUiSlider.create($(likePhotosCount)[0], getSliderConfiguration(0, 0, 5, " Photos"));
     }
 
     function getSliderConfiguration(start, min, max, suffix) {
@@ -354,6 +357,7 @@ $(function () {
         settings.loadStoryViewersQueryHash = $(loadStoryViewersQueryHashInput).val();
         settings.followUnfollowTimeout = parseInt($(followUnfollowTimeout)[0].noUiSlider.get());
         settings.loadingUsersTimeout = parseInt($(loadingUsersTimeout)[0].noUiSlider.get());
+        settings.likingPhotosTimeout = parseInt($(likingPhotosTimeout)[0].noUiSlider.get());
         settings.timeoutRandomization = parseInt($(timeoutRandomization)[0].noUiSlider.get());
 
         chrome.storage.local.set({"settings": settings}, function () {
@@ -376,6 +380,7 @@ $(function () {
         $(loadStoryViewersQueryHashInput).val(settings.loadStoryViewersQueryHash);
         $(followUnfollowTimeout)[0].noUiSlider.set(settings.followUnfollowTimeout);
         $(loadingUsersTimeout)[0].noUiSlider.set(settings.loadingUsersTimeout);
+        $(likingPhotosTimeout)[0].noUiSlider.set(settings.likingPhotosTimeout);
         $(timeoutRandomization)[0].noUiSlider.set(settings.timeoutRandomization);
     }
 
@@ -933,7 +938,11 @@ $(function () {
             }
         })
             .done(function () {
-                onUserProcessed(user, users, processType, false);
+                if (processType === PROCESS_TYPE.FOLLOWING && settings.likePhotosCount > 0) {
+                    getLatestPhotosIds(likePhotos, user, users, settings.likePhotosCount);
+                } else {
+                    onUserProcessed(user, users, processType, false);
+                }
             });
     }
 
@@ -968,6 +977,31 @@ $(function () {
         }
 
         processUsersTimeout(secondsRemaining, secondsRemaining, nextElementCountdownElement, users, processType);
+    }
+
+    function getLatestPhotosIds(callback, user, users, count) {
+        let photosIds = [];
+
+        $.ajax("https://www.instagram.com/" + user.username + "/?__a=1").done(function (data) {
+            let photos = data.graphql.user.edge_owner_to_timeline_media.edges;
+            let loadedCount = 0;
+
+            for (let photo of photos) {
+                if (loadedCount >= count) {
+                    break;
+                }
+
+                photosIds.push(photo.node.id);
+                loadedCount++;
+            }
+
+            callback(onUserProcessed, user, users, photosIds);
+        });
+    }
+
+    function likePhotos(callback, user, users, photosIds) {
+        console.log(photosIds);
+        callback(user, users, PROCESS_TYPE.FOLLOWING, false);
     }
 
     function randomizeTimeout(timeout, timeoutRandomization) {
