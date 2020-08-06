@@ -21,4 +21,3 @@ Enjoy!
 ![Screenshot](misc/screenshots/3.png)
 ![Screenshot](misc/screenshots/4.png)
 ![Screenshot](misc/screenshots/5.png)
-![Screenshot](misc/screenshots/6.png)
