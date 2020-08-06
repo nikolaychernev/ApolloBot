@@ -996,7 +996,7 @@ $(function () {
             if (photosIds.length === 0) {
                 onUserProcessed(user, users, PROCESS_TYPE.FOLLOWING, false);
             } else {
-                likePhotos(onUserProcessed, user, users, countdownElement, photosIds, photosIds.length);
+                likePhotos(user, users, countdownElement, photosIds, photosIds.length);
             }
         });
     }
