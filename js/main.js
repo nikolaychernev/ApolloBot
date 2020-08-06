@@ -876,6 +876,7 @@ $($.when(
             .done(function () {
                 if (photosIds.length === 0) {
                     onUserProcessed(user, users, PROCESS_TYPE.FOLLOWING, false);
+                    return;
                 }
 
                 let text = (totalPhotosCount - photosIds.length) + "/" + totalPhotosCount;
