@@ -120,7 +120,6 @@ $($.when(
         $(bottomDot).on("click", onBottomDotClicked);
     }
 
-
     function extractUserInfo() {
         chrome.runtime.sendMessage({currentUrl: true}, function (response) {
             let matches = EXTRACT_USERNAME_REGEX.exec(response);
