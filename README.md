@@ -2,6 +2,7 @@
 ![Logo](misc/promotional/promotional.png)
 
 The main features of ApolloBot are the following:
+
 1. Loading the followers and following of the current page. The range of users loaded can be specified.
 2. Load the people not following back.
 3. Load the people who have unfollowed since the last check.
@@ -11,7 +12,8 @@ The main features of ApolloBot are the following:
 7. Saving and loading queues in order to be processed later.
 8. Basic and advanced settings allowing you to configure the timeouts, timeout randomization and even the queue hashes in case Instagram changes their APIs.
 
-There are 2 main modes for processing the users queue toggled by clicking on the dots on the left of the button:
+There are 2 modes for processing the users queue toggled by clicking on the dots on the left of the main button:
+
 1. Start Following - by selecting this mode a pop-up will appear with options to skip private accounts and select if you want to like any of the latest photos automatically.
 2. Start Unfollowing - every user in the queue will be unfollowed.
 
