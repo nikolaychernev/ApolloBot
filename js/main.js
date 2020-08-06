@@ -829,7 +829,7 @@ $($.when(
 
         let secondsRemaining;
 
-        if (processType === PROCESS_TYPE.FOLLOWING && settings.skipPrivateAccounts === 1 && user.is_private) {
+        if (processType === PROCESS_TYPE.FOLLOWING && settings.skipPrivateAccounts === 1 && nextUser.is_private) {
             secondsRemaining = 0;
         } else {
             secondsRemaining = randomizeTimeout(settings.followUnfollowTimeout, settings.timeoutRandomization);
