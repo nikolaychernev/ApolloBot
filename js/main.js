@@ -1,28 +1,29 @@
-// Global Variables
-let csrfToken;
-let currentUser;
-let settings;
-let timeoutObject;
-let lastChecked;
-let simpleBarContent;
-let visibleUsersCount = 0;
-
-// In-Memory Collections
-let followersMap = new Map();
-let followingMap = new Map();
-let usersQueue = new Map();
-
-chrome.runtime.sendMessage({csrfToken: true}, function (response) {
-    csrfToken = response;
-});
-
 $($.when(
     $.getScript(chrome.runtime.getURL("js/buttons.js")),
-
 ).done(function () {
+    initializeCsrfToken();
     initializeCustomScrollBar();
     initializeSettings();
     initializeEventListeners();
+
+    function initializeCsrfToken() {
+        chrome.runtime.sendMessage({csrfToken: true}, function (response) {
+            csrfToken = response;
+        });
+    }
+
+    function initializeCustomScrollBar() {
+        simpleBarContent = new SimpleBar($(scrollableArea)[0]).getContentElement();
+        appendEmptyQueueMessage();
+
+        let storyListContentScrollElement = new SimpleBar($(storyListContent)[0]).getScrollElement();
+        storyListContentScrollElement.onwheel = onStoryListContentScroll;
+    }
+
+    function appendEmptyQueueMessage() {
+        let emptyQueueMessageClone = $(emptyQueueMessage).clone().show();
+        $(simpleBarContent).append($(emptyQueueMessageClone));
+    }
 
     function onStoryListContentScroll(event) {
         let elementToScroll = event.currentTarget;
@@ -37,12 +38,88 @@ $($.when(
         event.preventDefault();
     }
 
-    chrome.runtime.onMessage.addListener(
-        function (request) {
-            if (request.extractUserInfo) {
-                extractUserInfo();
+    function initializeSettings() {
+        chrome.storage.local.get("settings", function (item) {
+            let loadedSettings = item["settings"];
+
+            if (loadedSettings) {
+                settings = loadedSettings;
+            } else {
+                settings = Object.assign({}, DEFAULT_SETTINGS);
             }
         });
+
+        noUiSlider.create($(settingsToggle)[0], getSliderConfiguration(0, 0, 1, null));
+        noUiSlider.create($(followUnfollowTimeout)[0], getSliderConfiguration(0, 0, 240, " Sec"));
+        noUiSlider.create($(loadingUsersTimeout)[0], getSliderConfiguration(0, 0, 30, " Sec"));
+        noUiSlider.create($(likingPhotosTimeout)[0], getSliderConfiguration(0, 0, 30, " Sec"));
+        noUiSlider.create($(timeoutRandomization)[0], getSliderConfiguration(0, 0, 100, "%"));
+        noUiSlider.create($(skipPrivateAccounts)[0], getSliderConfiguration(0, 0, 1, null));
+        noUiSlider.create($(likePhotosCount)[0], getSliderConfiguration(0, 0, 5, " Photos"));
+    }
+
+    function getSliderConfiguration(start, min, max, suffix) {
+        return {
+            start: start,
+            connect: Array.isArray(start) ? true : "lower",
+            behaviour: "tap",
+            range: {
+                'min': min,
+                'max': max
+            },
+            step: 1,
+            format: wNumb({
+                suffix: suffix ? suffix : "",
+                decimals: 0,
+                thousand: " "
+            }),
+            tooltips: !!suffix
+        }
+    }
+
+    function initializeEventListeners() {
+        chrome.runtime.onMessage.addListener(
+            function (request) {
+                if (request.extractUserInfo) {
+                    extractUserInfo();
+                }
+            });
+
+        $(overlay).on("mousedown", onOverlayClicked);
+        $(settingsBtn).on("click", onSettingsBtnClicked);
+        $(settingsToggle)[0].noUiSlider.on('update', onSettingsToggle);
+        $(cancelSettingsBtn).on("click", hideSettingsPage);
+        $(saveSettingsBtn).on("click", onSaveSettingsBtnClicked);
+        $(resetSettingsBtn).on("click", onResetSettingsBtnClicked);
+        $(selectAllBtn).on("click", onSelectAllBtnClicked);
+        $(selectNoneBtn).on("click", onSelectNoneBtnClicked);
+        $(revertSelectionBtn).on("click", onRevertSelectionBtnClicked);
+        $(removeSelectedBtn).on("click", onRemoveSelectedBtnClicked);
+        $(loadFollowersBtn).on("click", onLoadFollowersBtnClicked);
+        $(loadFollowingBtn).on("click", onLoadFollowingBtnClicked);
+        $(loadNotFollowingBackBtn).on("click", onLoadNotFollowingBackBtnClicked);
+        $(loadUnfollowedBtn).on("click", onLoadUnfollowedBtnClicked);
+        $(loadStoryViewersBtn).on("click", onLoadStoryViewersBtnClicked);
+        $(storyListCancelBtn).on("click", hideStoryList);
+        $(usersRangeConfirmBtn).on("click", onUsersRangeConfirmBtnClicked);
+        $(usersRangeCancelBtn).on("click", hideUsersRange);
+        $(followingOptionsConfirmBtn).on("click", onFollowingOptionsConfirmBtnClicked);
+        $(followingOptionsCancelBtn).on("click", hideFollowingOptions);
+        $(popupConfirmBtn).on("click", onPopupConfirmBtnClicked);
+        $(popupCancelBtn).on("click", hidePopup);
+        $(loadQueueBtn).on("click", onLoadQueueBtnClicked);
+        $(loadQueueFileInput).on("change", onLoadQueueFileInputChange);
+        $(saveQueueBtn).on("click", onSaveQueueBtnClicked);
+        $(startFollowingBtn).on("click", onStartFollowingBtnClicked);
+        $(startUnfollowingBtn).on("click", onStartUnfollowingBtnClicked);
+        $(stopFollowingBtn).on("click", onStopFollowingBtnClicked);
+        $(stopUnfollowingBtn).on("click", onStopUnfollowingBtnClicked);
+        $(stopLoadingBtn).on("click", onStopLoadingBtnClicked);
+        $(searchBarInput).on("keyup", onSearchBarInputKeyUp);
+        $(topDot).on("click", onTopDotClicked);
+        $(bottomDot).on("click", onBottomDotClicked);
+    }
+
 
     function extractUserInfo() {
         chrome.runtime.sendMessage({currentUrl: true}, function (response) {
@@ -106,89 +183,6 @@ $($.when(
 
     function disableLoadUsersDropdown() {
         $(loadUsersDropdown).addClass(DISABLED_CLASS);
-    }
-
-    function initializeCustomScrollBar() {
-        simpleBarContent = new SimpleBar($(scrollableArea)[0]).getContentElement();
-        appendEmptyQueueMessage();
-
-        let storyListContentScrollElement = new SimpleBar($(storyListContent)[0]).getScrollElement();
-        storyListContentScrollElement.onwheel = onStoryListContentScroll;
-    }
-
-    function initializeSettings() {
-        chrome.storage.local.get("settings", function (item) {
-            let loadedSettings = item["settings"];
-
-            if (loadedSettings) {
-                settings = loadedSettings;
-            } else {
-                settings = Object.assign({}, DEFAULT_SETTINGS);
-            }
-        });
-
-        noUiSlider.create($(settingsToggle)[0], getSliderConfiguration(0, 0, 1, null));
-        noUiSlider.create($(followUnfollowTimeout)[0], getSliderConfiguration(0, 0, 240, " Sec"));
-        noUiSlider.create($(loadingUsersTimeout)[0], getSliderConfiguration(0, 0, 30, " Sec"));
-        noUiSlider.create($(likingPhotosTimeout)[0], getSliderConfiguration(0, 0, 30, " Sec"));
-        noUiSlider.create($(timeoutRandomization)[0], getSliderConfiguration(0, 0, 100, "%"));
-        noUiSlider.create($(skipPrivateAccounts)[0], getSliderConfiguration(0, 0, 1, null));
-        noUiSlider.create($(likePhotosCount)[0], getSliderConfiguration(0, 0, 5, " Photos"));
-    }
-
-    function getSliderConfiguration(start, min, max, suffix) {
-        return {
-            start: start,
-            connect: Array.isArray(start) ? true : "lower",
-            behaviour: "tap",
-            range: {
-                'min': min,
-                'max': max
-            },
-            step: 1,
-            format: wNumb({
-                suffix: suffix ? suffix : "",
-                decimals: 0,
-                thousand: " "
-            }),
-            tooltips: !!suffix
-        }
-    }
-
-    function initializeEventListeners() {
-        $(overlay).on("mousedown", onOverlayClicked);
-        $(settingsBtn).on("click", onSettingsBtnClicked);
-        $(settingsToggle)[0].noUiSlider.on('update', onSettingsToggle);
-        $(cancelSettingsBtn).on("click", hideSettingsPage);
-        $(saveSettingsBtn).on("click", onSaveSettingsBtnClicked);
-        $(resetSettingsBtn).on("click", onResetSettingsBtnClicked);
-        $(selectAllBtn).on("click", onSelectAllBtnClicked);
-        $(selectNoneBtn).on("click", onSelectNoneBtnClicked);
-        $(revertSelectionBtn).on("click", onRevertSelectionBtnClicked);
-        $(removeSelectedBtn).on("click", onRemoveSelectedBtnClicked);
-        $(loadFollowersBtn).on("click", onLoadFollowersBtnClicked);
-        $(loadFollowingBtn).on("click", onLoadFollowingBtnClicked);
-        $(loadNotFollowingBackBtn).on("click", onLoadNotFollowingBackBtnClicked);
-        $(loadUnfollowedBtn).on("click", onLoadUnfollowedBtnClicked);
-        $(loadStoryViewersBtn).on("click", onLoadStoryViewersBtnClicked);
-        $(storyListCancelBtn).on("click", hideStoryList);
-        $(usersRangeConfirmBtn).on("click", onUsersRangeConfirmBtnClicked);
-        $(usersRangeCancelBtn).on("click", hideUsersRange);
-        $(followingOptionsConfirmBtn).on("click", onFollowingOptionsConfirmBtnClicked);
-        $(followingOptionsCancelBtn).on("click", hideFollowingOptions);
-        $(popupConfirmBtn).on("click", onPopupConfirmBtnClicked);
-        $(popupCancelBtn).on("click", hidePopup);
-        $(loadQueueBtn).on("click", onLoadQueueBtnClicked);
-        $(loadQueueFileInput).on("change", onLoadQueueFileInputChange);
-        $(saveQueueBtn).on("click", onSaveQueueBtnClicked);
-        $(startFollowingBtn).on("click", onStartFollowingBtnClicked);
-        $(startUnfollowingBtn).on("click", onStartUnfollowingBtnClicked);
-        $(stopFollowingBtn).on("click", onStopFollowingBtnClicked);
-        $(stopUnfollowingBtn).on("click", onStopUnfollowingBtnClicked);
-        $(stopLoadingBtn).on("click", onStopLoadingBtnClicked);
-        $(searchBarInput).on("keyup", onSearchBarInputKeyUp);
-        $(topDot).on("click", onTopDotClicked);
-        $(bottomDot).on("click", onBottomDotClicked);
     }
 
     function onOverlayClicked(e) {
@@ -690,11 +684,6 @@ $($.when(
         }
 
         $(queueTotalUsersCount).text(count + " Users");
-    }
-
-    function appendEmptyQueueMessage() {
-        let emptyQueueMessageClone = $(emptyQueueMessage).clone().show();
-        $(simpleBarContent).append($(emptyQueueMessageClone));
     }
 
     function updateQueueSelectedUsersCounter() {

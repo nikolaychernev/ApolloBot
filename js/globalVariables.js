@@ -1,0 +1,10 @@
+let csrfToken;
+let currentUser;
+let settings;
+let timeoutObject;
+let lastChecked;
+let simpleBarContent;
+let visibleUsersCount = 0;
+let followersMap = new Map();
+let followingMap = new Map();
+let usersQueue = new Map();
