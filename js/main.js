@@ -829,7 +829,7 @@ $($.when(
 
         let secondsRemaining;
 
-        if (skipped) {
+        if (settings.skipPrivateAccounts && nextUser.is_private) {
             secondsRemaining = 0;
         } else {
             secondsRemaining = randomizeTimeout(settings.followUnfollowTimeout, settings.timeoutRandomization);
