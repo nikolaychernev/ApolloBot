@@ -78,12 +78,11 @@ $($.when(
     }
 
     function initializeEventListeners() {
-        chrome.runtime.onMessage.addListener(
-            function (request) {
-                if (request.extractUserInfo) {
-                    extractUserInfo();
-                }
-            });
+        window.addEventListener("message", function (event) {
+            if (event.data.extractUserInfo) {
+                extractUserInfo();
+            }
+        }, false);
 
         $(overlay).on("mousedown", onOverlayClicked);
         $(settingsBtn).on("click", onSettingsBtnClicked);

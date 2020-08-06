@@ -23,6 +23,6 @@ function toggleWrapper() {
         $(injectedWrapper).hide();
     } else {
         $(injectedWrapper).show();
-        chrome.runtime.sendMessage({extractUserInfo: true});
+        $(injectedWrapper)[0].contentWindow.postMessage({extractUserInfo: true}, "*");
     }
 }
