@@ -1,6 +1,7 @@
 # ApolloBot
 ![Logo](misc/promotional/promotional.png)
 
+# Features
 The main features of ApolloBot are the following:
 
 1. Loading the followers and following of the current page. The range of users loaded can be specified.
@@ -17,10 +18,12 @@ There are 2 modes for processing the users queue toggled by clicking on the dots
 1. Start Following - by selecting this mode a pop-up will appear with options to skip private accounts and select if you want to like any of the latest photos automatically.
 2. Start Unfollowing - every user in the queue will be unfollowed.
 
+# How to use
 To use the extension just open Instagram and a new icon will appear on the top right corner. Go to your or another profile page and click the icon.
 
 Enjoy!
 
+# Screenshots
 ![Screenshot](misc/screenshots/1.png)
 ![Screenshot](misc/screenshots/2.png)
 ![Screenshot](misc/screenshots/3.png)
