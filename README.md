@@ -21,8 +21,6 @@ There are 2 modes for processing the users queue toggled by clicking on the dots
 # How to use
 To use the extension just open Instagram and a new icon will appear on the top right corner. Go to your or another profile page and click the icon.
 
-Enjoy!
-
 # Screenshots
 ![Screenshot](misc/screenshots/1.png)
 ![Screenshot](misc/screenshots/2.png)
