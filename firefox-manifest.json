@@ -1,6 +1,6 @@
 {
   "manifest_version": 2,
-  "name": "ApolloBot for Instagram",
+  "name": "ApolloBot for Instagram™",
   "version": "1.0.3",
   "icons": {
     "16": "icons/icon16.png",
@@ -8,7 +8,7 @@
     "48": "icons/icon48.png",
     "128": "icons/icon128.png"
   },
-  "description": "ApolloBot simplifies many of the mundane tasks people perform on Instagram. It has a distinct feature set made really easy to use.",
+  "description": "ApolloBot simplifies many of the mundane tasks people perform on Instagram™. It has a distinct feature set made really easy to use.",
   "permissions": [
     "storage",
     "downloads",
