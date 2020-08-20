@@ -102,6 +102,7 @@ img {
 .card {
     background-color: rgba(0, 0, 0, 0.15);
     border-radius: 0.5em;
+    height: 100%;
 }
 
 .card-img-top {
