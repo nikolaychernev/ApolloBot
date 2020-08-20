@@ -5,6 +5,7 @@ html {
 }
 
 #stars {
+    z-index: -1;
     position: fixed;
     width: 1px;
     height: 1px;
@@ -24,6 +25,7 @@ html {
 }
 
 #stars2 {
+    z-index: -1;
     position: fixed;
     width: 2px;
     height: 2px;
