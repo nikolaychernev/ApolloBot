@@ -103,3 +103,8 @@ img {
     background-color: rgba(0, 0, 0, 0.15);
     border-radius: 0.5em;
 }
+
+.card-img-top {
+    font-size: 2.5em;
+    margin-top: 0.4em;
+}
