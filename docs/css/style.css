@@ -20,6 +20,7 @@ body {
 }
 
 body {
+    overflow: auto;
     display: -ms-flexbox;
     display: flex;
     color: #fff;
@@ -92,4 +93,8 @@ img {
 
 .mastfoot {
     color: rgba(255, 255, 255, .5);
+}
+
+.screenshot {
+    box-shadow: 0 0 2rem rgba(0, 0, 0, .3);
 }
