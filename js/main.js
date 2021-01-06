@@ -56,6 +56,7 @@ $($.when(
         noUiSlider.create($(timeoutRandomization)[0], getSliderConfiguration(0, 0, 100, "%"));
         noUiSlider.create($(skipPrivateAccounts)[0], getSliderConfiguration(0, 0, 1, null));
         noUiSlider.create($(likePhotosCount)[0], getSliderConfiguration(0, 0, 5, " Photos"));
+        noUiSlider.create($(skipFollowedUnfollowedUsers)[0], getSliderConfiguration(0, 0, 365, " Days"));
     }
 
     function getSliderConfiguration(start, min, max, suffix) {
@@ -156,6 +157,7 @@ $($.when(
                 $(usernameField).text(username);
 
                 initializeLastCheckedField();
+                initializeFollowedUnfollowedUsersMap();
                 enableLoadUsersDropdown();
             });
         });
@@ -172,6 +174,12 @@ $($.when(
     function initializeLastCheckedField() {
         chrome.storage.local.get(currentUser.id, function (item) {
             lastChecked = item[currentUser.id];
+        });
+    }
+
+    function initializeFollowedUnfollowedUsersMap() {
+        chrome.storage.local.get({"followedUnfollowedUsersMap": new Map()}, function (item) {
+            followedUnfollowedUsersMap = item["followedUnfollowedUsersMap"];
         });
     }
 
@@ -703,6 +711,7 @@ $($.when(
 
     function onStartFollowingBtnClicked() {
         $(likePhotosCount)[0].noUiSlider.set(settings.likePhotosCount);
+        $(skipFollowedUnfollowedUsers)[0].noUiSlider.set(settings.skipFollowedUnfollowedUsers);
         $(skipPrivateAccounts)[0].noUiSlider.set(settings.skipPrivateAccounts);
 
         $(overlay).css("display", "flex");
@@ -749,6 +758,7 @@ $($.when(
     function onFollowingOptionsConfirmBtnClicked() {
         settings.skipPrivateAccounts = parseInt($(skipPrivateAccounts)[0].noUiSlider.get());
         settings.likePhotosCount = parseInt($(likePhotosCount)[0].noUiSlider.get());
+        settings.skipFollowedUnfollowedUsers = parseInt($(skipFollowedUnfollowedUsers)[0].noUiSlider.get());
 
         chrome.storage.local.set({"settings": settings});
 
@@ -784,7 +794,19 @@ $($.when(
     function processUsers(users, processType) {
         let user = users.shift();
 
-        if (processType === PROCESS_TYPE.FOLLOWING && settings.skipPrivateAccounts === 1 && user.is_private) {
+        let shouldSkipPrivateUser = settings.skipPrivateAccounts === 1 && user.is_private;
+        let shouldSkipFollowedUnfollowedUser = false;
+
+        if (followedUnfollowedUsersMap.has(user.id)) {
+            let millisecondsPassedSinceFollowUnfollow = Date.now() - followedUnfollowedUsersMap[user.id];
+            let daysPassedSinceFollowUnfollow = (((((millisecondsPassedSinceFollowUnfollow) / 1000) / 60) / 60) / 24);
+
+            if (daysPassedSinceFollowUnfollow < settings.skipFollowedUnfollowedUsers) {
+                shouldSkipFollowedUnfollowedUser = true;
+            }
+        }
+
+        if (processType === PROCESS_TYPE.FOLLOWING && (shouldSkipPrivateUser || shouldSkipFollowedUnfollowedUser)) {
             onUserProcessed(user, users, processType, true);
             return;
         }
@@ -815,6 +837,9 @@ $($.when(
             $(profilePictureContainer).find(".selection").addClass(SKIPPED_CLASS);
         } else {
             $(profilePictureContainer).find(".selection").addClass(processType.PROCESSED_CLASS);
+
+            followedUnfollowedUsersMap[user.id] = Date.now();
+            chrome.storage.local.set({"followedUnfollowedUsersMap": followedUnfollowedUsersMap});
         }
 
         usersQueue.delete(user.id);

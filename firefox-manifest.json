@@ -40,5 +40,5 @@
     "images/rocket32.png",
     "html/main.html"
   ],
-  "content_security_policy": "script-src 'self' 'sha256-Y0/J/Na3KPSGYEBV0F37b+GyMxIq+lETspHMQyGJedc='; object-src 'self'"
+  "content_security_policy": "script-src 'self' 'sha256-sVbrQa//V0anm5ekFzHaAxagk6SsWCY9XBJ1yyiajAI='; object-src 'self'"
 }

@@ -50,6 +50,7 @@ let usersRangeCancelBtn = $("#usersRangeCancelBtn");
 let followingOptions = $("#followingOptions");
 let skipPrivateAccounts = $("#skipPrivateAccounts");
 let likePhotosCount = $("#likePhotosCount");
+let skipFollowedUnfollowedUsers = $("#skipFollowedUnfollowedUsers");
 let followingOptionsConfirmBtn = $("#followingOptionsConfirmBtn");
 let followingOptionsCancelBtn = $("#followingOptionsCancelBtn");
 

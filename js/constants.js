@@ -9,6 +9,7 @@ let DEFAULT_SETTINGS = {
     "likingPhotosTimeout": 5,
     "timeoutRandomization": 50,
     "likePhotosCount": 1,
+    "skipFollowedUnfollowedUsers": 30,
     "skipPrivateAccounts": 1
 };
 
