@@ -157,7 +157,6 @@ $($.when(
                 $(usernameField).text(username);
 
                 initializeLastCheckedField();
-                initializeFollowedUnfollowedUsersMap();
                 enableLoadUsersDropdown();
             });
         });
@@ -174,14 +173,6 @@ $($.when(
     function initializeLastCheckedField() {
         chrome.storage.local.get(currentUser.id, function (item) {
             lastChecked = item[currentUser.id];
-        });
-    }
-
-    function initializeFollowedUnfollowedUsersMap() {
-        chrome.storage.local.get("followedUnfollowedUsersMap", function (item) {
-            if (item["followedUnfollowedUsersMap"]) {
-                followedUnfollowedUsersMap = new Map(JSON.parse(item["followedUnfollowedUsersMap"]));
-            }
         });
     }
 
@@ -799,35 +790,41 @@ $($.when(
         let shouldSkipPrivateUser = settings.skipPrivateAccounts === 1 && user.is_private;
         let shouldSkipFollowedUnfollowedUser = false;
 
-        if (followedUnfollowedUsersMap.has(user.id)) {
-            let millisecondsPassedSinceFollowUnfollow = Date.now() - followedUnfollowedUsersMap.get(user.id);
-            let daysPassedSinceFollowUnfollow = (((((millisecondsPassedSinceFollowUnfollow) / 1000) / 60) / 60) / 24);
-
-            if (daysPassedSinceFollowUnfollow < settings.skipFollowedUnfollowedUsers) {
-                shouldSkipFollowedUnfollowedUser = true;
+        chrome.storage.local.get("followedUnfollowedUsersMap", function (item) {
+            if (item["followedUnfollowedUsersMap"]) {
+                followedUnfollowedUsersMap = new Map(JSON.parse(item["followedUnfollowedUsersMap"]));
             }
-        }
 
-        if (processType === PROCESS_TYPE.FOLLOWING && (shouldSkipPrivateUser || shouldSkipFollowedUnfollowedUser)) {
-            onUserProcessed(user, users, processType, true);
-            return;
-        }
+            if (followedUnfollowedUsersMap.has(user.id)) {
+                let millisecondsPassedSinceFollowUnfollow = Date.now() - followedUnfollowedUsersMap.get(user.id);
+                let daysPassedSinceFollowUnfollow = (((((millisecondsPassedSinceFollowUnfollow) / 1000) / 60) / 60) / 24);
 
-        $.ajax({
-            url: "https://www.instagram.com/web/friendships/" + user.id + processType.ENDPOINT,
-            method: "POST",
-            beforeSend: function (xhr) {
-                xhr.setRequestHeader('x-csrftoken', csrfToken);
-            }
-        })
-            .done(function () {
-                if (processType === PROCESS_TYPE.FOLLOWING && settings.likePhotosCount > 0) {
-                    let countdownElement = $("div#" + user.id).find(".countdown").show();
-                    getLatestPhotosIds(user, users, countdownElement, settings.likePhotosCount);
-                } else {
-                    onUserProcessed(user, users, processType, false);
+                if (daysPassedSinceFollowUnfollow < settings.skipFollowedUnfollowedUsers) {
+                    shouldSkipFollowedUnfollowedUser = true;
                 }
-            });
+            }
+
+            if (processType === PROCESS_TYPE.FOLLOWING && (shouldSkipPrivateUser || shouldSkipFollowedUnfollowedUser)) {
+                onUserProcessed(user, users, processType, true);
+                return;
+            }
+
+            $.ajax({
+                url: "https://www.instagram.com/web/friendships/" + user.id + processType.ENDPOINT,
+                method: "POST",
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader('x-csrftoken', csrfToken);
+                }
+            })
+                .done(function () {
+                    if (processType === PROCESS_TYPE.FOLLOWING && settings.likePhotosCount > 0) {
+                        let countdownElement = $("div#" + user.id).find(".countdown").show();
+                        getLatestPhotosIds(user, users, countdownElement, settings.likePhotosCount);
+                    } else {
+                        onUserProcessed(user, users, processType, false);
+                    }
+                });
+        });
     }
 
     function onUserProcessed(user, users, processType, skipped) {
