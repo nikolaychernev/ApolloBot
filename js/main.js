@@ -178,8 +178,10 @@ $($.when(
     }
 
     function initializeFollowedUnfollowedUsersMap() {
-        chrome.storage.local.get({"followedUnfollowedUsersMap": new Map()}, function (item) {
-            followedUnfollowedUsersMap = item["followedUnfollowedUsersMap"];
+        chrome.storage.local.get("followedUnfollowedUsersMap", function (item) {
+            if (item["followedUnfollowedUsersMap"]) {
+                followedUnfollowedUsersMap = new Map(JSON.parse(item["followedUnfollowedUsersMap"]));
+            }
         });
     }
 
@@ -798,7 +800,7 @@ $($.when(
         let shouldSkipFollowedUnfollowedUser = false;
 
         if (followedUnfollowedUsersMap.has(user.id)) {
-            let millisecondsPassedSinceFollowUnfollow = Date.now() - followedUnfollowedUsersMap[user.id];
+            let millisecondsPassedSinceFollowUnfollow = Date.now() - followedUnfollowedUsersMap.get(user.id);
             let daysPassedSinceFollowUnfollow = (((((millisecondsPassedSinceFollowUnfollow) / 1000) / 60) / 60) / 24);
 
             if (daysPassedSinceFollowUnfollow < settings.skipFollowedUnfollowedUsers) {
@@ -837,9 +839,10 @@ $($.when(
             $(profilePictureContainer).find(".selection").addClass(SKIPPED_CLASS);
         } else {
             $(profilePictureContainer).find(".selection").addClass(processType.PROCESSED_CLASS);
+            followedUnfollowedUsersMap.set(user.id, Date.now());
 
-            followedUnfollowedUsersMap[user.id] = Date.now();
-            chrome.storage.local.set({"followedUnfollowedUsersMap": followedUnfollowedUsersMap});
+            let mapAsJson = JSON.stringify(Array.from(followedUnfollowedUsersMap.entries()));
+            chrome.storage.local.set({"followedUnfollowedUsersMap": mapAsJson});
         }
 
         usersQueue.delete(user.id);
@@ -854,7 +857,7 @@ $($.when(
 
         let secondsRemaining;
 
-        if (processType === PROCESS_TYPE.FOLLOWING && settings.skipPrivateAccounts === 1 && nextUser.is_private) {
+        if (skipped) {
             secondsRemaining = 0;
         } else {
             secondsRemaining = randomizeTimeout(settings.followUnfollowTimeout, settings.timeoutRandomization);
