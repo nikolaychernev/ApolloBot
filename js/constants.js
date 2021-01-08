@@ -1,8 +1,7 @@
 let DEFAULT_SETTINGS = {
     "loadFollowersQueryHash": "c76146de99bb02f6415203be841dd25a",
     "loadFollowingQueryHash": "d04b0a864b4b54837c0d870b0e77e076",
-    "loadStoryListQueryHash": "90709b530ea0969f002c86a89b4f2b8d",
-    "loadStoryViewersQueryHash": "42c6ec100f5e57a1fe09be16cd3a7021",
+    "applicationId": "936619743392459",
     "followUnfollowTimeout": 60,
     "loadingUsersBatchSize": 48,
     "loadingUsersTimeout": 3,

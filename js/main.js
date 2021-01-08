@@ -218,8 +218,7 @@ $($.when(
     function onSaveSettingsBtnClicked() {
         settings.loadFollowersQueryHash = $(loadFollowersQueryHashInput).val();
         settings.loadFollowingQueryHash = $(loadFollowingQueryHashInput).val();
-        settings.loadStoryListQueryHash = $(loadStoryListQueryHashInput).val();
-        settings.loadStoryViewersQueryHash = $(loadStoryViewersQueryHashInput).val();
+        settings.applicationId = $(applicationIdInput).val();
         settings.followUnfollowTimeout = parseInt($(followUnfollowTimeout)[0].noUiSlider.get());
         settings.loadingUsersTimeout = parseInt($(loadingUsersTimeout)[0].noUiSlider.get());
         settings.likingPhotosTimeout = parseInt($(likingPhotosTimeout)[0].noUiSlider.get());
@@ -241,8 +240,7 @@ $($.when(
     function populateSettings() {
         $(loadFollowersQueryHashInput).val(settings.loadFollowersQueryHash);
         $(loadFollowingQueryHashInput).val(settings.loadFollowingQueryHash);
-        $(loadStoryListQueryHashInput).val(settings.loadStoryListQueryHash);
-        $(loadStoryViewersQueryHashInput).val(settings.loadStoryViewersQueryHash);
+        $(applicationIdInput).val(settings.applicationId);
         $(followUnfollowTimeout)[0].noUiSlider.set(settings.followUnfollowTimeout);
         $(loadingUsersTimeout)[0].noUiSlider.set(settings.loadingUsersTimeout);
         $(likingPhotosTimeout)[0].noUiSlider.set(settings.likingPhotosTimeout);
@@ -348,22 +346,14 @@ $($.when(
     }
 
     function loadStoryList() {
-        let jsonVars = {
-            "reel_ids": [
-                currentUser.id
-            ],
-            "tag_names": [],
-            "location_ids": [],
-            "highlight_reel_ids": [],
-            "precomposed_overlay": false,
-            "stories_video_dash_manifest": false
-        };
-
-        let encodedJsonVars = encodeURIComponent(JSON.stringify(jsonVars));
-
-        $.ajax("https://www.instagram.com/graphql/query/?query_hash=" + settings.loadStoryListQueryHash + "&variables=" + encodedJsonVars)
+        $.ajax({
+            url: "https://i.instagram.com/api/v1/feed/reels_media/?reel_ids=" + currentUser.id,
+            beforeSend: function (request) {
+                request.setRequestHeader("x-ig-app-id", settings.applicationId);
+            },
+        })
             .done(function (data) {
-                let stories = data.data.reels_media[0] ? data.data.reels_media[0].items : [];
+                let stories = data.reels_media[0] ? data.reels_media[0].items : [];
                 drawStoryList(stories);
             });
     }
@@ -380,8 +370,8 @@ $($.when(
 
         for (let story of stories) {
             let storyElement = $("<img>");
-            $(storyElement).attr("id", story.id);
-            $(storyElement).attr("src", story.display_url);
+            $(storyElement).attr("id", story.pk);
+            $(storyElement).attr("src", story.image_versions2.candidates[0].url);
             $(storyElement).addClass(STORY_ELEMENT_CLASS);
 
             $(storyElement).on("click", onStoryElementClicked);
@@ -393,22 +383,49 @@ $($.when(
         let target = $(event.target);
         let storyId = target.attr("id");
 
-        loadStoryViewers(storyId);
+        hideStoryList();
+
+        usersQueue.clear();
+        loadStoryViewers(storyId, 0);
     }
 
-    function loadStoryViewers(storyId) {
-        let jsonVars = {
-            "item_id": storyId,
-            "story_viewer_fetch_count": settings.loadingUsersBatchSize,
-            "story_viewer_cursor": "0"
-        };
-
-        let encodedJsonVars = encodeURIComponent(JSON.stringify(jsonVars));
-
-        $.ajax("https://www.instagram.com/graphql/query/?query_hash=" + settings.loadStoryViewersQueryHash + "&variables=" + encodedJsonVars)
+    function loadStoryViewers(storyId, maxId) {
+        $.ajax({
+            url: "https://i.instagram.com/api/v1/media/" + storyId + "/list_reel_media_viewer/?max_id=" + maxId,
+            beforeSend: function (request) {
+                request.setRequestHeader("x-ig-app-id", settings.applicationId);
+            },
+        })
             .done(function (data) {
-                hideStoryList();
-                console.log(data);
+                let storyViewers = data.users;
+                let nextMaxId = data.next_max_id;
+
+                for (let storyViewer of storyViewers) {
+                    let user = {
+                        id: storyViewer.pk,
+                        username: storyViewer.username,
+                        full_name: storyViewer.full_name,
+                        profile_pic_url: storyViewer.profile_pic_url,
+                        is_private: storyViewer.is_private,
+                        visible: true
+                    };
+
+                    usersQueue.set(user.id, user);
+                }
+
+                $(loadingBarElement).css("display", "flex");
+                updateLoadingBarElement(data.total_viewer_count, nextMaxId, "Loading Story Viewers");
+
+                if (!nextMaxId) {
+                    $(loadingBarElement).hide();
+                    drawUsers();
+                } else {
+                    let secondsRemaining = randomizeTimeout(settings.loadingUsersTimeout, settings.timeoutRandomization);
+
+                    loadUsersTimeout(secondsRemaining, function () {
+                        loadStoryViewers(storyId, nextMaxId);
+                    });
+                }
             });
     }
 
