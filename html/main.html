@@ -1,23 +1,3 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <link rel="stylesheet" href="../css/normalize.css">
-    <link rel="stylesheet" href="../css/background.css">
-    <link rel="stylesheet" href="../css/jam.min.css">
-    <link rel="stylesheet" href="../css/simplebar.css">
-    <link rel="stylesheet" href="../css/nouislider.min.css">
-    <link rel="stylesheet" href="../css/style.css">
-    <script src="../js/jquery-3.5.1.min.js"></script>
-    <script src="../js/circle-progress.min.js"></script>
-    <script src="../js/simplebar.min.js"></script>
-    <script src="../js/wNumb.min.js"></script>
-    <script src="../js/nouislider.min.js"></script>
-    <script src="../js/constants.js"></script>
-    <script src="../js/globalVariables.js"></script>
-    <script src="../js/main.js"></script>
-    <title></title>
-</head>
-<body>
 <div id='stars'></div>
 <div id='stars2'></div>
 <div class="spaceBetween">
@@ -29,30 +9,30 @@
         <input id="searchBarInput" type="text" placeholder="Search">
         <div id="selectionDropdown" class="dropdown">
             <div id="selectionBtn" class="button">
-                <span class="jam jam-circle"></span>
+                <img data-src="icons/circle.svg" class="jam"/>
                 <span>Selection</span>
             </div>
             <div class="dropdown-content left hidden">
                 <div id="selectAllBtn" class="button">
-                    <span class="jam jam-plus-circle"></span>
+                    <img data-src="icons/plus-circle.svg" class="jam"/>
                     <span>Select All</span>
                 </div>
                 <div id="selectNoneBtn" class="button">
-                    <span class="jam jam-minus-circle"></span>
+                    <img data-src="icons/minus-circle.svg" class="jam"/>
                     <span>Select None</span>
                 </div>
                 <div id="revertSelectionBtn" class="button">
-                    <span class="jam jam-chevrons-circle-left"></span>
+                    <img data-src="icons/chevrons-circle-left.svg" class="jam"/>
                     <span>Revert Selection</span>
                 </div>
                 <div id="removeSelectedBtn" class="button">
-                    <span class="jam jam-close-circle"></span>
+                    <img data-src="icons/close-circle.svg" class="jam"/>
                     <span>Remove Selected</span>
                 </div>
             </div>
         </div>
         <div id="settingsBtn">
-            <span class="jam jam-cog-f"></span>
+            <img data-src="icons/cog-f.svg" class="jam"/>
         </div>
     </div>
 </div>
@@ -66,28 +46,28 @@
 <div class="spaceBetween">
     <div id="loadUsersDropdown" class="dropdown">
         <div class="button loadUsersButton">
-            <span class="jam jam-user-plus"></span>
+            <img data-src="icons/user-plus.svg" class="jam"/>
             <span>Load Users</span>
         </div>
         <div class="dropdown-content top hidden">
             <div id="loadFollowersBtn" class="button">
-                <span class="jam jam-users"></span>
+                <img data-src="icons/users.svg" class="jam"/>
                 <span>Load Followers</span>
             </div>
             <div id="loadFollowingBtn" class="button">
-                <span class="jam jam-users"></span>
+                <img data-src="icons/users.svg" class="jam"/>
                 <span>Load Following</span>
             </div>
             <div id="loadNotFollowingBackBtn" class="button">
-                <span class="jam jam-user-minus"></span>
+                <img data-src="icons/user-minus.svg" class="jam"/>
                 <span>Not Following Back</span>
             </div>
             <div id="loadUnfollowedBtn" class="button">
-                <span class="jam jam-user-remove"></span>
+                <img data-src="icons/user-remove.svg" class="jam"/>
                 <span>Load Unfollowed</span>
             </div>
             <div id="loadStoryViewersBtn" class="button">
-                <span class="jam jam-instant-picture"></span>
+                <img data-src="icons/instant-picture.svg" class="jam"/>
                 <span>Load Story Viewers</span>
             </div>
         </div>
@@ -98,39 +78,38 @@
             <span id="bottomDot" class="dot"></span>
         </div>
         <div id="startFollowingBtn" class="button greenButton">
-            <span class="jam jam-play"></span>
+            <img data-src="icons/play.svg" class="jam"/>
             <span>Start Following</span>
         </div>
         <div id="startUnfollowingBtn" class="button redButton hidden">
-            <span class="jam jam-play"></span>
+            <img data-src="icons/play.svg" class="jam"/>
             <span>Start Unfollowing</span>
         </div>
         <div id="stopFollowingBtn" class="button redButton hidden">
-            <span class="jam jam-stop"></span>
+            <img data-src="icons/stop.svg" class="jam"/>
             <span>Stop Following</span>
         </div>
         <div id="stopUnfollowingBtn" class="button redButton hidden">
-            <span class="jam jam-stop"></span>
+            <img data-src="icons/stop.svg" class="jam"/>
             <span>Stop Unfollowing</span>
         </div>
     </div>
     <div id="queueActionsDropdown" class="dropdown">
         <div class="button queueActionsButton">
-            <span class="jam jam-users"></span>
+            <img data-src="icons/users.svg" class="jam"/>
             <span>Queue Actions</span>
         </div>
         <div class="dropdown-content left top hidden">
             <div id="loadQueueBtn" class="button">
-                <span class="jam jam-upload"></span>
+                <img data-src="icons/upload.svg" class="jam "></span>
                 <span>Load Queue</span>
             </div>
             <div id="saveQueueBtn" class="button">
-                <span class="jam jam-download"></span>
+                <img data-src="icons/download.svg" class="jam"/>
                 <span>Save Queue</span>
             </div>
         </div>
     </div>
-</div>
 </div>
 <div class="overlay hidden">
     <div class="settingsPage hidden">
@@ -172,16 +151,16 @@
         </div>
         <div class="spaceBetween marginTop">
             <div id="cancelSettingsBtn" class="button">
-                <span class="jam jam-close"></span>
+                <img data-src="icons/close.svg" class="jam"/>
                 <span>Cancel</span>
             </div>
             <div>
                 <div id="saveSettingsBtn" class="button greenButton">
-                    <span class="jam jam-save"></span>
+                    <img data-src="icons/save.svg" class="jam"/>
                     <span>Save</span>
                 </div>
                 <div id="resetSettingsBtn" class="button redButton">
-                    <span class="jam jam-history"></span>
+                    <img data-src="icons/history.svg" class="jam"/>
                     <span>Reset</span>
                 </div>
             </div>
@@ -191,11 +170,11 @@
         <h1 id="usersRangeHeading"></h1>
         <div id="usersRangeSlider"></div>
         <div id="usersRangeConfirmBtn" class="button greenButton">
-            <span class="jam jam-check"></span>
+            <img data-src="icons/check.svg" class="jam"/>
             <span>Confirm</span>
         </div>
         <div id="usersRangeCancelBtn" class="button">
-            <span class="jam jam-close"></span>
+            <img data-src="icons/close.svg" class="jam"/>
             <span>Cancel</span>
         </div>
     </div>
@@ -215,11 +194,11 @@
         </div>
         <div class="marginTop">
             <div id="followingOptionsConfirmBtn" class="button greenButton">
-                <span class="jam jam-check"></span>
+                <img data-src="icons/check.svg" class="jam"/>
                 <span>Confirm</span>
             </div>
             <div id="followingOptionsCancelBtn" class="button">
-                <span class="jam jam-close"></span>
+                <img data-src="icons/close.svg" class="jam"/>
                 <span>Cancel</span>
             </div>
         </div>
@@ -228,11 +207,11 @@
         <span id="popupMessage"></span>
         <div>
             <div id="popupConfirmBtn" class="button greenButton">
-                <span class="jam jam-check"></span>
+                <img data-src="icons/check.svg" class="jam"/>
                 <span>Confirm</span>
             </div>
             <div id="popupCancelBtn" class="button">
-                <span class="jam jam-close"></span>
+                <img data-src="icons/close.svg" class="jam"/>
                 <span>Cancel</span>
             </div>
         </div>
@@ -241,7 +220,7 @@
         <h1 id="storyListHeading"></h1>
         <div id="storyListContent"></div>
         <div id="storyListCancelBtn" class="button">
-            <span class="jam jam-close"></span>
+            <img data-src="icons/close.svg" class="jam"/>
             <span>Cancel</span>
         </div>
     </div>
@@ -251,7 +230,7 @@
     <div id="loadingBarContent">
         <div class="alignCenter">
             <div id="stopLoadingBtn">
-                <span class="jam jam-close"></span>
+                <img data-src="icons/close.svg" class="jam"/>
             </div>
             <h1 id="loadingMessage"></h1>
         </div>
@@ -270,5 +249,3 @@
     <a href="" target="_blank" class="username"></a>
 </div>
 <span id="emptyQueueMessage" style="display: none">Queue Is Currently Empty</span>
-</body>
-</html>

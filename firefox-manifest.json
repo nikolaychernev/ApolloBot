@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "ApolloBot for Instagram™",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "icons": {
     "16": "icons/icon16.png",
     "32": "icons/icon32.png",
@@ -37,8 +37,16 @@
     }
   ],
   "web_accessible_resources": [
-    "images/rocket32.png",
-    "html/main.html"
+    "images/*",
+    "html/*",
+    "css/*",
+    "js/*",
+    "icons/*"
   ],
+  "externally_connectable": {
+    "matches": [
+      "*://*.instagram.com/*"
+    ]
+  },
   "content_security_policy": "script-src 'self' 'sha256-+uJ637iVsOuNZvDUujdYa/yAPWmrN3cq8mdsR8a6j8w='; object-src 'self'"
 }

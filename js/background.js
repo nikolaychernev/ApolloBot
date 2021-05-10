@@ -1,4 +1,4 @@
-chrome.runtime.onMessage.addListener(
+chrome.runtime.onMessageExternal.addListener(
     function (request, sender, sendResponse) {
         if (request.csrfToken) {
             getCsrfToken(sendResponse);
@@ -6,6 +6,12 @@ chrome.runtime.onMessage.addListener(
             getCurrentUrl(sendResponse);
         } else if (request.download) {
             downloadUrl(request.download.url, request.download.filename);
+        } else if (request.getFromLocalStorage) {
+            getFromLocalStorage(request.key, sendResponse);
+        } else if (request.setToLocalStorage) {
+            setToLocalStorage(request.key, request.value, sendResponse);
+        } else if (request.getUrl) {
+            getUrl(request.url, sendResponse);
         }
 
         return true;
@@ -37,4 +43,16 @@ function downloadUrl(url, fileName) {
         url: url,
         filename: fileName
     });
+}
+
+function getFromLocalStorage(key, sendResponse) {
+    chrome.storage.local.get(key, sendResponse);
+}
+
+function setToLocalStorage(key, value, sendResponse) {
+    chrome.storage.local.set({key: value}, sendResponse);
+}
+
+function getUrl(url, sendResponse) {
+    sendResponse(chrome.runtime.getURL(url));
 }
