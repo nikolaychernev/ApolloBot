@@ -61,6 +61,10 @@ h3 {
     background-color: #FFFFFF;
 }
 
+.button:hover img {
+    filter: invert(0%) sepia(0%) saturate(16%) hue-rotate(253deg) brightness(105%) contrast(104%);
+}
+
 .container {
     flex: auto;
     position: relative;
