@@ -94,6 +94,7 @@ h1, h3, strong {
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
+    align-content: flex-start;
     height: 100%;
     padding: 1.5em;
     box-sizing: border-box;
