@@ -102,6 +102,7 @@ h1, h3, strong {
 }
 
 .scrollable-area::after {
+    content: "";
     flex: auto;
     display: block;
 }
