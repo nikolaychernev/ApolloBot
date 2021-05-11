@@ -117,7 +117,12 @@ function extractUserInfo() {
             $(usernameField).text("Loading...");
         });
 
-        $.ajax(currentUrl + "/?__a=1").done(function (data) {
+        $.ajax({
+            url: currentUrl + "/?__a=1",
+            xhrFields: {
+                withCredentials: true
+            }
+        }).done(function (data) {
             if (Object.keys(data).length === 0 || !data.graphql) {
                 notOnProfilePage();
                 return;
@@ -335,11 +340,13 @@ function loadStoryList() {
         beforeSend: function (request) {
             request.setRequestHeader("x-ig-app-id", settings.applicationId);
         },
-    })
-        .done(function (data) {
-            let stories = data.reels_media[0] ? data.reels_media[0].items : [];
-            drawStoryList(stories);
-        });
+        xhrFields: {
+            withCredentials: true
+        }
+    }).done(function (data) {
+        let stories = data.reels_media[0] ? data.reels_media[0].items : [];
+        drawStoryList(stories);
+    });
 }
 
 function drawStoryList(stories) {
@@ -378,38 +385,40 @@ function loadStoryViewers(storyId, maxId) {
         beforeSend: function (request) {
             request.setRequestHeader("x-ig-app-id", settings.applicationId);
         },
-    })
-        .done(function (data) {
-            let storyViewers = data.users;
-            let nextMaxId = data.next_max_id;
+        xhrFields: {
+            withCredentials: true
+        }
+    }).done(function (data) {
+        let storyViewers = data.users;
+        let nextMaxId = data.next_max_id;
 
-            for (let storyViewer of storyViewers) {
-                let user = {
-                    id: storyViewer.pk,
-                    username: storyViewer.username,
-                    full_name: storyViewer.full_name,
-                    profile_pic_url: storyViewer.profile_pic_url,
-                    is_private: storyViewer.is_private,
-                    visible: true
-                };
+        for (let storyViewer of storyViewers) {
+            let user = {
+                id: storyViewer.pk,
+                username: storyViewer.username,
+                full_name: storyViewer.full_name,
+                profile_pic_url: storyViewer.profile_pic_url,
+                is_private: storyViewer.is_private,
+                visible: true
+            };
 
-                usersQueue.set(user.id, user);
-            }
+            usersQueue.set(user.id, user);
+        }
 
-            $(loadingBarElement).css("display", "flex");
-            updateLoadingBarElement(data.total_viewer_count, nextMaxId, "Loading Story Viewers");
+        $(loadingBarElement).css("display", "flex");
+        updateLoadingBarElement(data.total_viewer_count, nextMaxId, "Loading Story Viewers");
 
-            if (!nextMaxId) {
-                $(loadingBarElement).css("display", "none");
-                drawUsers();
-            } else {
-                let secondsRemaining = randomizeTimeout(settings.loadingUsersTimeout, settings.timeoutRandomization);
+        if (!nextMaxId) {
+            $(loadingBarElement).css("display", "none");
+            drawUsers();
+        } else {
+            let secondsRemaining = randomizeTimeout(settings.loadingUsersTimeout, settings.timeoutRandomization);
 
-                loadUsersTimeout(secondsRemaining, function () {
-                    loadStoryViewers(storyId, nextMaxId);
-                });
-            }
-        });
+            loadUsersTimeout(secondsRemaining, function () {
+                loadStoryViewers(storyId, nextMaxId);
+            });
+        }
+    });
 }
 
 function hideStoryList() {
@@ -523,50 +532,54 @@ function loadFollowers(callback, loadedFollowersCount, endCursor, limit) {
 
     let encodedJsonVars = encodeURIComponent(JSON.stringify(jsonVars));
 
-    $.ajax("https://www.instagram.com/graphql/query/?query_hash=" + settings.loadFollowersQueryHash + "&variables=" + encodedJsonVars)
-        .done(function (data) {
-            let followers = data.data.user.edge_followed_by.edges;
-            let totalFollowersCount = data.data.user.edge_followed_by.count;
-            let limitReached = false;
+    $.ajax({
+        url: "https://www.instagram.com/graphql/query/?query_hash=" + settings.loadFollowersQueryHash + "&variables=" + encodedJsonVars,
+        xhrFields: {
+            withCredentials: true
+        }
+    }).done(function (data) {
+        let followers = data.data.user.edge_followed_by.edges;
+        let totalFollowersCount = data.data.user.edge_followed_by.count;
+        let limitReached = false;
 
-            for (let follower of followers) {
-                if (limit && loadedFollowersCount >= limit) {
-                    limitReached = true;
-                    break;
-                }
-
-                let user = {
-                    id: follower.node.id,
-                    username: follower.node.username,
-                    full_name: follower.node.full_name,
-                    profile_pic_url: follower.node.profile_pic_url,
-                    is_private: follower.node.is_private
-                };
-
-                followersMap.set(follower.node.id, user);
-                loadedFollowersCount++;
+        for (let follower of followers) {
+            if (limit && loadedFollowersCount >= limit) {
+                limitReached = true;
+                break;
             }
 
-            $(loadingBarElement).css("display", "flex");
-            updateLoadingBarElement(limit ? limit : totalFollowersCount, loadedFollowersCount, "Loading Followers");
+            let user = {
+                id: follower.node.id,
+                username: follower.node.username,
+                full_name: follower.node.full_name,
+                profile_pic_url: follower.node.profile_pic_url,
+                is_private: follower.node.is_private
+            };
 
-            let pageInfo = data.data.user.edge_followed_by.page_info;
+            followersMap.set(follower.node.id, user);
+            loadedFollowersCount++;
+        }
 
-            if (!pageInfo.has_next_page || limitReached) {
-                if (!limitReached && !lastChecked) {
-                    updateLastChecked();
-                }
+        $(loadingBarElement).css("display", "flex");
+        updateLoadingBarElement(limit ? limit : totalFollowersCount, loadedFollowersCount, "Loading Followers");
 
-                $(loadingBarElement).css("display", "none");
-                callback(loadNotFollowingBack, 0, "", limit);
-            } else {
-                let secondsRemaining = randomizeTimeout(settings.loadingUsersTimeout, settings.timeoutRandomization);
+        let pageInfo = data.data.user.edge_followed_by.page_info;
 
-                loadUsersTimeout(secondsRemaining, function () {
-                    loadFollowers(callback, loadedFollowersCount, pageInfo.end_cursor, limit);
-                });
+        if (!pageInfo.has_next_page || limitReached) {
+            if (!limitReached && !lastChecked) {
+                updateLastChecked();
             }
-        });
+
+            $(loadingBarElement).css("display", "none");
+            callback(loadNotFollowingBack, 0, "", limit);
+        } else {
+            let secondsRemaining = randomizeTimeout(settings.loadingUsersTimeout, settings.timeoutRandomization);
+
+            loadUsersTimeout(secondsRemaining, function () {
+                loadFollowers(callback, loadedFollowersCount, pageInfo.end_cursor, limit);
+            });
+        }
+    });
 }
 
 function loadFollowing(callback, loadedFollowingCount, endCursor, limit) {
@@ -578,46 +591,50 @@ function loadFollowing(callback, loadedFollowingCount, endCursor, limit) {
 
     let encodedJsonVars = encodeURIComponent(JSON.stringify(jsonVars));
 
-    $.ajax("https://www.instagram.com/graphql/query/?query_hash=" + settings.loadFollowingQueryHash + "&variables=" + encodedJsonVars)
-        .done(function (data) {
-            let usersFollowing = data.data.user.edge_follow.edges;
-            let totalFollowingCount = data.data.user.edge_follow.count;
-            let limitReached = false;
+    $.ajax({
+        url: "https://www.instagram.com/graphql/query/?query_hash=" + settings.loadFollowingQueryHash + "&variables=" + encodedJsonVars,
+        xhrFields: {
+            withCredentials: true
+        }
+    }).done(function (data) {
+        let usersFollowing = data.data.user.edge_follow.edges;
+        let totalFollowingCount = data.data.user.edge_follow.count;
+        let limitReached = false;
 
-            for (let userFollowing of usersFollowing) {
-                if (limit && loadedFollowingCount >= limit) {
-                    limitReached = true;
-                    break;
-                }
-
-                let user = {
-                    id: userFollowing.node.id,
-                    username: userFollowing.node.username,
-                    full_name: userFollowing.node.full_name,
-                    profile_pic_url: userFollowing.node.profile_pic_url,
-                    is_private: userFollowing.node.is_private
-                };
-
-                followingMap.set(userFollowing.node.id, user);
-                loadedFollowingCount++;
+        for (let userFollowing of usersFollowing) {
+            if (limit && loadedFollowingCount >= limit) {
+                limitReached = true;
+                break;
             }
 
-            $(loadingBarElement).css("display", "flex");
-            updateLoadingBarElement(limit ? limit : totalFollowingCount, loadedFollowingCount, "Loading Following");
+            let user = {
+                id: userFollowing.node.id,
+                username: userFollowing.node.username,
+                full_name: userFollowing.node.full_name,
+                profile_pic_url: userFollowing.node.profile_pic_url,
+                is_private: userFollowing.node.is_private
+            };
 
-            let pageInfo = data.data.user.edge_follow.page_info;
+            followingMap.set(userFollowing.node.id, user);
+            loadedFollowingCount++;
+        }
 
-            if (!pageInfo.has_next_page || limitReached) {
-                $(loadingBarElement).css("display", "none");
-                callback();
-            } else {
-                let secondsRemaining = randomizeTimeout(settings.loadingUsersTimeout, settings.timeoutRandomization);
+        $(loadingBarElement).css("display", "flex");
+        updateLoadingBarElement(limit ? limit : totalFollowingCount, loadedFollowingCount, "Loading Following");
 
-                loadUsersTimeout(secondsRemaining, function () {
-                    loadFollowing(callback, loadedFollowingCount, pageInfo.end_cursor, limit);
-                });
-            }
-        });
+        let pageInfo = data.data.user.edge_follow.page_info;
+
+        if (!pageInfo.has_next_page || limitReached) {
+            $(loadingBarElement).css("display", "none");
+            callback();
+        } else {
+            let secondsRemaining = randomizeTimeout(settings.loadingUsersTimeout, settings.timeoutRandomization);
+
+            loadUsersTimeout(secondsRemaining, function () {
+                loadFollowing(callback, loadedFollowingCount, pageInfo.end_cursor, limit);
+            });
+        }
+    });
 }
 
 function loadUsersTimeout(secondsRemaining, callback) {
@@ -821,16 +838,18 @@ function processUsers(users, processType) {
             method: "POST",
             beforeSend: function (xhr) {
                 xhr.setRequestHeader('x-csrftoken', csrfToken);
+            },
+            xhrFields: {
+                withCredentials: true
             }
-        })
-            .done(function () {
-                if (processType === PROCESS_TYPE.FOLLOWING && settings.likePhotosCount > 0) {
-                    let countdownElement = $("div#" + user.id, shadowRoot).find(".countdown").css("display", "block");
-                    getLatestPhotosIds(user, users, countdownElement, settings.likePhotosCount);
-                } else {
-                    onUserProcessed(user, users, processType, false);
-                }
-            });
+        }).done(function () {
+            if (processType === PROCESS_TYPE.FOLLOWING && settings.likePhotosCount > 0) {
+                let countdownElement = $("div#" + user.id, shadowRoot).find(".countdown").css("display", "block");
+                getLatestPhotosIds(user, users, countdownElement, settings.likePhotosCount);
+            } else {
+                onUserProcessed(user, users, processType, false);
+            }
+        });
     });
 }
 
@@ -878,7 +897,12 @@ function onUserProcessed(user, users, processType, skipped) {
 function getLatestPhotosIds(user, users, countdownElement, count) {
     let photosIds = [];
 
-    $.ajax("https://www.instagram.com/" + user.username + "/?__a=1").done(function (data) {
+    $.ajax({
+        url: "https://www.instagram.com/" + user.username + "/?__a=1",
+        xhrFields: {
+            withCredentials: true
+        }
+    }).done(function (data) {
         let photos = data.graphql.user.edge_owner_to_timeline_media.edges;
         let loadedCount = 0;
 
@@ -910,20 +934,22 @@ function likePhotos(user, users, countdownElement, photosIds, totalPhotosCount) 
         method: "POST",
         beforeSend: function (xhr) {
             xhr.setRequestHeader('x-csrftoken', csrfToken);
+        },
+        xhrFields: {
+            withCredentials: true
         }
-    })
-        .done(function () {
-            if (photosIds.length === 0) {
-                onUserProcessed(user, users, PROCESS_TYPE.FOLLOWING, false);
-                return;
-            }
+    }).done(function () {
+        if (photosIds.length === 0) {
+            onUserProcessed(user, users, PROCESS_TYPE.FOLLOWING, false);
+            return;
+        }
 
-            let text = (totalPhotosCount - photosIds.length) + "/" + totalPhotosCount;
-            updateCountdownElement(totalPhotosCount, photosIds.length, text, countdownElement);
+        let text = (totalPhotosCount - photosIds.length) + "/" + totalPhotosCount;
+        updateCountdownElement(totalPhotosCount, photosIds.length, text, countdownElement);
 
-            let secondsRemaining = randomizeTimeout(settings.likingPhotosTimeout, settings.timeoutRandomization);
-            likePhotosTimeout(secondsRemaining, secondsRemaining, user, users, countdownElement, photosIds, totalPhotosCount);
-        });
+        let secondsRemaining = randomizeTimeout(settings.likingPhotosTimeout, settings.timeoutRandomization);
+        likePhotosTimeout(secondsRemaining, secondsRemaining, user, users, countdownElement, photosIds, totalPhotosCount);
+    });
 }
 
 function likePhotosTimeout(totalSeconds, secondsRemaining, user, users, countdownElement, photosIds, totalPhotosCount) {

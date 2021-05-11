@@ -107,15 +107,16 @@ h1, h3, strong {
     display: block;
 }
 
-.scrollable-area::-webkit-scrollbar {
+.scrollable-area::-webkit-scrollbar, #storyListContent::-webkit-scrollbar {
     width: 0.5em;
+    height: 0.5em;
 }
 
-.scrollable-area::-webkit-scrollbar-track {
+.scrollable-area::-webkit-scrollbar-track, #storyListContent::-webkit-scrollbar-track {
     background: none;
 }
 
-.scrollable-area::-webkit-scrollbar-thumb {
+.scrollable-area::-webkit-scrollbar-thumb, #storyListContent::-webkit-scrollbar-thumb {
     background-color: grey;
     border-radius: 0.5em;
 }
@@ -397,6 +398,8 @@ input:focus {
 
 #storyListContent {
     display: flex;
+    overflow-x: scroll;
+    overflow-y: hidden;
 }
 
 .storyElement {
