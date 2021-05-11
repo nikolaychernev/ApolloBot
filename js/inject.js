@@ -1,5 +1,5 @@
-let stylesheets = ["css/normalize.css", "css/background.css", "css/simplebar.css", "css/nouislider.min.css", "css/style.css"];
-let scripts = ["js/jquery-3.5.1.min.js", "js/circle-progress.min.js", "js/simplebar.min.js", "js/wNumb.min.js", "js/nouislider.min.js", "js/constants.js", "js/globalVariables.js", "js/elements.js", "js/main.js"];
+let stylesheets = ["css/normalize.css", "css/background.css", "css/nouislider.min.css", "css/style.css"];
+let scripts = ["js/jquery-3.5.1.min.js", "js/circle-progress.min.js", "js/wNumb.min.js", "js/nouislider.min.js", "js/constants.js", "js/globalVariables.js", "js/elements.js", "js/main.js"];
 
 injectIcon();
 injectWrapper();

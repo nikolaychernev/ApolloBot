@@ -1,13 +1,15 @@
 h1 {
-    font-weight: normal;
     margin-top: 0;
     margin-bottom: 1.5em;
 }
 
 h3 {
-    font-weight: normal;
     margin-top: 0;
     margin-bottom: 0.5em;
+}
+
+h1, h3, strong {
+    font-weight: normal;
 }
 
 .button {
@@ -89,24 +91,32 @@ h3 {
 }
 
 .scrollable-area {
-    height: 100%;
-    padding: 1.5em;
-    box-sizing: border-box;
-}
-
-.scrollable-area .simplebar-content {
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
+    height: 100%;
+    padding: 1.5em;
+    box-sizing: border-box;
+    overflow-x: hidden;
+    overflow-y: scroll;
 }
 
-.simplebar-content::after {
+.scrollable-area::after {
     flex: auto;
     display: block;
 }
 
-.simplebar-scrollbar::before {
-    background-color: white;
+.scrollable-area::-webkit-scrollbar {
+    width: 0.5em;
+}
+
+.scrollable-area::-webkit-scrollbar-track {
+    background: none;
+}
+
+.scrollable-area::-webkit-scrollbar-thumb {
+    background-color: grey;
+    border-radius: 0.5em;
 }
 
 .userElement {
@@ -326,8 +336,8 @@ img {
     cursor: pointer;
 }
 
-#stopLoadingBtn {
-    color: indianred;
+#stopLoadingBtn img {
+    filter: invert(50%) sepia(27%) saturate(778%) hue-rotate(313deg) brightness(88%) contrast(124%);
 }
 
 #settingsBtn:hover {
@@ -384,7 +394,7 @@ input:focus {
     width: 70%;
 }
 
-#storyListContent .simplebar-content {
+#storyListContent {
     display: flex;
 }
 

@@ -4,7 +4,6 @@ let settings;
 let timeoutObject;
 let lastChecked;
 let followedUnfollowedUsersMap = new Map();
-let simpleBarContent;
 let visibleUsersCount = 0;
 let followersMap = new Map();
 let followingMap = new Map();

@@ -1,5 +1,5 @@
+appendEmptyQueueMessage();
 initializeCsrfToken();
-initializeCustomScrollBar();
 initializeSettings();
 initializeEventListeners();
 
@@ -9,30 +9,9 @@ function initializeCsrfToken() {
     });
 }
 
-function initializeCustomScrollBar() {
-    simpleBarContent = new SimpleBar($(scrollableArea)[0]).getContentElement();
-    appendEmptyQueueMessage();
-
-    let storyListContentScrollElement = new SimpleBar($(storyListContent)[0]).getScrollElement();
-    storyListContentScrollElement.onwheel = onStoryListContentScroll;
-}
-
 function appendEmptyQueueMessage() {
     let emptyQueueMessageClone = $(emptyQueueMessage).clone().css("display", "inline");
-    $(simpleBarContent).append($(emptyQueueMessageClone));
-}
-
-function onStoryListContentScroll(event) {
-    let elementToScroll = event.currentTarget;
-
-    clearTimeout(elementToScroll.timer);
-    elementToScroll.timer = setTimeout(() => {
-        elementToScroll.scrollTo({
-            left: event.deltaY > 0 ? elementToScroll.scrollLeft + 100 : elementToScroll.scrollLeft - 100
-        });
-    }, 10);
-
-    event.preventDefault();
+    $(scrollableArea).append($(emptyQueueMessageClone));
 }
 
 function initializeSettings() {
@@ -370,8 +349,7 @@ function drawStoryList(stories) {
         $(storyListHeading).text("Select Story");
     }
 
-    let simpleBarContent = $("#storyListContent .simplebar-content", shadowRoot);
-    $(simpleBarContent).empty();
+    $(storyListContent).empty();
 
     for (let story of stories) {
         let storyElement = $("<img>");
@@ -380,7 +358,7 @@ function drawStoryList(stories) {
         $(storyElement).addClass(STORY_ELEMENT_CLASS);
 
         $(storyElement).on("click", onStoryElementClicked);
-        $(simpleBarContent).append($(storyElement));
+        $(storyListContent).append($(storyElement));
     }
 }
 
@@ -671,7 +649,7 @@ function drawUsers() {
     followersMap.clear();
     followingMap.clear();
 
-    $(simpleBarContent).empty();
+    $(scrollableArea).empty();
     visibleUsersCount = 0;
 
     for (let user of usersQueue.values()) {
@@ -693,7 +671,7 @@ function drawUsers() {
             .attr("href", "https://www.instagram.com/" + user.username + "/")
             .text(user.username);
 
-        $(simpleBarContent).append($(userElementClone));
+        $(scrollableArea).append($(userElementClone));
         visibleUsersCount++;
     }
 
@@ -1088,10 +1066,10 @@ function enableElements(processType) {
     $(stopUnfollowingBtn).css("display", "none");
 
     if (processType === PROCESS_TYPE.FOLLOWING) {
-        $(startFollowingBtn).css("display", "block");
+        $(startFollowingBtn).css("display", "inline-flex");
         $(topDot).removeClass(RED_DOT_CLASS);
     } else {
-        $(startUnfollowingBtn).css("display", "block");
+        $(startUnfollowingBtn).css("display", "inline-flex");
     }
 
     if (currentUser) {
