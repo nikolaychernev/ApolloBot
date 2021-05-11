@@ -76,6 +76,7 @@ function initializeEventListeners() {
     $(loadNotFollowingBackBtn).on("click", onLoadNotFollowingBackBtnClicked);
     $(loadUnfollowedBtn).on("click", onLoadUnfollowedBtnClicked);
     $(loadStoryViewersBtn).on("click", onLoadStoryViewersBtnClicked);
+    $(storyListContent).on("wheel", onStoryListContentScroll);
     $(storyListCancelBtn).on("click", hideStoryList);
     $(usersRangeConfirmBtn).on("click", onUsersRangeConfirmBtnClicked);
     $(usersRangeCancelBtn).on("click", hideUsersRange);
@@ -419,6 +420,19 @@ function loadStoryViewers(storyId, maxId) {
             });
         }
     });
+}
+
+function onStoryListContentScroll(event) {
+    let elementToScroll = event.currentTarget;
+
+    clearTimeout(elementToScroll.timer);
+    elementToScroll.timer = setTimeout(() => {
+        elementToScroll.scrollTo({
+            left: event.originalEvent.deltaY > 0 ? elementToScroll.scrollLeft + 100 : elementToScroll.scrollLeft - 100
+        });
+    }, 10);
+
+    event.preventDefault();
 }
 
 function hideStoryList() {
