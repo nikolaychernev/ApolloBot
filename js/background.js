@@ -50,7 +50,7 @@ function getFromLocalStorage(key, sendResponse) {
 }
 
 function setToLocalStorage(key, value, sendResponse) {
-    chrome.storage.local.set({key: value}, sendResponse);
+    chrome.storage.local.set({[key]: value}, sendResponse);
 }
 
 function getUrl(url, sendResponse) {
