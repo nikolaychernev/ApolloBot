@@ -830,7 +830,7 @@ function processUsers(users, processType) {
         key: "followedUnfollowedUsersMap"
     }, function (response) {
         if (response["followedUnfollowedUsersMap"]) {
-            followedUnfollowedUsersMap = new Map(JSON.parse(item["followedUnfollowedUsersMap"]));
+            followedUnfollowedUsersMap = new Map(JSON.parse(response["followedUnfollowedUsersMap"]));
         }
 
         if (followedUnfollowedUsersMap.has(user.id)) {
