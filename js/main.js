@@ -4,7 +4,7 @@ initializeSettings();
 initializeEventListeners();
 
 function initializeCsrfToken() {
-    chrome.runtime.sendMessage(extensionId, {csrfToken: true}, function (response) {
+    chrome.runtime.sendMessage({csrfToken: true}, function (response) {
         csrfToken = response;
     });
 }
@@ -15,7 +15,7 @@ function appendEmptyQueueMessage() {
 }
 
 function initializeSettings() {
-    chrome.runtime.sendMessage(extensionId, {getFromLocalStorage: true, key: "settings"}, function (response) {
+    chrome.runtime.sendMessage({getFromLocalStorage: true, key: "settings"}, function (response) {
         let loadedSettings = response["settings"];
 
         if (loadedSettings) {
@@ -98,7 +98,7 @@ function initializeEventListeners() {
 }
 
 function extractUserInfo() {
-    chrome.runtime.sendMessage(extensionId, {currentUrl: true}, function (response) {
+    chrome.runtime.sendMessage({currentUrl: true}, function (response) {
         let matches = EXTRACT_USERNAME_REGEX.exec(response);
 
         if (!matches) {
@@ -113,7 +113,7 @@ function extractUserInfo() {
             return;
         }
 
-        chrome.runtime.sendMessage(extensionId, {getUrl: true, url: "images/blank.png"}, function (response) {
+        chrome.runtime.sendMessage({getUrl: true, url: "images/blank.png"}, function (response) {
             $(currentUserProfilePicture).attr("src", response);
             $(usernameField).text("Loading...");
         });
@@ -147,7 +147,7 @@ function extractUserInfo() {
 }
 
 function notOnProfilePage() {
-    chrome.runtime.sendMessage(extensionId, {getUrl: true, url: "images/blank.png"}, function (response) {
+    chrome.runtime.sendMessage({getUrl: true, url: "images/blank.png"}, function (response) {
         $(currentUserProfilePicture).attr("src", response);
         $(usernameField).text("Not On Profile Page");
     });
@@ -157,7 +157,7 @@ function notOnProfilePage() {
 }
 
 function initializeLastCheckedField() {
-    chrome.runtime.sendMessage(extensionId, {getFromLocalStorage: true, key: currentUser.id}, function (response) {
+    chrome.runtime.sendMessage({getFromLocalStorage: true, key: currentUser.id}, function (response) {
         lastChecked = response[currentUser.id];
     });
 }
@@ -210,7 +210,7 @@ function onSaveSettingsBtnClicked() {
     settings.likingPhotosTimeout = parseInt($(likingPhotosTimeout)[0].noUiSlider.get());
     settings.timeoutRandomization = parseInt($(timeoutRandomization)[0].noUiSlider.get());
 
-    chrome.runtime.sendMessage(extensionId, {setToLocalStorage: true, key: "settings", value: settings}, function () {
+    chrome.runtime.sendMessage({setToLocalStorage: true, key: "settings", value: settings}, function () {
         hideSettingsPage();
     });
 }
@@ -218,7 +218,7 @@ function onSaveSettingsBtnClicked() {
 function onResetSettingsBtnClicked() {
     settings = Object.assign({}, DEFAULT_SETTINGS);
 
-    chrome.runtime.sendMessage(extensionId, {
+    chrome.runtime.sendMessage({
         setToLocalStorage: true,
         key: "settings",
         value: settings
@@ -484,7 +484,7 @@ function updateLastChecked() {
         "timestamp": getCurrentTimestamp()
     };
 
-    chrome.runtime.sendMessage(extensionId, {
+    chrome.runtime.sendMessage({
         setToLocalStorage: true,
         key: [currentUser.id],
         value: lastCheckedUpdated
@@ -534,7 +534,7 @@ function onSaveQueueBtnClicked() {
     let blob = new Blob([JSON.stringify(queue)], {type: "text/plain"});
     let url = URL.createObjectURL(blob);
 
-    chrome.runtime.sendMessage(extensionId, {download: {url: url, filename: "queue.txt"}})
+    chrome.runtime.sendMessage({download: {url: url, filename: "queue.txt"}})
 }
 
 function loadFollowers(callback, loadedFollowersCount, endCursor, limit) {
@@ -788,7 +788,7 @@ function onFollowingOptionsConfirmBtnClicked() {
     settings.likePhotosCount = parseInt($(likePhotosCount)[0].noUiSlider.get());
     settings.skipFollowedUnfollowedUsers = parseInt($(skipFollowedUnfollowedUsers)[0].noUiSlider.get());
 
-    chrome.runtime.sendMessage(extensionId, {setToLocalStorage: true, key: "settings", value: settings});
+    chrome.runtime.sendMessage({setToLocalStorage: true, key: "settings", value: settings});
 
     hideFollowingOptions();
     startProcessingQueue(PROCESS_TYPE.FOLLOWING);
@@ -825,7 +825,7 @@ function processUsers(users, processType) {
     let shouldSkipPrivateUser = settings.skipPrivateAccounts === 1 && user.is_private;
     let shouldSkipFollowedUnfollowedUser = false;
 
-    chrome.runtime.sendMessage(extensionId, {
+    chrome.runtime.sendMessage({
         getFromLocalStorage: true,
         key: "followedUnfollowedUsersMap"
     }, function (response) {
@@ -880,7 +880,7 @@ function onUserProcessed(user, users, processType, skipped) {
 
         let mapAsJson = JSON.stringify(Array.from(followedUnfollowedUsersMap.entries()));
 
-        chrome.runtime.sendMessage(extensionId, {
+        chrome.runtime.sendMessage({
             setToLocalStorage: true,
             key: "followedUnfollowedUsersMap",
             value: mapAsJson

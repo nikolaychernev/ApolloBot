@@ -1,5 +1,4 @@
 let stylesheets = ["css/normalize.css", "css/background.css", "css/nouislider.min.css", "css/style.css"];
-let scripts = ["js/jquery-3.5.1.min.js", "js/circle-progress.min.js", "js/wNumb.min.js", "js/nouislider.min.js", "js/constants.js", "js/globalVariables.js", "js/elements.js", "js/main.js"];
 
 injectIcon();
 injectWrapper();
@@ -28,18 +27,6 @@ function injectWrapper() {
             shadowRoot.append(stylesheetElement);
         }
 
-        let extensionIdScript = document.createElement('script');
-        extensionIdScript.textContent = "let extensionId = " + JSON.stringify(chrome.runtime.id);
-        shadowRoot.append(extensionIdScript);
-
-        for (let script of scripts) {
-            let scriptElement = document.createElement("script");
-            scriptElement.src = chrome.runtime.getURL(script);
-            scriptElement.async = false;
-
-            shadowRoot.append(scriptElement);
-        }
-
         let tempWrapper = document.createElement("div");
         tempWrapper.innerHTML = data;
 
@@ -49,6 +36,10 @@ function injectWrapper() {
 
         replaceIconsSrc(shadowRoot);
         document.body.prepend(wrapper);
+
+        chrome.runtime.sendMessage({executeScript: true, script: "js/elements.js"}, function () {
+            chrome.runtime.sendMessage({executeScript: true, script: "js/main.js"});
+        });
     });
 }
 
