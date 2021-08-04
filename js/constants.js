@@ -1,9 +1,10 @@
 let DEFAULT_SETTINGS = {
     "loadFollowersQueryHash": "c76146de99bb02f6415203be841dd25a",
     "loadFollowingQueryHash": "d04b0a864b4b54837c0d870b0e77e076",
+    "loadPostListQueryHash": "8c2a529969ee035a5063f2fc8602a0fd",
+    "loadPostLikesQueryHash": "d5d763b1e2acf209d62d22d184488e57",
     "applicationId": "936619743392459",
     "followUnfollowTimeout": 60,
-    "loadingUsersBatchSize": 48,
     "loadingUsersTimeout": 3,
     "likingPhotosTimeout": 5,
     "timeoutRandomization": 50,
@@ -20,6 +21,7 @@ let UNFOLLOWED_CLASS = "unfollowed";
 let SKIPPED_CLASS = "skipped";
 let DISABLED_CLASS = "disabled";
 let STORY_ELEMENT_CLASS = "storyElement";
+let POST_ELEMENT_CLASS = "postElement";
 let GREEN_DOT_CLASS = "greenDot";
 let RED_DOT_CLASS = "redDot";
 
@@ -40,5 +42,8 @@ const USERS_TYPE = {
     },
     FOLLOWING: {
         HEADING: "Select Following Range To Load"
+    },
+    POST_LIKES: {
+        HEADING: "Select Users Range To Load"
     },
 };

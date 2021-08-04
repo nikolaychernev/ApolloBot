@@ -108,16 +108,16 @@ h1, h3, strong {
     display: block;
 }
 
-.scrollable-area::-webkit-scrollbar, #storyListContent::-webkit-scrollbar {
+.scrollable-area::-webkit-scrollbar, #storyListContent::-webkit-scrollbar, #postListContent::-webkit-scrollbar {
     width: 0.5em;
     height: 0.5em;
 }
 
-.scrollable-area::-webkit-scrollbar-track, #storyListContent::-webkit-scrollbar-track {
+.scrollable-area::-webkit-scrollbar-track, #storyListContent::-webkit-scrollbar-track, #postListContent::-webkit-scrollbar-track {
     background: none;
 }
 
-.scrollable-area::-webkit-scrollbar-thumb, #storyListContent::-webkit-scrollbar-thumb {
+.scrollable-area::-webkit-scrollbar-thumb, #storyListContent::-webkit-scrollbar-thumb, #postListContent::-webkit-scrollbar-thumb {
     background-color: grey;
     border-radius: 0.5em;
 }
@@ -204,6 +204,14 @@ img {
     padding: 2em;
 }
 
+#usersRangeHeading {
+    margin-bottom: 2.5em;
+}
+
+#usersRangeOverlay {
+    z-index: 1;
+}
+
 .setting {
     margin-bottom: 2em;
 }
@@ -212,7 +220,7 @@ img {
     pointer-events: none;
 }
 
-.disabled#searchBarInput, .disabled.dropdown, .disabled#dots {
+.disabled#searchBarInput, .disabled.dropdown, .disabled#dots, .disabled#postListLoadMoreBtn {
     opacity: 0.5;
 }
 
@@ -390,11 +398,17 @@ input:focus {
     outline: none;
 }
 
-#storyList {
+#storyList, #postList {
     background-color: #313c49;
     border-radius: 1.5em;
     padding: 2em;
     width: 70%;
+}
+
+#postList {
+    display: flex;
+    flex-direction: column;
+    height: 70%;
 }
 
 #storyListContent {
@@ -403,7 +417,16 @@ input:focus {
     overflow-y: hidden;
 }
 
-.storyElement {
+#postListContent {
+    display: flex;
+    flex: auto;
+    justify-content: center;
+    flex-wrap: wrap;
+    overflow-x: hidden;
+    overflow-y: scroll;
+}
+
+.storyElement, .postElement {
     height: 20em;
     margin-bottom: 1.5em;
     border-radius: 1.5em;
@@ -411,12 +434,17 @@ input:focus {
     margin-right: 1.5em;
 }
 
-.storyElement:hover, #stopLoadingBtn:hover, .dot:hover {
+.postElement {
+    width: 20em;
+    object-fit: cover;
+}
+
+.storyElement:hover, .postElement:hover, #stopLoadingBtn:hover, .dot:hover {
     opacity: 0.5;
     transition: all 0.3s;
 }
 
-#storyListCancelBtn {
+#storyListCancelBtn, #postListCancelBtn, #postListLoadMoreBtn {
     margin-top: 2em;
 }
 
@@ -433,11 +461,11 @@ input, .button, .noUi-target {
     box-shadow: 0 0 25px 5px rgba(0, 0, 0, 0.25);
 }
 
-.storyElement {
+.storyElement, .postElement {
     box-shadow: 15px 5px 25px 1px rgba(0, 0, 0, 0.1);
 }
 
-.settingsPage, #popup, #storyList, #usersRange, #followingOptions {
+.settingsPage, #popup, #storyList, #postList, #usersRange, #followingOptions {
     box-shadow: 0 0 25px 10px rgba(0, 0, 0, 1);
 }
 

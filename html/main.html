@@ -70,6 +70,10 @@
                 <img data-src="icons/instant-picture.svg" class="jam"/>
                 <span>Load Story Viewers</span>
             </div>
+            <div id="loadPostLikesBtn" class="button">
+                <img data-src="icons/picture.svg" class="jam"/>
+                <span>Load Post Likes</span>
+            </div>
         </div>
     </div>
     <div class="grow">
@@ -111,8 +115,8 @@
         </div>
     </div>
 </div>
-<div class="overlay hidden">
-    <div class="settingsPage hidden">
+<div id="settingsPageOverlay" class="overlay hidden">
+    <div class="settingsPage">
         <div class="spaceBetween">
             <h1 id="settingsHeading">Settings</h1>
             <div id="settingsToggle"></div>
@@ -125,6 +129,14 @@
             <div class="setting">
                 <h3>Load Following Query Hash</h3>
                 <input type="text" id="loadFollowingQueryHash" name="loadFollowingQueryHash">
+            </div>
+            <div class="setting">
+                <h3>Load Post List Query Hash</h3>
+                <input type="text" id="loadPostListQueryHash" name="loadPostListQueryHash">
+            </div>
+            <div class="setting">
+                <h3>Load Post Likes Query Hash</h3>
+                <input type="text" id="loadPostLikesQueryHash" name="loadPostLikesQueryHash">
             </div>
             <div class="setting">
                 <h3>Application Id</h3>
@@ -166,7 +178,9 @@
             </div>
         </div>
     </div>
-    <div id="usersRange" class="hidden">
+</div>
+<div id="usersRangeOverlay" class="overlay hidden">
+    <div id="usersRange">
         <h1 id="usersRangeHeading"></h1>
         <div id="usersRangeSlider"></div>
         <div id="usersRangeConfirmBtn" class="button greenButton">
@@ -178,7 +192,9 @@
             <span>Cancel</span>
         </div>
     </div>
-    <div id="followingOptions" class="hidden">
+</div>
+<div id="followingOptionsOverlay" class="overlay hidden">
+    <div id="followingOptions">
         <h1>Following Options</h1>
         <div class="setting">
             <h3>Like Latest Photos</h3>
@@ -203,7 +219,9 @@
             </div>
         </div>
     </div>
-    <div id="popup" class="hidden">
+</div>
+<div id="popupOverlay" class="overlay hidden">
+    <div id="popup">
         <span id="popupMessage"></span>
         <div>
             <div id="popupConfirmBtn" class="button greenButton">
@@ -216,12 +234,30 @@
             </div>
         </div>
     </div>
-    <div id="storyList" class="hidden">
+</div>
+<div id="storyListOverlay" class="overlay hidden">
+    <div id="storyList">
         <h1 id="storyListHeading"></h1>
         <div id="storyListContent"></div>
         <div id="storyListCancelBtn" class="button">
             <img data-src="icons/close.svg" class="jam"/>
             <span>Cancel</span>
+        </div>
+    </div>
+</div>
+<div id="postListOverlay" class="overlay hidden">
+    <div id="postList">
+        <h1 id="postListHeading"></h1>
+        <div id="postListContent"></div>
+        <div class="spaceBetween">
+            <div id="postListCancelBtn" class="button">
+                <img data-src="icons/close.svg" class="jam"/>
+                <span>Cancel</span>
+            </div>
+            <div id="postListLoadMoreBtn" class="button greenButton">
+                <img data-src="icons/plus-circle.svg" class="jam"/>
+                <span>Load More</span>
+            </div>
         </div>
     </div>
 </div>
