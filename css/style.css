@@ -204,6 +204,10 @@ img {
     padding: 2em;
 }
 
+#usersRangeHeading {
+    margin-bottom: 2.5em;
+}
+
 #usersRangeOverlay {
     z-index: 1;
 }
