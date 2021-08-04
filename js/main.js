@@ -870,7 +870,10 @@ function onUsersRangeConfirmBtnClicked(data) {
             loadFollowing(() => clearQueueAndDrawUsers(followingMap), 0, "", limit);
             break;
         case USERS_TYPE.POST_LIKES.HEADING:
-            loadPostLikes(() => clearQueueAndDrawUsers(postLikesMap), data.shortcode, 0, "", limit);
+            loadPostLikes(() => {
+                clearQueueAndDrawUsers(postLikesMap);
+                hidePostList();
+            }, data.shortcode, 0, "", limit);
             break;
     }
 }
