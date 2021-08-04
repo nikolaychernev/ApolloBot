@@ -9,9 +9,10 @@ The main features of ApolloBot are the following:
 3. Load the people who have unfollowed since the last check.
 4. Global users queue search by username and full name.
 5. Showing who has viewed any of your last active stories. Combined with the search functionality you can easily know if a specific person has watched your story.
-6. Removing specific people from the queue who you for example don't want to unfollow even if they don't follow you back.
-7. Saving and loading queues in order to be processed later.
-8. Basic and advanced settings allowing you to configure the timeouts, timeout randomization and even the queue hashes and application id in case Instagram™ change their APIs.
+6. Loading the people who have liked a specific post.
+7. Removing specific people from the queue who you for example don't want to unfollow even if they don't follow you back.
+8. Saving and loading queues in order to be processed later.
+9. Basic and advanced settings allowing you to configure the timeouts, timeout randomization and even the queue hashes and application id in case Instagram™ change their APIs.
 
 There are 2 modes for processing the users queue toggled by clicking the dots on the left side of the main button:
 
