@@ -70,6 +70,10 @@
                 <img data-src="icons/instant-picture.svg" class="jam"/>
                 <span>Load Story Viewers</span>
             </div>
+            <div id="loadPostLikesBtn" class="button">
+                <img data-src="icons/picture.svg" class="jam"/>
+                <span>Load Post Likes</span>
+            </div>
         </div>
     </div>
     <div class="grow">
@@ -125,6 +129,14 @@
             <div class="setting">
                 <h3>Load Following Query Hash</h3>
                 <input type="text" id="loadFollowingQueryHash" name="loadFollowingQueryHash">
+            </div>
+            <div class="setting">
+                <h3>Load Post List Query Hash</h3>
+                <input type="text" id="loadPostListQueryHash" name="loadPostListQueryHash">
+            </div>
+            <div class="setting">
+                <h3>Load Post Likes Query Hash</h3>
+                <input type="text" id="loadPostLikesQueryHash" name="loadPostLikesQueryHash">
             </div>
             <div class="setting">
                 <h3>Application Id</h3>
@@ -222,6 +234,20 @@
         <div id="storyListCancelBtn" class="button">
             <img data-src="icons/close.svg" class="jam"/>
             <span>Cancel</span>
+        </div>
+    </div>
+    <div id="postList" class="hidden">
+        <h1 id="postListHeading"></h1>
+        <div id="postListContent"></div>
+        <div id="postListButtons" class="spaceBetween">
+            <div id="postListCancelBtn" class="button">
+                <img data-src="icons/close.svg" class="jam"/>
+                <span>Cancel</span>
+            </div>
+            <div id="postListLoadMoreBtn" class="button greenButton">
+                <img data-src="icons/plus-circle.svg" class="jam"/>
+                <span>Load More</span>
+            </div>
         </div>
     </div>
 </div>

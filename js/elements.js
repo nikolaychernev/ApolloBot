@@ -16,6 +16,7 @@ let loadFollowingBtn = $("#loadFollowingBtn", shadowRoot);
 let loadNotFollowingBackBtn = $("#loadNotFollowingBackBtn", shadowRoot);
 let loadUnfollowedBtn = $("#loadUnfollowedBtn", shadowRoot);
 let loadStoryViewersBtn = $("#loadStoryViewersBtn", shadowRoot);
+let loadPostLikesBtn = $("#loadPostLikesBtn", shadowRoot);
 let loadQueueBtn = $("#loadQueueBtn", shadowRoot);
 let saveQueueBtn = $("#saveQueueBtn", shadowRoot);
 let startFollowingBtn = $("#startFollowingBtn", shadowRoot);
@@ -33,6 +34,8 @@ let basicSettings = $("#basicSettings", shadowRoot);
 let advancedSettings = $("#advancedSettings", shadowRoot);
 let loadFollowersQueryHashInput = $("#loadFollowersQueryHash", shadowRoot);
 let loadFollowingQueryHashInput = $("#loadFollowingQueryHash", shadowRoot);
+let loadPostListQueryHashInput = $("#loadPostListQueryHash", shadowRoot);
+let loadPostLikesQueryHashInput = $("#loadPostLikesQueryHash", shadowRoot);
 let applicationIdInput = $("#applicationId", shadowRoot);
 let followUnfollowTimeout = $("#followUnfollowTimeout", shadowRoot);
 let loadingUsersTimeout = $("#loadingUsersTimeout", shadowRoot);
@@ -65,6 +68,13 @@ let storyList = $("#storyList", shadowRoot);
 let storyListHeading = $("#storyListHeading", shadowRoot);
 let storyListContent = $("#storyListContent", shadowRoot);
 let storyListCancelBtn = $("#storyListCancelBtn", shadowRoot);
+
+//Post List
+let postList = $("#postList", shadowRoot);
+let postListHeading = $("#postListHeading", shadowRoot);
+let postListContent = $("#postListContent", shadowRoot);
+let postListCancelBtn = $("#postListCancelBtn", shadowRoot);
+let postListLoadMoreBtn = $("#postListLoadMoreBtn", shadowRoot);
 
 // Other Elements
 let currentUserProfilePicture = $("#currentUserProfilePicture", shadowRoot);

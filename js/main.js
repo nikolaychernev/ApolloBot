@@ -76,9 +76,10 @@ function initializeEventListeners() {
     $(loadNotFollowingBackBtn).on("click", onLoadNotFollowingBackBtnClicked);
     $(loadUnfollowedBtn).on("click", onLoadUnfollowedBtnClicked);
     $(loadStoryViewersBtn).on("click", onLoadStoryViewersBtnClicked);
+    $(loadPostLikesBtn).on("click", onLoadPostLikesBtnClicked);
     $(storyListContent).on("wheel", onStoryListContentScroll);
     $(storyListCancelBtn).on("click", hideStoryList);
-    $(usersRangeConfirmBtn).on("click", onUsersRangeConfirmBtnClicked);
+    $(postListCancelBtn).on("click", hidePostList);
     $(usersRangeCancelBtn).on("click", hideUsersRange);
     $(followingOptionsConfirmBtn).on("click", onFollowingOptionsConfirmBtnClicked);
     $(followingOptionsCancelBtn).on("click", hideFollowingOptions);
@@ -180,6 +181,7 @@ function onOverlayClicked(e) {
     hideFollowingOptions();
     hidePopup();
     hideStoryList();
+    hidePostList();
 }
 
 function onSettingsBtnClicked() {
@@ -204,6 +206,8 @@ function onSettingsToggle(values, handle) {
 function onSaveSettingsBtnClicked() {
     settings.loadFollowersQueryHash = $(loadFollowersQueryHashInput).val();
     settings.loadFollowingQueryHash = $(loadFollowingQueryHashInput).val();
+    settings.loadPostListQueryHash = $(loadPostListQueryHashInput).val();
+    settings.loadPostLikesQueryHash = $(loadPostLikesQueryHashInput).val();
     settings.applicationId = $(applicationIdInput).val();
     settings.followUnfollowTimeout = parseInt($(followUnfollowTimeout)[0].noUiSlider.get());
     settings.loadingUsersTimeout = parseInt($(loadingUsersTimeout)[0].noUiSlider.get());
@@ -230,6 +234,8 @@ function onResetSettingsBtnClicked() {
 function populateSettings() {
     $(loadFollowersQueryHashInput).val(settings.loadFollowersQueryHash);
     $(loadFollowingQueryHashInput).val(settings.loadFollowingQueryHash);
+    $(loadPostListQueryHashInput).val(settings.loadPostListQueryHash);
+    $(loadPostLikesQueryHashInput).val(settings.loadPostLikesQueryHash);
     $(applicationIdInput).val(settings.applicationId);
     $(followUnfollowTimeout)[0].noUiSlider.set(settings.followUnfollowTimeout);
     $(loadingUsersTimeout)[0].noUiSlider.set(settings.loadingUsersTimeout);
@@ -271,26 +277,16 @@ function onRemoveSelectedBtnClicked() {
 }
 
 function onLoadFollowersBtnClicked() {
-    loadUsersRange(USERS_TYPE.FOLLOWERS);
+    loadUsersRange(USERS_TYPE.FOLLOWERS, currentUser.followersCount);
 }
 
 function onLoadFollowingBtnClicked() {
-    loadUsersRange(USERS_TYPE.FOLLOWING);
+    loadUsersRange(USERS_TYPE.FOLLOWING, currentUser.followingCount);
 }
 
-function loadUsersRange(usersType) {
+function loadUsersRange(usersType, count, data) {
     $(usersRangeHeading).text(usersType.HEADING);
-
-    let start;
-    let end;
-
-    if (usersType === USERS_TYPE.FOLLOWERS) {
-        end = currentUser.followersCount;
-    } else {
-        end = currentUser.followingCount;
-    }
-
-    start = end - 2048;
+    let start = count - 2048;
 
     if (start < 0) {
         start = 0;
@@ -300,7 +296,7 @@ function loadUsersRange(usersType) {
         $(usersRangeSlider)[0].noUiSlider.destroy();
     }
 
-    noUiSlider.create($(usersRangeSlider)[0], getSliderConfiguration([start, end], 0, end, " "));
+    noUiSlider.create($(usersRangeSlider)[0], getSliderConfiguration([start, count], 0, count, " "));
     mergeTooltips($(usersRangeSlider)[0], 20, " - ");
 
     let endHandleOrigin = $($(usersRangeSlider)[0]).find('.noUi-origin')[1];
@@ -308,6 +304,9 @@ function loadUsersRange(usersType) {
 
     let endHandle = $(endHandleOrigin).find('.noUi-handle');
     $(endHandle).addClass(DISABLED_CLASS);
+
+    $(usersRangeConfirmBtn).off("click");
+    $(usersRangeConfirmBtn).on("click", () => onUsersRangeConfirmBtnClicked(data));
 
     $(overlay).css("display", "flex");
     $(usersRange).css("display", "block");
@@ -435,6 +434,133 @@ function onStoryListContentScroll(event) {
     event.preventDefault();
 }
 
+function onLoadPostLikesBtnClicked() {
+    $(postListContent).empty();
+    loadPostList("");
+
+    $(overlay).css("display", "flex");
+    $(postList).css("display", "flex");
+}
+
+function loadPostList(endCursor) {
+    let jsonVars = {
+        id: currentUser.id,
+        first: 12,
+        after: endCursor
+    };
+
+    let encodedJsonVars = encodeURIComponent(JSON.stringify(jsonVars));
+
+    $.ajax({
+        url: "https://www.instagram.com/graphql/query/?query_hash=" + settings.loadPostListQueryHash + "&variables=" + encodedJsonVars,
+        xhrFields: {
+            withCredentials: true
+        }
+    }).done(function (data) {
+        let posts = data.data.user.edge_owner_to_timeline_media.edges;
+        let endCursor = data.data.user.edge_owner_to_timeline_media.page_info.end_cursor;
+        let hasNextPage = data.data.user.edge_owner_to_timeline_media.page_info.has_next_page;
+
+        drawPostList(posts, endCursor);
+
+        if (!hasNextPage) {
+            $(postListLoadMoreBtn).addClass(DISABLED_CLASS);
+        }
+    })
+}
+
+function drawPostList(posts, endCursor) {
+    if (posts.length === 0) {
+        $(postListHeading).text("No Posts");
+    } else {
+        $(postListHeading).text("Select Post");
+    }
+
+    for (let post of posts) {
+        let postElement = $("<img>");
+        $(postElement).attr("data-shortcode", post.node.shortcode);
+        $(postElement).attr("data-likes", post.node.edge_media_preview_like.count);
+        $(postElement).attr("src", post.node.display_url);
+        $(postElement).addClass(POST_ELEMENT_CLASS);
+
+        $(postElement).on("click", onPostElementClicked);
+        $(postListContent).append($(postElement));
+    }
+
+    $(postListLoadMoreBtn).off("click");
+    $(postListLoadMoreBtn).on("click", () => loadPostList(endCursor));
+}
+
+function onPostElementClicked(event) {
+    let target = $(event.target);
+
+    let shortcode = target.attr("data-shortcode");
+    let likes = Number(target.attr("data-likes"));
+
+    loadUsersRange(USERS_TYPE.POST_LIKES, likes, {shortcode});
+}
+
+function loadPostLikes(callback, shortcode, loaded, endCursor, limit) {
+    let jsonVars = {
+        shortcode: shortcode,
+        include_reel: true,
+        first: 12,
+        after: endCursor
+    };
+
+    let encodedJsonVars = encodeURIComponent(JSON.stringify(jsonVars));
+
+    $.ajax({
+        url: "https://www.instagram.com/graphql/query/?query_hash=" + settings.loadPostLikesQueryHash + "&variables=" + encodedJsonVars,
+        xhrFields: {
+            withCredentials: true
+        }
+    }).done(function (data) {
+        let likes = data.data.shortcode_media.edge_liked_by.edges;
+        let totalLikesCount = data.data.shortcode_media.edge_liked_by.count;
+        let limitReached = false;
+
+        for (let like of likes) {
+            if (limit && loaded >= limit) {
+                limitReached = true;
+                break;
+            }
+
+            let user = {
+                id: like.node.id,
+                username: like.node.username,
+                full_name: like.node.full_name,
+                profile_pic_url: like.node.profile_pic_url,
+                is_private: like.node.is_private
+            };
+
+            postLikesMap.set(like.node.id, user);
+            loaded++;
+        }
+
+        $(loadingBarElement).css("display", "flex");
+        updateLoadingBarElement(limit ? limit : totalLikesCount, loaded, "Loading Post Likes");
+
+        let pageInfo = data.data.shortcode_media.edge_liked_by.page_info;
+
+        if (!pageInfo.has_next_page || limitReached) {
+            $(loadingBarElement).css("display", "none");
+            callback();
+        } else {
+            let secondsRemaining = randomizeTimeout(settings.loadingUsersTimeout, settings.timeoutRandomization);
+
+            loadUsersTimeout(secondsRemaining, function () {
+                loadPostLikes(callback, shortcode, loaded, pageInfo.end_cursor, limit);
+            });
+        }
+    });
+}
+
+function hidePostList() {
+    $(overlay).css("display", "none");
+    $(postList).css("display", "none");
+}
+
 function hideStoryList() {
     $(overlay).css("display", "none");
     $(storyList).css("display", "none");
@@ -537,10 +663,10 @@ function onSaveQueueBtnClicked() {
     chrome.runtime.sendMessage({download: {url: url, filename: "queue.txt"}})
 }
 
-function loadFollowers(callback, loadedFollowersCount, endCursor, limit) {
+function loadFollowers(callback, loaded, endCursor, limit) {
     let jsonVars = {
         id: currentUser.id,
-        first: settings.loadingUsersBatchSize,
+        first: 48,
         after: endCursor
     };
 
@@ -557,7 +683,7 @@ function loadFollowers(callback, loadedFollowersCount, endCursor, limit) {
         let limitReached = false;
 
         for (let follower of followers) {
-            if (limit && loadedFollowersCount >= limit) {
+            if (limit && loaded >= limit) {
                 limitReached = true;
                 break;
             }
@@ -571,11 +697,11 @@ function loadFollowers(callback, loadedFollowersCount, endCursor, limit) {
             };
 
             followersMap.set(follower.node.id, user);
-            loadedFollowersCount++;
+            loaded++;
         }
 
         $(loadingBarElement).css("display", "flex");
-        updateLoadingBarElement(limit ? limit : totalFollowersCount, loadedFollowersCount, "Loading Followers");
+        updateLoadingBarElement(limit ? limit : totalFollowersCount, loaded, "Loading Followers");
 
         let pageInfo = data.data.user.edge_followed_by.page_info;
 
@@ -590,16 +716,16 @@ function loadFollowers(callback, loadedFollowersCount, endCursor, limit) {
             let secondsRemaining = randomizeTimeout(settings.loadingUsersTimeout, settings.timeoutRandomization);
 
             loadUsersTimeout(secondsRemaining, function () {
-                loadFollowers(callback, loadedFollowersCount, pageInfo.end_cursor, limit);
+                loadFollowers(callback, loaded, pageInfo.end_cursor, limit);
             });
         }
     });
 }
 
-function loadFollowing(callback, loadedFollowingCount, endCursor, limit) {
+function loadFollowing(callback, loaded, endCursor, limit) {
     let jsonVars = {
         id: currentUser.id,
-        first: settings.loadingUsersBatchSize,
+        first: 48,
         after: endCursor
     };
 
@@ -616,7 +742,7 @@ function loadFollowing(callback, loadedFollowingCount, endCursor, limit) {
         let limitReached = false;
 
         for (let userFollowing of usersFollowing) {
-            if (limit && loadedFollowingCount >= limit) {
+            if (limit && loaded >= limit) {
                 limitReached = true;
                 break;
             }
@@ -630,11 +756,11 @@ function loadFollowing(callback, loadedFollowingCount, endCursor, limit) {
             };
 
             followingMap.set(userFollowing.node.id, user);
-            loadedFollowingCount++;
+            loaded++;
         }
 
         $(loadingBarElement).css("display", "flex");
-        updateLoadingBarElement(limit ? limit : totalFollowingCount, loadedFollowingCount, "Loading Following");
+        updateLoadingBarElement(limit ? limit : totalFollowingCount, loaded, "Loading Following");
 
         let pageInfo = data.data.user.edge_follow.page_info;
 
@@ -645,7 +771,7 @@ function loadFollowing(callback, loadedFollowingCount, endCursor, limit) {
             let secondsRemaining = randomizeTimeout(settings.loadingUsersTimeout, settings.timeoutRandomization);
 
             loadUsersTimeout(secondsRemaining, function () {
-                loadFollowing(callback, loadedFollowingCount, pageInfo.end_cursor, limit);
+                loadFollowing(callback, loaded, pageInfo.end_cursor, limit);
             });
         }
     });
@@ -679,6 +805,7 @@ function loadNotFollowingBack() {
 function drawUsers() {
     followersMap.clear();
     followingMap.clear();
+    postLikesMap.clear();
 
     $(scrollableArea).empty();
     visibleUsersCount = 0;
@@ -746,7 +873,7 @@ function onStartFollowingBtnClicked() {
     $(followingOptions).css("display", "block");
 }
 
-function onUsersRangeConfirmBtnClicked() {
+function onUsersRangeConfirmBtnClicked(data) {
     let values = $(usersRangeSlider)[0].noUiSlider.get();
 
     let start = parseInt(values[0].replace(/\s+/g, ""));
@@ -754,30 +881,25 @@ function onUsersRangeConfirmBtnClicked() {
 
     hideUsersRange();
 
-    if ($(usersRangeHeading).text() === USERS_TYPE.FOLLOWERS.HEADING) {
-        loadFollowers(drawFollowers, 0, "", limit);
-    } else {
-        loadFollowing(drawFollowing, 0, "", limit);
+    switch ($(usersRangeHeading).text()) {
+        case USERS_TYPE.FOLLOWERS.HEADING:
+            loadFollowers(() => clearQueueAndDrawUsers(followersMap), 0, "", limit);
+            break;
+        case USERS_TYPE.FOLLOWING.HEADING:
+            loadFollowing(() => clearQueueAndDrawUsers(followingMap), 0, "", limit);
+            break;
+        case USERS_TYPE.POST_LIKES.HEADING:
+            loadPostLikes(() => clearQueueAndDrawUsers(postLikesMap), data.shortcode, 0, "", limit);
+            break;
     }
 }
 
-function drawFollowers() {
+function clearQueueAndDrawUsers(usersMap) {
     usersQueue.clear();
 
-    for (let follower of followersMap.values()) {
-        follower.visible = true;
-        usersQueue.set(follower.id, follower);
-    }
-
-    drawUsers();
-}
-
-function drawFollowing() {
-    usersQueue.clear();
-
-    for (let userFollowing of followingMap.values()) {
-        userFollowing.visible = true;
-        usersQueue.set(userFollowing.id, userFollowing);
+    for (let user of usersMap.values()) {
+        user.visible = true;
+        usersQueue.set(user.id, user);
     }
 
     drawUsers();
