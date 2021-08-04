@@ -176,19 +176,12 @@ function onOverlayClicked(e) {
         return;
     }
 
-    hideSettingsPage();
-    hideUsersRange();
-    hideFollowingOptions();
-    hidePopup();
-    hideStoryList();
-    hidePostList();
+    $(e.target).css("display", "none");
 }
 
 function onSettingsBtnClicked() {
     populateSettings();
-
-    $(overlay).css("display", "flex");
-    $(settingsPage).css("display", "block");
+    $(settingsOverlay).css("display", "flex");
 }
 
 function onSettingsToggle(values, handle) {
@@ -244,8 +237,7 @@ function populateSettings() {
 }
 
 function hideSettingsPage() {
-    $(overlay).css("display", "none");
-    $(settingsPage).css("display", "none");
+    $(settingsOverlay).css("display", "none");
 }
 
 function onSelectAllBtnClicked() {
@@ -308,8 +300,7 @@ function loadUsersRange(usersType, count, data) {
     $(usersRangeConfirmBtn).off("click");
     $(usersRangeConfirmBtn).on("click", () => onUsersRangeConfirmBtnClicked(data));
 
-    $(overlay).css("display", "flex");
-    $(usersRange).css("display", "block");
+    $(usersRangeOverlay).css("display", "flex");
 }
 
 function onLoadNotFollowingBackBtnClicked() {
@@ -323,15 +314,12 @@ function onLoadUnfollowedBtnClicked() {
         $(popupMessage).text("There is no data for this account's followers. Click confirm to load them for the first time.");
     }
 
-    $(overlay).css("display", "flex");
-    $(popup).css("display", "block");
+    $(popupOverlay).css("display", "flex");
 }
 
 function onLoadStoryViewersBtnClicked() {
     loadStoryList();
-
-    $(overlay).css("display", "flex");
-    $(storyList).css("display", "block");
+    $(storyListOverlay).css("display", "flex");
 }
 
 function loadStoryList() {
@@ -436,10 +424,9 @@ function onStoryListContentScroll(event) {
 
 function onLoadPostLikesBtnClicked() {
     $(postListContent).empty();
-    loadPostList("");
 
-    $(overlay).css("display", "flex");
-    $(postList).css("display", "flex");
+    loadPostList("");
+    $(postListOverlay).css("display", "flex");
 }
 
 function loadPostList(endCursor) {
@@ -557,23 +544,19 @@ function loadPostLikes(callback, shortcode, loaded, endCursor, limit) {
 }
 
 function hidePostList() {
-    $(overlay).css("display", "none");
-    $(postList).css("display", "none");
+    $(postListOverlay).css("display", "none");
 }
 
 function hideStoryList() {
-    $(overlay).css("display", "none");
-    $(storyList).css("display", "none");
+    $(storyListOverlay).css("display", "none");
 }
 
 function hideUsersRange() {
-    $(overlay).css("display", "none");
-    $(usersRange).css("display", "none");
+    $(usersRangeOverlay).css("display", "none");
 }
 
 function hideFollowingOptions() {
-    $(overlay).css("display", "none");
-    $(followingOptions).css("display", "none");
+    $(followingOptionsOverlay).css("display", "none");
 }
 
 function onPopupConfirmBtnClicked() {
@@ -582,8 +565,7 @@ function onPopupConfirmBtnClicked() {
 }
 
 function hidePopup() {
-    $(overlay).css("display", "none");
-    $(popup).css("display", "none");
+    $(popupOverlay).css("display", "none");
 }
 
 function loadUnfollowed() {
@@ -869,8 +851,7 @@ function onStartFollowingBtnClicked() {
     $(skipFollowedUnfollowedUsers)[0].noUiSlider.set(settings.skipFollowedUnfollowedUsers);
     $(skipPrivateAccounts)[0].noUiSlider.set(settings.skipPrivateAccounts);
 
-    $(overlay).css("display", "flex");
-    $(followingOptions).css("display", "block");
+    $(followingOptionsOverlay).css("display", "flex");
 }
 
 function onUsersRangeConfirmBtnClicked(data) {
