@@ -113,11 +113,11 @@ h1, h3, strong {
     height: 0.5em;
 }
 
-.scrollable-area::-webkit-scrollbar-track, #storyListContent::-webkit-scrollbar-track, #postListContent::-webkit-scrollbar {
+.scrollable-area::-webkit-scrollbar-track, #storyListContent::-webkit-scrollbar-track, #postListContent::-webkit-scrollbar-track {
     background: none;
 }
 
-.scrollable-area::-webkit-scrollbar-thumb, #storyListContent::-webkit-scrollbar-thumb, #postListContent::-webkit-scrollbar {
+.scrollable-area::-webkit-scrollbar-thumb, #storyListContent::-webkit-scrollbar-thumb, #postListContent::-webkit-scrollbar-thumb {
     background-color: grey;
     border-radius: 0.5em;
 }
@@ -402,6 +402,7 @@ input:focus {
 }
 
 #postList {
+    display: flex;
     flex-direction: column;
     height: 70%;
 }
@@ -414,14 +415,11 @@ input:focus {
 
 #postListContent {
     display: flex;
+    flex: auto;
     justify-content: center;
     flex-wrap: wrap;
     overflow-x: hidden;
     overflow-y: scroll;
-}
-
-#postListButtons {
-    margin-top: auto;
 }
 
 .storyElement, .postElement {
