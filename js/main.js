@@ -424,6 +424,7 @@ function onStoryListContentScroll(event) {
 
 function onLoadPostLikesBtnClicked() {
     $(postListContent).empty();
+    $(postListLoadMoreBtn).removeClass(DISABLED_CLASS);
 
     loadPostList("");
     $(postListOverlay).css("display", "flex");
