@@ -25,6 +25,14 @@ h1, h3, strong {
     user-select: none;
 }
 
+#buyMeACoffeeBtn {
+    color: white;
+}
+
+#buyMeACoffeeBtn:hover {
+    color: black;
+}
+
 .dropdown {
     position: relative;
     display: inline-block;
