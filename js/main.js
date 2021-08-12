@@ -62,7 +62,7 @@ function initializeEventListeners() {
         }
     }, false);
 
-    $(overlay).on("mousedown", onOverlayClicked);
+    $(overlay).on("click", onOverlayClicked);
     $(settingsBtn).on("click", onSettingsBtnClicked);
     $(settingsToggle)[0].noUiSlider.on('update', onSettingsToggle);
     $(cancelSettingsBtn).on("click", hideSettingsPage);
@@ -98,6 +98,8 @@ function initializeEventListeners() {
     $(searchBarInput).on("keyup", onSearchBarInputKeyUp);
     $(topDot).on("click", onTopDotClicked);
     $(bottomDot).on("click", onBottomDotClicked);
+    $(rateLimitOverlay).on("click", onRateLimitOverlayClicked);
+    $(rateLimitCancelBtn).on("click", hideRateLimitOverlay);
 }
 
 function extractUserInfo() {
@@ -1309,11 +1311,18 @@ function mergeTooltips(slider, threshold, separator) {
 
 function makeRequest(requestSettings, callback) {
     $.ajax(requestSettings).done(callback).fail(function () {
+        $(rateLimitRetryBtn).off("click");
+
+        $(rateLimitRetryBtn).on("click", () => {
+            hideRateLimitOverlay();
+            makeRequest(requestSettings, callback);
+        });
+
         $(rateLimitOverlay).css("display", "flex");
         let secondsRemaining = settings.rateLimitTimeout * 60;
 
         makeRequestTimeout(secondsRemaining, secondsRemaining, function () {
-            $(rateLimitOverlay).css("display", "none");
+            hideRateLimitOverlay();
             makeRequest(requestSettings, callback);
         });
     });
@@ -1323,7 +1332,7 @@ function makeRequestTimeout(totalSeconds, secondsRemaining, callback) {
     if (secondsRemaining > 0) {
         updateRateLimitCountdownElement(secondsRemaining);
 
-        setTimeout(function () {
+        rateLimitTimeoutObject = setTimeout(function () {
             makeRequestTimeout(totalSeconds, secondsRemaining - 1, callback);
         }, 1000);
     } else {
@@ -1332,7 +1341,20 @@ function makeRequestTimeout(totalSeconds, secondsRemaining, callback) {
 }
 
 function updateRateLimitCountdownElement(secondsRemaining) {
-    $(rateLimitMessage).text("Possible rate limit detected. Waiting " + secondsRemaining + " seconds.");
+    $(rateLimitMessage).text("Possible rate limit detected. Waiting " + secondsRemaining + " seconds before auto retry.");
+}
+
+function onRateLimitOverlayClicked(e) {
+    if (!$(e.target).is($(rateLimitOverlay))) {
+        return;
+    }
+
+    hideRateLimitOverlay();
+}
+
+function hideRateLimitOverlay() {
+    $(rateLimitOverlay).css("display", "none");
+    clearTimeout(rateLimitTimeoutObject);
 }
 
 function showPopup(heading, message) {

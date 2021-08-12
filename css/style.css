@@ -205,12 +205,8 @@ img {
     top: 0;
 }
 
-#usersRangeOverlay, #rateLimitOverlay {
+#usersRangeOverlay {
     z-index: 1;
-}
-
-#rateLimitOverlay {
-    font-size: 1.2em;
 }
 
 #advancedSettings .setting:not(:last-child), #basicSettings .setting:last-child {
@@ -367,7 +363,7 @@ img {
     cursor: pointer;
 }
 
-#stopLoadingBtn img, #rateLimitOverlay img {
+#stopLoadingBtn img {
     filter: invert(50%) sepia(27%) saturate(778%) hue-rotate(313deg) brightness(88%) contrast(124%);
 }
 

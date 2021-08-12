@@ -84,6 +84,8 @@ let postListLoadMoreBtn = $("#postListLoadMoreBtn", shadowRoot);
 //Rate Limit Overlay
 let rateLimitOverlay = $("#rateLimitOverlay", shadowRoot);
 let rateLimitMessage = $("#rateLimitMessage", shadowRoot);
+let rateLimitCancelBtn = $("#rateLimitCancelBtn", shadowRoot);
+let rateLimitRetryBtn = $("#rateLimitRetryBtn", shadowRoot);
 
 // Other Elements
 let currentUserProfilePicture = $("#currentUserProfilePicture", shadowRoot);
