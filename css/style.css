@@ -242,7 +242,6 @@ img {
 }
 
 #searchBarInput {
-    width: 15em;
     border: none;
     padding: 0;
     margin-left: 0.3em;
@@ -519,7 +518,7 @@ input, .button, .noUi-target, #searchBar {
     background: none;
     height: 2.2em;
     padding: 0 1.1em;
-    margin-bottom: 4em;
+    margin-bottom: 3.5em;
     border: 0.1em solid #e6e6e6;
     border-radius: 5em;
 }
@@ -565,5 +564,5 @@ input, .button, .noUi-target, #searchBar {
 }
 
 .marginTop {
-    margin-top: 4.5em;
+    margin-top: 4em;
 }

@@ -29,6 +29,7 @@ function initializeSettings() {
     noUiSlider.create($(followUnfollowTimeout)[0], getSliderConfiguration(0, 0, 240, " Sec"));
     noUiSlider.create($(loadingUsersTimeout)[0], getSliderConfiguration(0, 0, 30, " Sec"));
     noUiSlider.create($(likingPhotosTimeout)[0], getSliderConfiguration(0, 0, 30, " Sec"));
+    noUiSlider.create($(rateLimitTimeout)[0], getSliderConfiguration(0, 0, 60, " Min"));
     noUiSlider.create($(timeoutRandomization)[0], getSliderConfiguration(0, 0, 100, "%"));
     noUiSlider.create($(skipPrivateAccounts)[0], getSliderConfiguration(0, 0, 1, null));
     noUiSlider.create($(likePhotosCount)[0], getSliderConfiguration(0, 0, 5, " Photos"));
@@ -205,6 +206,7 @@ function onSaveSettingsBtnClicked() {
     settings.followUnfollowTimeout = parseInt($(followUnfollowTimeout)[0].noUiSlider.get());
     settings.loadingUsersTimeout = parseInt($(loadingUsersTimeout)[0].noUiSlider.get());
     settings.likingPhotosTimeout = parseInt($(likingPhotosTimeout)[0].noUiSlider.get());
+    settings.rateLimitTimeout = parseInt($(rateLimitTimeout)[0].noUiSlider.get());
     settings.timeoutRandomization = parseInt($(timeoutRandomization)[0].noUiSlider.get());
 
     chrome.runtime.sendMessage({setToLocalStorage: true, key: "settings", value: settings}, function () {
@@ -233,6 +235,7 @@ function populateSettings() {
     $(followUnfollowTimeout)[0].noUiSlider.set(settings.followUnfollowTimeout);
     $(loadingUsersTimeout)[0].noUiSlider.set(settings.loadingUsersTimeout);
     $(likingPhotosTimeout)[0].noUiSlider.set(settings.likingPhotosTimeout);
+    $(rateLimitTimeout)[0].noUiSlider.set(settings.rateLimitTimeout);
     $(timeoutRandomization)[0].noUiSlider.set(settings.timeoutRandomization);
 }
 

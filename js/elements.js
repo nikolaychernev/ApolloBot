@@ -40,6 +40,7 @@ let applicationIdInput = $("#applicationId", shadowRoot);
 let followUnfollowTimeout = $("#followUnfollowTimeout", shadowRoot);
 let loadingUsersTimeout = $("#loadingUsersTimeout", shadowRoot);
 let likingPhotosTimeout = $("#likingPhotosTimeout", shadowRoot);
+let rateLimitTimeout = $("#rateLimitTimeout", shadowRoot);
 let timeoutRandomization = $("#timeoutRandomization", shadowRoot);
 
 //Users Range

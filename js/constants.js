@@ -7,6 +7,7 @@ let DEFAULT_SETTINGS = {
     "followUnfollowTimeout": 60,
     "loadingUsersTimeout": 3,
     "likingPhotosTimeout": 5,
+    "rateLimitTimeout": 10,
     "timeoutRandomization": 50,
     "likePhotosCount": 1,
     "skipFollowedUnfollowedUsers": 30,
