@@ -15,7 +15,7 @@ h1, h3, strong {
 .button {
     display: inline-flex;
     padding: 0.6em 1.2em;
-    border: 0.1em solid #FFFFFF;
+    border: 0.13em solid #e6e6e6;
     border-radius: 0.5em;
     transition: all 0.3s;
     cursor: pointer;
@@ -26,7 +26,7 @@ h1, h3, strong {
 }
 
 #buyMeACoffeeBtn {
-    color: white;
+    color: #e6e6e6;
 }
 
 #buyMeACoffeeBtn:hover {
@@ -68,7 +68,7 @@ h1, h3, strong {
 
 .button:hover {
     color: #000000;
-    background-color: #FFFFFF;
+    background-color: #e6e6e6;
 }
 
 .button:hover img {
@@ -157,8 +157,8 @@ img {
 }
 
 #currentUserProfilePicture {
-    width: 4em;
-    height: 4em;
+    width: 4.5em;
+    height: 4.5em;
 }
 
 .alignCenter {
@@ -182,7 +182,7 @@ img {
 }
 
 .skipped {
-    box-shadow: inset 0 0 0 4px white;
+    box-shadow: inset 0 0 0 4px #e6e6e6;
 }
 
 .selected {
@@ -232,6 +232,23 @@ img {
     opacity: 0.5;
 }
 
+#searchBar {
+    display: flex;
+    align-items: center;
+    border: 0.13em solid #e6e6e6;
+    border-radius: 0.5em;
+    padding: 0.6em 1.2em;
+    font-size: 1.2em;
+}
+
+#searchBarInput {
+    width: 15em;
+    border: none;
+    padding: 0;
+    margin-left: 0.3em;
+    box-shadow: none;
+}
+
 .loadUsersButton {
     flex-grow: 1;
 }
@@ -267,7 +284,6 @@ img {
 
 #startFollowingBtn, #startUnfollowingBtn, #stopFollowingBtn, #stopUnfollowingBtn {
     width: 50%;
-    border-width: 0.15em;
 }
 
 .hidden {
@@ -284,7 +300,7 @@ img {
 .countdown strong {
     width: 100%;
     font-size: 2em;
-    color: white;
+    color: #e6e6e6;
     line-height: 300%;
 }
 
@@ -313,7 +329,7 @@ img {
 #loadingBar strong, #loadingMessage {
     width: 100%;
     font-size: 2em;
-    color: white;
+    color: #e6e6e6;
 }
 
 #loadingMessage {
@@ -341,7 +357,7 @@ img {
 .jam {
     display: block;
     width: 1.1em;
-    margin-right: 0.2em;
+    margin-right: 0.3em;
     filter: invert(86%) sepia(100%) saturate(0%) hue-rotate(202deg) brightness(111%) contrast(100%);
 }
 
@@ -382,7 +398,7 @@ img {
 
 #popupMessage {
     display: block;
-    margin-bottom: 1em;
+    margin-bottom: 1.5em;
     font-size: 1.5em;
 }
 
@@ -390,16 +406,11 @@ input {
     width: 100%;
     box-sizing: border-box;
     background: none;
-    border: 0.1em solid #FFFFFF;
+    border: 0.13rem solid #e6e6e6;
     border-radius: 0.5em;
-    color: white;
+    color: #e6e6e6;
     padding: 0.8em 1.2em;
     -moz-appearance: textfield;
-}
-
-input:hover {
-    border: 0.1em solid darkgray;
-    transition: all 0.3s;
 }
 
 input:focus {
@@ -465,7 +476,7 @@ input:focus {
     opacity: 0.2;
 }
 
-input, .button, .noUi-target {
+input, .button, .noUi-target, #searchBar {
     box-shadow: 0 0 25px 5px rgba(0, 0, 0, 0.25);
 }
 
@@ -509,7 +520,7 @@ input, .button, .noUi-target {
     height: 2.2em;
     padding: 0 1.1em;
     margin-bottom: 4em;
-    border: 0.1em solid #FFFFFF;
+    border: 0.1em solid #e6e6e6;
     border-radius: 5em;
 }
 
@@ -544,7 +555,7 @@ input, .button, .noUi-target {
 .noUi-horizontal .noUi-tooltip {
     bottom: -120%;
     background: none;
-    color: white;
+    color: #e6e6e6;
     border: none;
     font-size: 1.1em;
 }

@@ -38,12 +38,12 @@ const PROCESS_TYPE = {
 
 const USERS_TYPE = {
     FOLLOWERS: {
-        HEADING: "Select Followers Range To Load"
+        HEADING: "Select Followers Range"
     },
     FOLLOWING: {
-        HEADING: "Select Following Range To Load"
+        HEADING: "Select Following Range"
     },
     POST_LIKES: {
-        HEADING: "Select Users Range To Load"
+        HEADING: "Select Users Range"
     },
 };
