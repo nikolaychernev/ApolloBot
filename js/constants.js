@@ -10,7 +10,7 @@ let DEFAULT_SETTINGS = {
     "rateLimitTimeout": 10,
     "timeoutRandomization": 50,
     "likePhotosCount": 1,
-    "skipFollowedUnfollowedUsers": 30,
+    "skipAlreadyProcessedUsers": 30,
     "skipPrivateAccounts": 1
 };
 

@@ -26,14 +26,14 @@ function initializeSettings() {
     });
 
     noUiSlider.create($(settingsToggle)[0], getSliderConfiguration(0, 0, 1, null));
-    noUiSlider.create($(followUnfollowTimeout)[0], getSliderConfiguration(0, 0, 240, " Sec"));
-    noUiSlider.create($(loadingUsersTimeout)[0], getSliderConfiguration(0, 0, 30, " Sec"));
-    noUiSlider.create($(likingPhotosTimeout)[0], getSliderConfiguration(0, 0, 30, " Sec"));
-    noUiSlider.create($(rateLimitTimeout)[0], getSliderConfiguration(0, 0, 60, " Min"));
+    noUiSlider.create($(followUnfollowTimeout)[0], getSliderConfiguration(1, 1, 240, " Sec"));
+    noUiSlider.create($(loadingUsersTimeout)[0], getSliderConfiguration(1, 1, 30, " Sec"));
+    noUiSlider.create($(likingPhotosTimeout)[0], getSliderConfiguration(1, 1, 30, " Sec"));
+    noUiSlider.create($(rateLimitTimeout)[0], getSliderConfiguration(1, 1, 60, " Min"));
     noUiSlider.create($(timeoutRandomization)[0], getSliderConfiguration(0, 0, 100, "%"));
     noUiSlider.create($(skipPrivateAccounts)[0], getSliderConfiguration(0, 0, 1, null));
     noUiSlider.create($(likePhotosCount)[0], getSliderConfiguration(0, 0, 5, " Photos"));
-    noUiSlider.create($(skipFollowedUnfollowedUsers)[0], getSliderConfiguration(0, 0, 365, " Days"));
+    noUiSlider.create($(skipAlreadyProcessedUsers)[0], getSliderConfiguration(0, 0, 365, " Days"));
 }
 
 function getSliderConfiguration(start, min, max, suffix) {
@@ -84,7 +84,8 @@ function initializeEventListeners() {
     $(usersRangeCancelBtn).on("click", hideUsersRange);
     $(followingOptionsConfirmBtn).on("click", onFollowingOptionsConfirmBtnClicked);
     $(followingOptionsCancelBtn).on("click", hideFollowingOptions);
-    $(popupConfirmBtn).on("click", onPopupConfirmBtnClicked);
+    $(loadUnfollowedConfirmBtn).on("click", onloadUnfollowedConfirmBtnClicked);
+    $(loadUnfollowedCancelBtn).on("click", hideLoadUnfollowed);
     $(popupCancelBtn).on("click", hidePopup);
     $(loadQueueBtn).on("click", onLoadQueueBtnClicked);
     $(loadQueueFileInput).on("change", onLoadQueueFileInputChange);
@@ -312,17 +313,16 @@ function onLoadNotFollowingBackBtnClicked() {
 
 function onLoadUnfollowedBtnClicked() {
     if (lastChecked) {
-        $(popupMessage).text("Clicking confirm will load all users who have unfollowed since " + lastChecked.timestamp + ".");
+        $(loadUnfollowedMessage).text("Clicking confirm will load all users who have unfollowed since " + lastChecked.timestamp + ".");
     } else {
-        $(popupMessage).text("There is no data for this account's followers. Click confirm to load them for the first time.");
+        $(loadUnfollowedMessage).text("There is no data for this account's followers. Click confirm to load them for the first time.");
     }
 
-    $(popupOverlay).css("display", "flex");
+    $(loadUnfollowedOverlay).css("display", "flex");
 }
 
 function onLoadStoryViewersBtnClicked() {
     loadStoryList();
-    $(storyListOverlay).css("display", "flex");
 }
 
 function loadStoryList() {
@@ -342,9 +342,10 @@ function loadStoryList() {
 
 function drawStoryList(stories) {
     if (stories.length === 0) {
-        $(storyListHeading).text("No Stories");
+        showPopup("Warning", "Currently this account doesn't have any stories.")
+        return;
     } else {
-        $(storyListHeading).text("Select Story");
+        $(storyListOverlay).css("display", "flex");
     }
 
     $(storyListContent).empty();
@@ -430,7 +431,6 @@ function onLoadPostLikesBtnClicked() {
     $(postListLoadMoreBtn).removeClass(DISABLED_CLASS);
 
     loadPostList("");
-    $(postListOverlay).css("display", "flex");
 }
 
 function loadPostList(endCursor) {
@@ -462,9 +462,10 @@ function loadPostList(endCursor) {
 
 function drawPostList(posts, endCursor) {
     if (posts.length === 0) {
-        $(postListHeading).text("No Posts");
+        showPopup("Warning", "Currently this account doesn't have any posts.")
+        return;
     } else {
-        $(postListHeading).text("Select Post");
+        $(postListOverlay).css("display", "flex");
     }
 
     for (let post of posts) {
@@ -563,9 +564,13 @@ function hideFollowingOptions() {
     $(followingOptionsOverlay).css("display", "none");
 }
 
-function onPopupConfirmBtnClicked() {
-    hidePopup();
+function onloadUnfollowedConfirmBtnClicked() {
+    hideLoadUnfollowed();
     loadFollowers(loadUnfollowed, 0, "", null);
+}
+
+function hideLoadUnfollowed() {
+    $(loadUnfollowedOverlay).css("display", "none");
 }
 
 function hidePopup() {
@@ -852,7 +857,7 @@ function onProfilePictureClicked(event) {
 
 function onStartFollowingBtnClicked() {
     $(likePhotosCount)[0].noUiSlider.set(settings.likePhotosCount);
-    $(skipFollowedUnfollowedUsers)[0].noUiSlider.set(settings.skipFollowedUnfollowedUsers);
+    $(skipAlreadyProcessedUsers)[0].noUiSlider.set(settings.skipAlreadyProcessedUsers);
     $(skipPrivateAccounts)[0].noUiSlider.set(settings.skipPrivateAccounts);
 
     $(followingOptionsOverlay).css("display", "flex");
@@ -896,7 +901,7 @@ function clearQueueAndDrawUsers(usersMap) {
 function onFollowingOptionsConfirmBtnClicked() {
     settings.skipPrivateAccounts = parseInt($(skipPrivateAccounts)[0].noUiSlider.get());
     settings.likePhotosCount = parseInt($(likePhotosCount)[0].noUiSlider.get());
-    settings.skipFollowedUnfollowedUsers = parseInt($(skipFollowedUnfollowedUsers)[0].noUiSlider.get());
+    settings.skipAlreadyProcessedUsers = parseInt($(skipAlreadyProcessedUsers)[0].noUiSlider.get());
 
     chrome.runtime.sendMessage({setToLocalStorage: true, key: "settings", value: settings});
 
@@ -947,7 +952,7 @@ function processUsers(users, processType) {
             let millisecondsPassedSinceFollowUnfollow = Date.now() - followedUnfollowedUsersMap.get(user.id);
             let daysPassedSinceFollowUnfollow = (((((millisecondsPassedSinceFollowUnfollow) / 1000) / 60) / 60) / 24);
 
-            if (daysPassedSinceFollowUnfollow < settings.skipFollowedUnfollowedUsers) {
+            if (daysPassedSinceFollowUnfollow < settings.skipAlreadyProcessedUsers) {
                 shouldSkipFollowedUnfollowedUser = true;
             }
         }
@@ -1328,4 +1333,10 @@ function makeRequestTimeout(totalSeconds, secondsRemaining, callback) {
 
 function updateRateLimitCountdownElement(secondsRemaining) {
     $(rateLimitMessage).text("Possible rate limit detected. Waiting " + secondsRemaining + " seconds.");
+}
+
+function showPopup(heading, message) {
+    $(popupHeading).text(heading);
+    $(popupMessage).text(message);
+    $(popupOverlay).css("display", "flex");
 }

@@ -124,133 +124,166 @@
     </div>
 </div>
 <div id="settingsPageOverlay" class="overlay hidden">
-    <div class="settingsPage">
-        <div class="spaceBetween">
+    <div class="modal">
+        <div class="modalHeading spaceBetween">
             <h1 id="settingsHeading">Settings</h1>
             <div id="settingsToggle"></div>
         </div>
-        <div id="advancedSettings" class="hidden">
-            <div class="setting">
-                <h3>Load Followers Query Hash</h3>
-                <input type="text" id="loadFollowersQueryHash" name="loadFollowersQueryHash">
+        <div class="modalBody">
+            <div id="advancedSettings" class="hidden">
+                <div class="setting">
+                    <h3>Load Followers Query Hash</h3>
+                    <input type="text" id="loadFollowersQueryHash" name="loadFollowersQueryHash">
+                </div>
+                <div class="setting">
+                    <h3>Load Following Query Hash</h3>
+                    <input type="text" id="loadFollowingQueryHash" name="loadFollowingQueryHash">
+                </div>
+                <div class="setting">
+                    <h3>Load Post List Query Hash</h3>
+                    <input type="text" id="loadPostListQueryHash" name="loadPostListQueryHash">
+                </div>
+                <div class="setting">
+                    <h3>Load Post Likes Query Hash</h3>
+                    <input type="text" id="loadPostLikesQueryHash" name="loadPostLikesQueryHash">
+                </div>
+                <div class="setting">
+                    <h3>Application Id</h3>
+                    <input type="text" id="applicationId" name="applicationId">
+                </div>
             </div>
-            <div class="setting">
-                <h3>Load Following Query Hash</h3>
-                <input type="text" id="loadFollowingQueryHash" name="loadFollowingQueryHash">
-            </div>
-            <div class="setting">
-                <h3>Load Post List Query Hash</h3>
-                <input type="text" id="loadPostListQueryHash" name="loadPostListQueryHash">
-            </div>
-            <div class="setting">
-                <h3>Load Post Likes Query Hash</h3>
-                <input type="text" id="loadPostLikesQueryHash" name="loadPostLikesQueryHash">
-            </div>
-            <div class="setting">
-                <h3>Application Id</h3>
-                <input type="text" id="applicationId" name="applicationId">
+            <div id="basicSettings">
+                <div class="setting">
+                    <h3>Follow / Unfollow Timeout</h3>
+                    <div id="followUnfollowTimeout"></div>
+                </div>
+                <div class="setting">
+                    <h3>Loading Users Timeout</h3>
+                    <div id="loadingUsersTimeout"></div>
+                </div>
+                <div class="setting">
+                    <h3>Liking Photos Timeout</h3>
+                    <div id="likingPhotosTimeout"></div>
+                </div>
+                <div class="setting">
+                    <h3>Rate Limit Timeout</h3>
+                    <div id="rateLimitTimeout"></div>
+                </div>
+                <div class="setting">
+                    <h3>Timeout Randomization</h3>
+                    <div id="timeoutRandomization"></div>
+                </div>
             </div>
         </div>
-        <div id="basicSettings">
-            <div class="setting">
-                <h3>Follow / Unfollow Timeout</h3>
-                <div id="followUnfollowTimeout"></div>
-            </div>
-            <div class="setting">
-                <h3>Loading Users Timeout</h3>
-                <div id="loadingUsersTimeout"></div>
-            </div>
-            <div class="setting">
-                <h3>Liking Photos Timeout</h3>
-                <div id="likingPhotosTimeout"></div>
-            </div>
-            <div class="setting">
-                <h3>Rate Limit Timeout</h3>
-                <div id="rateLimitTimeout"></div>
-            </div>
-            <div class="setting">
-                <h3>Timeout Randomization</h3>
-                <div id="timeoutRandomization"></div>
-            </div>
-        </div>
-        <div class="spaceBetween marginTop">
+        <div class="spaceBetween">
             <div id="cancelSettingsBtn" class="button">
                 <img data-src="icons/close.svg" class="jam"/>
                 <span>Cancel</span>
             </div>
             <div>
-                <div id="saveSettingsBtn" class="button greenButton">
-                    <img data-src="icons/save.svg" class="jam"/>
-                    <span>Save</span>
-                </div>
                 <div id="resetSettingsBtn" class="button redButton">
                     <img data-src="icons/history.svg" class="jam"/>
                     <span>Reset</span>
+                </div>
+                <div id="saveSettingsBtn" class="button greenButton">
+                    <img data-src="icons/save.svg" class="jam"/>
+                    <span>Save</span>
                 </div>
             </div>
         </div>
     </div>
 </div>
 <div id="usersRangeOverlay" class="overlay hidden">
-    <div id="usersRange">
-        <h1 id="usersRangeHeading"></h1>
-        <div id="usersRangeSlider"></div>
-        <div id="usersRangeConfirmBtn" class="button greenButton">
-            <img data-src="icons/check.svg" class="jam"/>
-            <span>Confirm</span>
+    <div class="modal">
+        <div class="modalHeading">
+            <h1 id="usersRangeHeading"></h1>
         </div>
-        <div id="usersRangeCancelBtn" class="button">
-            <img data-src="icons/close.svg" class="jam"/>
-            <span>Cancel</span>
+        <div class="modalBody">
+            <div id="usersRangeSlider"></div>
+        </div>
+        <div class="spaceBetween">
+            <div id="usersRangeCancelBtn" class="button">
+                <img data-src="icons/close.svg" class="jam"/>
+                <span>Cancel</span>
+            </div>
+            <div id="usersRangeConfirmBtn" class="button greenButton">
+                <img data-src="icons/check.svg" class="jam"/>
+                <span>Confirm</span>
+            </div>
         </div>
     </div>
 </div>
 <div id="followingOptionsOverlay" class="overlay hidden">
-    <div id="followingOptions">
-        <h1>Following Options</h1>
-        <div class="setting">
-            <h3>Like Latest Photos</h3>
-            <div id="likePhotosCount"></div>
+    <div class="modal">
+        <div class="modalHeading">
+            <h1>Following Options</h1>
         </div>
-        <div class="setting">
-            <h3>Skip Followed/Unfollowed Users</h3>
-            <div id="skipFollowedUnfollowedUsers"></div>
+        <div class="modalBody">
+            <div class="setting">
+                <h3>Like Latest Photos</h3>
+                <div id="likePhotosCount"></div>
+            </div>
+            <div class="setting">
+                <h3>Skip Already Processed Users</h3>
+                <div id="skipAlreadyProcessedUsers"></div>
+            </div>
+            <div class="setting">
+                <h3>Skip Private Accounts</h3>
+                <div id="skipPrivateAccounts"></div>
+            </div>
         </div>
-        <div class="setting">
-            <h3>Skip Private Accounts</h3>
-            <div id="skipPrivateAccounts"></div>
-        </div>
-        <div class="marginTop">
+        <div class="spaceBetween">
+            <div id="followingOptionsCancelBtn" class="button">
+                <img data-src="icons/close.svg" class="jam"/>
+                <span>Cancel</span>
+            </div>
             <div id="followingOptionsConfirmBtn" class="button greenButton">
                 <img data-src="icons/check.svg" class="jam"/>
                 <span>Confirm</span>
             </div>
-            <div id="followingOptionsCancelBtn" class="button">
+        </div>
+    </div>
+</div>
+<div id="loadUnfollowedOverlay" class="overlay hidden">
+    <div class="modal">
+        <div class="modalHeading">
+            <h1>Load Unfollowed</h1>
+        </div>
+        <div class="modalBody">
+            <p id="loadUnfollowedMessage"></p>
+        </div>
+        <div class="spaceBetween">
+            <div id="loadUnfollowedCancelBtn" class="button">
                 <img data-src="icons/close.svg" class="jam"/>
                 <span>Cancel</span>
+            </div>
+            <div id="loadUnfollowedConfirmBtn" class="button greenButton">
+                <img data-src="icons/check.svg" class="jam"/>
+                <span>Confirm</span>
             </div>
         </div>
     </div>
 </div>
 <div id="popupOverlay" class="overlay hidden">
-    <div id="popup">
-        <span id="popupMessage"></span>
-        <div>
-            <div id="popupConfirmBtn" class="button greenButton">
-                <img data-src="icons/check.svg" class="jam"/>
-                <span>Confirm</span>
-            </div>
-            <div id="popupCancelBtn" class="button">
-                <img data-src="icons/close.svg" class="jam"/>
-                <span>Cancel</span>
-            </div>
+    <div class="modal">
+        <div class="modalHeading">
+            <h1 id="popupHeading"></h1>
+        </div>
+        <div class="modalBody">
+            <p id="popupMessage"></p>
+        </div>
+        <div id="popupCancelBtn" class="button">
+            <img data-src="icons/close.svg" class="jam"/>
+            <span>Cancel</span>
         </div>
     </div>
 </div>
 <div id="storyListOverlay" class="overlay hidden">
-    <div id="storyList">
-        <h1 id="storyListHeading"></h1>
-        <div id="storyListContent"></div>
+    <div id="storyList" class="modal">
+        <div class="modalHeading">
+            <h1>Select Story</h1>
+        </div>
+        <div id="storyListContent" class="modalBody"></div>
         <div id="storyListCancelBtn" class="button">
             <img data-src="icons/close.svg" class="jam"/>
             <span>Cancel</span>
@@ -258,9 +291,11 @@
     </div>
 </div>
 <div id="postListOverlay" class="overlay hidden">
-    <div id="postList">
-        <h1 id="postListHeading"></h1>
-        <div id="postListContent"></div>
+    <div id="postList" class="modal">
+        <div class="modalHeading">
+            <h1>Select Post</h1>
+        </div>
+        <div id="postListContent" class="modalBody"></div>
         <div class="spaceBetween">
             <div id="postListCancelBtn" class="button">
                 <img data-src="icons/close.svg" class="jam"/>
@@ -274,8 +309,24 @@
     </div>
 </div>
 <div id="rateLimitOverlay" class="rateLimitOverlay hidden">
-    <img data-src="icons/stop-sign.svg" class="jam"/>
-    <span id="rateLimitMessage"></span>
+    <div class="modal">
+        <div class="modalHeading">
+            <h1>Warning</h1>
+        </div>
+        <div class="modalBody">
+            <p id="rateLimitMessage"></p>
+        </div>
+        <div class="spaceBetween">
+            <div id="rateLimitCancelBtn" class="button">
+                <img data-src="icons/close.svg" class="jam"/>
+                <span>Cancel</span>
+            </div>
+            <div id="rateLimitRetryBtn" class="button greenButton">
+                <img data-src="icons/refresh.svg" class="jam"/>
+                <span>Retry</span>
+            </div>
+        </div>
+    </div>
 </div>
 <input type="file" id="loadQueueFileSelector" class="hidden" accept=".txt">
 <div id="loadingBar" class="hidden">

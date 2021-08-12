@@ -54,25 +54,29 @@ let usersRangeCancelBtn = $("#usersRangeCancelBtn", shadowRoot);
 let followingOptionsOverlay = $("#followingOptionsOverlay", shadowRoot);
 let skipPrivateAccounts = $("#skipPrivateAccounts", shadowRoot);
 let likePhotosCount = $("#likePhotosCount", shadowRoot);
-let skipFollowedUnfollowedUsers = $("#skipFollowedUnfollowedUsers", shadowRoot);
+let skipAlreadyProcessedUsers = $("#skipAlreadyProcessedUsers", shadowRoot);
 let followingOptionsConfirmBtn = $("#followingOptionsConfirmBtn", shadowRoot);
 let followingOptionsCancelBtn = $("#followingOptionsCancelBtn", shadowRoot);
 
+//Load Unfollowed
+let loadUnfollowedOverlay = $("#loadUnfollowedOverlay", shadowRoot);
+let loadUnfollowedMessage = $("#loadUnfollowedMessage", shadowRoot);
+let loadUnfollowedConfirmBtn = $("#loadUnfollowedConfirmBtn", shadowRoot);
+let loadUnfollowedCancelBtn = $("#loadUnfollowedCancelBtn", shadowRoot);
+
 //Popup
 let popupOverlay = $("#popupOverlay", shadowRoot);
+let popupHeading = $("#popupHeading", shadowRoot);
 let popupMessage = $("#popupMessage", shadowRoot);
-let popupConfirmBtn = $("#popupConfirmBtn", shadowRoot);
 let popupCancelBtn = $("#popupCancelBtn", shadowRoot);
 
 //Story List
 let storyListOverlay = $("#storyListOverlay", shadowRoot);
-let storyListHeading = $("#storyListHeading", shadowRoot);
 let storyListContent = $("#storyListContent", shadowRoot);
 let storyListCancelBtn = $("#storyListCancelBtn", shadowRoot);
 
 //Post List
 let postListOverlay = $("#postListOverlay", shadowRoot);
-let postListHeading = $("#postListHeading", shadowRoot);
 let postListContent = $("#postListContent", shadowRoot);
 let postListCancelBtn = $("#postListCancelBtn", shadowRoot);
 let postListLoadMoreBtn = $("#postListLoadMoreBtn", shadowRoot);
