@@ -120,12 +120,12 @@ function extractUserInfo() {
             $(usernameField).text("Loading...");
         });
 
-        $.ajax({
+        makeRequest({
             url: currentUrl + "/?__a=1",
             xhrFields: {
                 withCredentials: true
             }
-        }).done(function (data) {
+        }, function (data) {
             if (Object.keys(data).length === 0 || !data.graphql) {
                 notOnProfilePage();
                 return;
@@ -326,7 +326,7 @@ function onLoadStoryViewersBtnClicked() {
 }
 
 function loadStoryList() {
-    $.ajax({
+    makeRequest({
         url: "https://i.instagram.com/api/v1/feed/reels_media/?reel_ids=" + currentUser.id,
         beforeSend: function (request) {
             request.setRequestHeader("x-ig-app-id", settings.applicationId);
@@ -334,7 +334,7 @@ function loadStoryList() {
         xhrFields: {
             withCredentials: true
         }
-    }).done(function (data) {
+    }, function (data) {
         let stories = data.reels_media[0] ? data.reels_media[0].items : [];
         drawStoryList(stories);
     });
@@ -371,7 +371,7 @@ function onStoryElementClicked(event) {
 }
 
 function loadStoryViewers(storyId, maxId) {
-    $.ajax({
+    makeRequest({
         url: "https://i.instagram.com/api/v1/media/" + storyId + "/list_reel_media_viewer/?max_id=" + maxId,
         beforeSend: function (request) {
             request.setRequestHeader("x-ig-app-id", settings.applicationId);
@@ -379,7 +379,7 @@ function loadStoryViewers(storyId, maxId) {
         xhrFields: {
             withCredentials: true
         }
-    }).done(function (data) {
+    }, function (data) {
         let storyViewers = data.users;
         let nextMaxId = data.next_max_id;
 
@@ -442,12 +442,12 @@ function loadPostList(endCursor) {
 
     let encodedJsonVars = encodeURIComponent(JSON.stringify(jsonVars));
 
-    $.ajax({
+    makeRequest({
         url: "https://www.instagram.com/graphql/query/?query_hash=" + settings.loadPostListQueryHash + "&variables=" + encodedJsonVars,
         xhrFields: {
             withCredentials: true
         }
-    }).done(function (data) {
+    }, function (data) {
         let posts = data.data.user.edge_owner_to_timeline_media.edges;
         let endCursor = data.data.user.edge_owner_to_timeline_media.page_info.end_cursor;
         let hasNextPage = data.data.user.edge_owner_to_timeline_media.page_info.has_next_page;
@@ -457,7 +457,7 @@ function loadPostList(endCursor) {
         if (!hasNextPage) {
             $(postListLoadMoreBtn).addClass(DISABLED_CLASS);
         }
-    })
+    });
 }
 
 function drawPostList(posts, endCursor) {
@@ -501,12 +501,12 @@ function loadPostLikes(callback, shortcode, loaded, endCursor, limit) {
 
     let encodedJsonVars = encodeURIComponent(JSON.stringify(jsonVars));
 
-    $.ajax({
+    makeRequest({
         url: "https://www.instagram.com/graphql/query/?query_hash=" + settings.loadPostLikesQueryHash + "&variables=" + encodedJsonVars,
         xhrFields: {
             withCredentials: true
         }
-    }).done(function (data) {
+    }, function (data) {
         let likes = data.data.shortcode_media.edge_liked_by.edges;
         let totalLikesCount = data.data.shortcode_media.edge_liked_by.count;
         let limitReached = false;
@@ -658,12 +658,12 @@ function loadFollowers(callback, loaded, endCursor, limit) {
 
     let encodedJsonVars = encodeURIComponent(JSON.stringify(jsonVars));
 
-    $.ajax({
+    makeRequest({
         url: "https://www.instagram.com/graphql/query/?query_hash=" + settings.loadFollowersQueryHash + "&variables=" + encodedJsonVars,
         xhrFields: {
             withCredentials: true
         }
-    }).done(function (data) {
+    }, function (data) {
         let followers = data.data.user.edge_followed_by.edges;
         let totalFollowersCount = data.data.user.edge_followed_by.count;
         let limitReached = false;
@@ -717,12 +717,12 @@ function loadFollowing(callback, loaded, endCursor, limit) {
 
     let encodedJsonVars = encodeURIComponent(JSON.stringify(jsonVars));
 
-    $.ajax({
+    makeRequest({
         url: "https://www.instagram.com/graphql/query/?query_hash=" + settings.loadFollowingQueryHash + "&variables=" + encodedJsonVars,
         xhrFields: {
             withCredentials: true
         }
-    }).done(function (data) {
+    }, function (data) {
         let usersFollowing = data.data.user.edge_follow.edges;
         let totalFollowingCount = data.data.user.edge_follow.count;
         let limitReached = false;
@@ -957,7 +957,7 @@ function processUsers(users, processType) {
             return;
         }
 
-        $.ajax({
+        makeRequest({
             url: "https://www.instagram.com/web/friendships/" + user.id + processType.ENDPOINT,
             method: "POST",
             beforeSend: function (xhr) {
@@ -966,7 +966,7 @@ function processUsers(users, processType) {
             xhrFields: {
                 withCredentials: true
             }
-        }).done(function () {
+        }, function () {
             if (processType === PROCESS_TYPE.FOLLOWING && settings.likePhotosCount > 0) {
                 let countdownElement = $("div#" + user.id, shadowRoot).find(".countdown").css("display", "block");
                 getLatestPhotosIds(user, users, countdownElement, settings.likePhotosCount);
@@ -1021,12 +1021,12 @@ function onUserProcessed(user, users, processType, skipped) {
 function getLatestPhotosIds(user, users, countdownElement, count) {
     let photosIds = [];
 
-    $.ajax({
+    makeRequest({
         url: "https://www.instagram.com/" + user.username + "/?__a=1",
         xhrFields: {
             withCredentials: true
         }
-    }).done(function (data) {
+    }, function (data) {
         let photos = data.graphql.user.edge_owner_to_timeline_media.edges;
         let loadedCount = 0;
 
@@ -1053,7 +1053,7 @@ function getLatestPhotosIds(user, users, countdownElement, count) {
 function likePhotos(user, users, countdownElement, photosIds, totalPhotosCount) {
     let photoId = photosIds.shift();
 
-    $.ajax({
+    makeRequest({
         url: "https://www.instagram.com/web/likes/" + photoId + "/like/",
         method: "POST",
         beforeSend: function (xhr) {
@@ -1062,7 +1062,7 @@ function likePhotos(user, users, countdownElement, photosIds, totalPhotosCount) 
         xhrFields: {
             withCredentials: true
         }
-    }).done(function () {
+    }, function () {
         if (photosIds.length === 0) {
             onUserProcessed(user, users, PROCESS_TYPE.FOLLOWING, false);
             return;
@@ -1300,4 +1300,32 @@ function mergeTooltips(slider, threshold, separator) {
             }
         });
     });
+}
+
+function makeRequest(requestSettings, callback) {
+    $.ajax(requestSettings).done(callback).fail(function () {
+        $(rateLimitOverlay).css("display", "flex");
+        let secondsRemaining = settings.rateLimitTimeout * 60;
+
+        makeRequestTimeout(secondsRemaining, secondsRemaining, function () {
+            $(rateLimitOverlay).css("display", "none");
+            makeRequest(requestSettings, callback);
+        });
+    });
+}
+
+function makeRequestTimeout(totalSeconds, secondsRemaining, callback) {
+    if (secondsRemaining > 0) {
+        updateRateLimitCountdownElement(secondsRemaining);
+
+        setTimeout(function () {
+            makeRequestTimeout(totalSeconds, secondsRemaining - 1, callback);
+        }, 1000);
+    } else {
+        callback();
+    }
+}
+
+function updateRateLimitCountdownElement(secondsRemaining) {
+    $(rateLimitMessage).text("Possible rate limit detected. Waiting " + secondsRemaining + " seconds.");
 }

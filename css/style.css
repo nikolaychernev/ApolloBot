@@ -194,7 +194,7 @@ img {
     justify-content: space-between;
 }
 
-.overlay {
+.overlay, .rateLimitOverlay {
     justify-content: center;
     align-items: center;
     background-color: rgba(0, 0, 0, 0.5);
@@ -216,8 +216,12 @@ img {
     margin-bottom: 2.5em;
 }
 
-#usersRangeOverlay {
+#usersRangeOverlay, #rateLimitOverlay {
     z-index: 1;
+}
+
+#rateLimitOverlay {
+    font-size: 1.2em;
 }
 
 .setting {
@@ -370,7 +374,7 @@ img {
     cursor: pointer;
 }
 
-#stopLoadingBtn img {
+#stopLoadingBtn img, #rateLimitOverlay img {
     filter: invert(50%) sepia(27%) saturate(778%) hue-rotate(313deg) brightness(88%) contrast(124%);
 }
 

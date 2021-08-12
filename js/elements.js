@@ -77,6 +77,10 @@ let postListContent = $("#postListContent", shadowRoot);
 let postListCancelBtn = $("#postListCancelBtn", shadowRoot);
 let postListLoadMoreBtn = $("#postListLoadMoreBtn", shadowRoot);
 
+//Rate Limit Overlay
+let rateLimitOverlay = $("#rateLimitOverlay", shadowRoot);
+let rateLimitMessage = $("#rateLimitMessage", shadowRoot);
+
 // Other Elements
 let currentUserProfilePicture = $("#currentUserProfilePicture", shadowRoot);
 let usernameField = $("#username", shadowRoot);
