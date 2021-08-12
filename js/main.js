@@ -815,7 +815,7 @@ function drawUsers() {
         $(profilePicture).attr("src", user.profile_pic_url);
 
         if (user.full_name) {
-            $(userElementClone).find("p.name").text(user.full_name);
+            $(userElementClone).find("span.name").text(user.full_name);
         }
 
         $(userElementClone).find("a.username")
