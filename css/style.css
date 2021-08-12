@@ -543,3 +543,7 @@ input, .button, .noUi-target, #searchBar {
 #usersRangeSlider {
     margin-top: 4.5em;
 }
+
+.name {
+    display: block;
+}
