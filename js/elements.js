@@ -49,6 +49,8 @@ let usersRangeHeading = $("#usersRangeHeading", shadowRoot);
 let usersRangeToggle = $("#usersRangeToggle", shadowRoot);
 let usersRangeSlider = $("#usersRangeSlider", shadowRoot);
 let usersRangeInputs = $("#usersRangeInputs", shadowRoot);
+let usersRangeStartInput = $("#usersRangeStartInput", shadowRoot);
+let usersRangeEndInput = $("#usersRangeEndInput", shadowRoot);
 let usersRangeConfirmBtn = $("#usersRangeConfirmBtn", shadowRoot);
 let usersRangeCancelBtn = $("#usersRangeCancelBtn", shadowRoot);
 

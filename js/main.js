@@ -83,6 +83,8 @@ function initializeEventListeners() {
     $(storyListCancelBtn).on("click", hideStoryList);
     $(postListCancelBtn).on("click", hidePostList);
     $(usersRangeToggle)[0].noUiSlider.on('update', onUsersRangeToggle);
+    $(usersRangeStartInput).on("change", onUsersRangeStartInputChange);
+    $(usersRangeEndInput).on("change", onUsersRangeEndInputChange);
     $(usersRangeCancelBtn).on("click", hideUsersRange);
     $(followingOptionsConfirmBtn).on("click", onFollowingOptionsConfirmBtnClicked);
     $(followingOptionsCancelBtn).on("click", hideFollowingOptions);
@@ -320,6 +322,8 @@ function loadUsersRange(usersType, count, data) {
 
     noUiSlider.create($(usersRangeSlider)[0], sliderConfiguration);
     mergeTooltips($(usersRangeSlider)[0], 20, " - ");
+
+    $(usersRangeSlider)[0].noUiSlider.on('update', onUsersRangeSliderUpdate);
 
     $(usersRangeConfirmBtn).off("click");
     $(usersRangeConfirmBtn).on("click", () => onUsersRangeConfirmBtnClicked(data));
@@ -1389,4 +1393,22 @@ function onUsersRangeToggle(values, handle) {
         $(usersRangeInputs).css("display", "none");
         $(usersRangeSlider).css("display", "flex");
     }
+}
+
+function onUsersRangeSliderUpdate(values) {
+    let start = parseInt(values[0].replace(/\s+/g, ""));
+    let end = parseInt(values[1].replace(/\s+/g, ""));
+
+    $(usersRangeStartInput).val(start);
+    $(usersRangeEndInput).val(end);
+}
+
+function onUsersRangeStartInputChange() {
+    let start = $(usersRangeStartInput).val();
+    $(usersRangeSlider)[0].noUiSlider.set([start, null]);
+}
+
+function onUsersRangeEndInputChange() {
+    let end = $(usersRangeEndInput).val();
+    $(usersRangeSlider)[0].noUiSlider.set([null, end]);
 }
