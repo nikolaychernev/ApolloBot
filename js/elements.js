@@ -46,7 +46,9 @@ let timeoutRandomization = $("#timeoutRandomization", shadowRoot);
 //Users Range
 let usersRangeOverlay = $("#usersRangeOverlay", shadowRoot);
 let usersRangeHeading = $("#usersRangeHeading", shadowRoot);
+let usersRangeToggle = $("#usersRangeToggle", shadowRoot);
 let usersRangeSlider = $("#usersRangeSlider", shadowRoot);
+let usersRangeInputs = $("#usersRangeInputs", shadowRoot);
 let usersRangeConfirmBtn = $("#usersRangeConfirmBtn", shadowRoot);
 let usersRangeCancelBtn = $("#usersRangeCancelBtn", shadowRoot);
 

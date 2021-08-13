@@ -195,11 +195,22 @@
 </div>
 <div id="usersRangeOverlay" class="overlay hidden">
     <div class="modal">
-        <div class="modalHeading">
+        <div class="modalHeading spaceBetween">
             <h1 id="usersRangeHeading"></h1>
+            <div id="usersRangeToggle"></div>
         </div>
         <div class="modalBody">
             <div id="usersRangeSlider"></div>
+            <div id="usersRangeInputs" class="spaceBetween hidden">
+                <div class="setting">
+                    <h3>Start User</h3>
+                    <input type="number" id="usersRangeStartInput">
+                </div>
+                <div class="setting">
+                    <h3>End User</h3>
+                    <input type="number" id="usersRangeEndInput">
+                </div>
+            </div>
         </div>
         <div class="spaceBetween">
             <div id="usersRangeCancelBtn" class="button">

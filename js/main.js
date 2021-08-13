@@ -26,6 +26,7 @@ function initializeSettings() {
     });
 
     noUiSlider.create($(settingsToggle)[0], getSliderConfiguration(0, 0, 1, null));
+    noUiSlider.create($(usersRangeToggle)[0], getSliderConfiguration(0, 0, 1, null));
     noUiSlider.create($(followUnfollowTimeout)[0], getSliderConfiguration(1, 1, 240, " Sec"));
     noUiSlider.create($(loadingUsersTimeout)[0], getSliderConfiguration(1, 1, 30, " Sec"));
     noUiSlider.create($(likingPhotosTimeout)[0], getSliderConfiguration(1, 1, 30, " Sec"));
@@ -62,7 +63,7 @@ function initializeEventListeners() {
         }
     }, false);
 
-    $(overlay).on("click", onOverlayClicked);
+    $(overlay).on("mousedown", onOverlayClicked);
     $(settingsBtn).on("click", onSettingsBtnClicked);
     $(settingsToggle)[0].noUiSlider.on('update', onSettingsToggle);
     $(cancelSettingsBtn).on("click", hideSettingsPage);
@@ -81,6 +82,7 @@ function initializeEventListeners() {
     $(storyListContent).on("wheel", onStoryListContentScroll);
     $(storyListCancelBtn).on("click", hideStoryList);
     $(postListCancelBtn).on("click", hidePostList);
+    $(usersRangeToggle)[0].noUiSlider.on('update', onUsersRangeToggle);
     $(usersRangeCancelBtn).on("click", hideUsersRange);
     $(followingOptionsConfirmBtn).on("click", onFollowingOptionsConfirmBtnClicked);
     $(followingOptionsCancelBtn).on("click", hideFollowingOptions);
@@ -98,7 +100,7 @@ function initializeEventListeners() {
     $(searchBarInput).on("keyup", onSearchBarInputKeyUp);
     $(topDot).on("click", onTopDotClicked);
     $(bottomDot).on("click", onBottomDotClicked);
-    $(rateLimitOverlay).on("click", onRateLimitOverlayClicked);
+    $(rateLimitOverlay).on("mousedown", onRateLimitOverlayClicked);
     $(rateLimitCancelBtn).on("click", hideRateLimitOverlay);
 }
 
@@ -313,14 +315,11 @@ function loadUsersRange(usersType, count, data) {
         $(usersRangeSlider)[0].noUiSlider.destroy();
     }
 
-    noUiSlider.create($(usersRangeSlider)[0], getSliderConfiguration([start, count], 0, count, " "));
+    let sliderConfiguration = getSliderConfiguration([start, count], 0, count, " ");
+    sliderConfiguration.behaviour = "drag";
+
+    noUiSlider.create($(usersRangeSlider)[0], sliderConfiguration);
     mergeTooltips($(usersRangeSlider)[0], 20, " - ");
-
-    let endHandleOrigin = $($(usersRangeSlider)[0]).find('.noUi-origin')[1];
-    $(endHandleOrigin).attr("disabled", "true");
-
-    let endHandle = $(endHandleOrigin).find('.noUi-handle');
-    $(endHandle).addClass(DISABLED_CLASS);
 
     $(usersRangeConfirmBtn).off("click");
     $(usersRangeConfirmBtn).on("click", () => onUsersRangeConfirmBtnClicked(data));
@@ -1380,4 +1379,14 @@ function showPopup(heading, message) {
     $(popupHeading).text(heading);
     $(popupMessage).text(message);
     $(popupOverlay).css("display", "flex");
+}
+
+function onUsersRangeToggle(values, handle) {
+    if (values[handle] === '1') {
+        $(usersRangeSlider).css("display", "none");
+        $(usersRangeInputs).css("display", "flex");
+    } else {
+        $(usersRangeInputs).css("display", "none");
+        $(usersRangeSlider).css("display", "flex");
+    }
 }

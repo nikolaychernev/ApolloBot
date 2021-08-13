@@ -422,7 +422,6 @@ input:focus {
 
 .storyElement, .postElement {
     height: 20em;
-    margin-bottom: 1.5em;
     border-radius: 1.5em;
     cursor: pointer;
     margin-right: 1.5em;
@@ -431,6 +430,7 @@ input:focus {
 .postElement {
     width: 20em;
     object-fit: cover;
+    margin-bottom: 1.5em;
 }
 
 .storyElement:hover, .postElement:hover, #stopLoadingBtn:hover, .dot:hover {
@@ -496,7 +496,6 @@ input, .button, .noUi-target, #searchBar {
     background: none;
     height: 2.2em;
     padding: 0 1.1em;
-    border: 0.1em solid #ffffff;
     border-radius: 5em;
 }
 
@@ -536,7 +535,7 @@ input, .button, .noUi-target, #searchBar {
     font-size: 1.1em;
 }
 
-#settingsToggle, #skipPrivateAccounts {
+#settingsToggle, #skipPrivateAccounts, #usersRangeToggle {
     width: 4.5em
 }
 
