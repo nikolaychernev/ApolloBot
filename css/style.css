@@ -14,7 +14,7 @@ h1, h3, strong {
 .button {
     display: inline-flex;
     padding: 0.6em 1.2em;
-    border: 0.13em solid #e6e6e6;
+    border: 0.12em solid #ffffff;
     border-radius: 0.5em;
     transition: all 0.3s;
     cursor: pointer;
@@ -25,7 +25,7 @@ h1, h3, strong {
 }
 
 #buyMeACoffeeBtn {
-    color: #e6e6e6;
+    color: #ffffff;
 }
 
 #buyMeACoffeeBtn:hover {
@@ -67,7 +67,7 @@ h1, h3, strong {
 
 .button:hover {
     color: #000000;
-    background-color: #e6e6e6;
+    background-color: #ffffff;
 }
 
 .button:hover img {
@@ -182,7 +182,7 @@ img {
 }
 
 .skipped {
-    box-shadow: inset 0 0 0 4px #e6e6e6;
+    box-shadow: inset 0 0 0 4px #ffffff;
 }
 
 .selected {
@@ -228,7 +228,7 @@ img {
 #searchBar {
     display: flex;
     align-items: center;
-    border: 0.13em solid #e6e6e6;
+    border: 0.12em solid #ffffff;
     border-radius: 0.5em;
     padding: 0.6em 1.2em;
     font-size: 1.2em;
@@ -292,7 +292,7 @@ img {
 .countdown strong {
     width: 100%;
     font-size: 2em;
-    color: #e6e6e6;
+    color: #ffffff;
     line-height: 300%;
 }
 
@@ -321,7 +321,7 @@ img {
 #loadingBar strong, #loadingMessage {
     width: 100%;
     font-size: 2em;
-    color: #e6e6e6;
+    color: #ffffff;
 }
 
 #loadingMessage {
@@ -384,9 +384,9 @@ input {
     width: 100%;
     box-sizing: border-box;
     background: none;
-    border: 0.13rem solid #e6e6e6;
+    border: 0.13rem solid #ffffff;
     border-radius: 0.5em;
-    color: #e6e6e6;
+    color: #ffffff;
     padding: 0.8em 1.2em;
     -moz-appearance: textfield;
 }
@@ -496,7 +496,7 @@ input, .button, .noUi-target, #searchBar {
     background: none;
     height: 2.2em;
     padding: 0 1.1em;
-    border: 0.1em solid #e6e6e6;
+    border: 0.1em solid #ffffff;
     border-radius: 5em;
 }
 
@@ -531,7 +531,7 @@ input, .button, .noUi-target, #searchBar {
 .noUi-horizontal .noUi-tooltip {
     bottom: -120%;
     background: none;
-    color: #e6e6e6;
+    color: #ffffff;
     border: none;
     font-size: 1.1em;
 }
