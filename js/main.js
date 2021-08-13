@@ -1,11 +1,18 @@
 appendEmptyQueueMessage();
 initializeCsrfToken();
+initializeUserId();
 initializeSettings();
 initializeEventListeners();
 
 function initializeCsrfToken() {
     chrome.runtime.sendMessage({csrfToken: true}, function (response) {
         csrfToken = response;
+    });
+}
+
+function initializeUserId() {
+    chrome.runtime.sendMessage({userId: true}, function (response) {
+        userId = response;
     });
 }
 
@@ -26,13 +33,15 @@ function initializeSettings() {
     });
 
     noUiSlider.create($(settingsToggle)[0], getSliderConfiguration(0, 0, 1, null));
-    noUiSlider.create($(followUnfollowTimeout)[0], getSliderConfiguration(0, 0, 240, " Sec"));
-    noUiSlider.create($(loadingUsersTimeout)[0], getSliderConfiguration(0, 0, 30, " Sec"));
-    noUiSlider.create($(likingPhotosTimeout)[0], getSliderConfiguration(0, 0, 30, " Sec"));
+    noUiSlider.create($(usersRangeToggle)[0], getSliderConfiguration(0, 0, 1, null));
+    noUiSlider.create($(followUnfollowTimeout)[0], getSliderConfiguration(1, 1, 240, " Sec"));
+    noUiSlider.create($(loadingUsersTimeout)[0], getSliderConfiguration(1, 1, 30, " Sec"));
+    noUiSlider.create($(likingPhotosTimeout)[0], getSliderConfiguration(1, 1, 30, " Sec"));
+    noUiSlider.create($(rateLimitTimeout)[0], getSliderConfiguration(1, 1, 60, " Min"));
     noUiSlider.create($(timeoutRandomization)[0], getSliderConfiguration(0, 0, 100, "%"));
     noUiSlider.create($(skipPrivateAccounts)[0], getSliderConfiguration(0, 0, 1, null));
     noUiSlider.create($(likePhotosCount)[0], getSliderConfiguration(0, 0, 5, " Photos"));
-    noUiSlider.create($(skipFollowedUnfollowedUsers)[0], getSliderConfiguration(0, 0, 365, " Days"));
+    noUiSlider.create($(skipAlreadyProcessedUsers)[0], getSliderConfiguration(0, 0, 365, " Days"));
 }
 
 function getSliderConfiguration(start, min, max, suffix) {
@@ -80,10 +89,14 @@ function initializeEventListeners() {
     $(storyListContent).on("wheel", onStoryListContentScroll);
     $(storyListCancelBtn).on("click", hideStoryList);
     $(postListCancelBtn).on("click", hidePostList);
+    $(usersRangeToggle)[0].noUiSlider.on('update', onUsersRangeToggle);
+    $(usersRangeStartInput).on("change", onUsersRangeStartInputChange);
+    $(usersRangeEndInput).on("change", onUsersRangeEndInputChange);
     $(usersRangeCancelBtn).on("click", hideUsersRange);
     $(followingOptionsConfirmBtn).on("click", onFollowingOptionsConfirmBtnClicked);
     $(followingOptionsCancelBtn).on("click", hideFollowingOptions);
-    $(popupConfirmBtn).on("click", onPopupConfirmBtnClicked);
+    $(loadUnfollowedConfirmBtn).on("click", onloadUnfollowedConfirmBtnClicked);
+    $(loadUnfollowedCancelBtn).on("click", hideLoadUnfollowed);
     $(popupCancelBtn).on("click", hidePopup);
     $(loadQueueBtn).on("click", onLoadQueueBtnClicked);
     $(loadQueueFileInput).on("change", onLoadQueueFileInputChange);
@@ -96,6 +109,8 @@ function initializeEventListeners() {
     $(searchBarInput).on("keyup", onSearchBarInputKeyUp);
     $(topDot).on("click", onTopDotClicked);
     $(bottomDot).on("click", onBottomDotClicked);
+    $(rateLimitOverlay).on("mousedown", onRateLimitOverlayClicked);
+    $(rateLimitCancelBtn).on("click", hideRateLimitOverlay);
 }
 
 function extractUserInfo() {
@@ -119,12 +134,12 @@ function extractUserInfo() {
             $(usernameField).text("Loading...");
         });
 
-        $.ajax({
+        makeRequest({
             url: currentUrl + "/?__a=1",
             xhrFields: {
                 withCredentials: true
             }
-        }).done(function (data) {
+        }, function (data) {
             if (Object.keys(data).length === 0 || !data.graphql) {
                 notOnProfilePage();
                 return;
@@ -205,6 +220,7 @@ function onSaveSettingsBtnClicked() {
     settings.followUnfollowTimeout = parseInt($(followUnfollowTimeout)[0].noUiSlider.get());
     settings.loadingUsersTimeout = parseInt($(loadingUsersTimeout)[0].noUiSlider.get());
     settings.likingPhotosTimeout = parseInt($(likingPhotosTimeout)[0].noUiSlider.get());
+    settings.rateLimitTimeout = parseInt($(rateLimitTimeout)[0].noUiSlider.get());
     settings.timeoutRandomization = parseInt($(timeoutRandomization)[0].noUiSlider.get());
 
     chrome.runtime.sendMessage({setToLocalStorage: true, key: "settings", value: settings}, function () {
@@ -233,6 +249,7 @@ function populateSettings() {
     $(followUnfollowTimeout)[0].noUiSlider.set(settings.followUnfollowTimeout);
     $(loadingUsersTimeout)[0].noUiSlider.set(settings.loadingUsersTimeout);
     $(likingPhotosTimeout)[0].noUiSlider.set(settings.likingPhotosTimeout);
+    $(rateLimitTimeout)[0].noUiSlider.set(settings.rateLimitTimeout);
     $(timeoutRandomization)[0].noUiSlider.set(settings.timeoutRandomization);
 }
 
@@ -277,6 +294,25 @@ function onLoadFollowingBtnClicked() {
 }
 
 function loadUsersRange(usersType, count, data) {
+    if (count === 0) {
+        let message;
+
+        switch (usersType) {
+            case USERS_TYPE.FOLLOWERS:
+                message = "Currently this account doesn't have any followers."
+                break;
+            case USERS_TYPE.FOLLOWING:
+                message = "Currently this account doesn't have any following."
+                break;
+            case USERS_TYPE.POST_LIKES:
+                message = "Currently this post doesn't have any likes."
+                break;
+        }
+
+        showPopup("Warning", message)
+        return;
+    }
+
     $(usersRangeHeading).text(usersType.HEADING);
     let start = count - 2048;
 
@@ -288,42 +324,45 @@ function loadUsersRange(usersType, count, data) {
         $(usersRangeSlider)[0].noUiSlider.destroy();
     }
 
-    noUiSlider.create($(usersRangeSlider)[0], getSliderConfiguration([start, count], 0, count, " "));
+    let sliderConfiguration = getSliderConfiguration([start, count], 0, count, " ");
+    sliderConfiguration.behaviour = "drag";
+
+    noUiSlider.create($(usersRangeSlider)[0], sliderConfiguration);
     mergeTooltips($(usersRangeSlider)[0], 20, " - ");
 
-    let endHandleOrigin = $($(usersRangeSlider)[0]).find('.noUi-origin')[1];
-    $(endHandleOrigin).attr("disabled", "true");
-
-    let endHandle = $(endHandleOrigin).find('.noUi-handle');
-    $(endHandle).addClass(DISABLED_CLASS);
+    $(usersRangeSlider)[0].noUiSlider.on('update', onUsersRangeSliderUpdate);
 
     $(usersRangeConfirmBtn).off("click");
-    $(usersRangeConfirmBtn).on("click", () => onUsersRangeConfirmBtnClicked(data));
+    $(usersRangeConfirmBtn).on("click", () => onUsersRangeConfirmBtnClicked(data, count));
 
     $(usersRangeOverlay).css("display", "flex");
 }
 
 function onLoadNotFollowingBackBtnClicked() {
-    loadFollowers(loadFollowing, 0, "", null);
+    loadFollowers(loadFollowing, 0, 0, "", null, null);
 }
 
 function onLoadUnfollowedBtnClicked() {
     if (lastChecked) {
-        $(popupMessage).text("Clicking confirm will load all users who have unfollowed since " + lastChecked.timestamp + ".");
+        $(loadUnfollowedMessage).text("Clicking confirm will load all users who have unfollowed since " + lastChecked.timestamp + ".");
     } else {
-        $(popupMessage).text("There is no data for this account's followers. Click confirm to load them for the first time.");
+        $(loadUnfollowedMessage).text("There is no data for this account's followers. Click confirm to load them for the first time.");
     }
 
-    $(popupOverlay).css("display", "flex");
+    $(loadUnfollowedOverlay).css("display", "flex");
 }
 
 function onLoadStoryViewersBtnClicked() {
+    if (userId !== currentUser.id) {
+        showPopup("Warning", "You can only load the viewers of your own stories.")
+        return;
+    }
+
     loadStoryList();
-    $(storyListOverlay).css("display", "flex");
 }
 
 function loadStoryList() {
-    $.ajax({
+    makeRequest({
         url: "https://i.instagram.com/api/v1/feed/reels_media/?reel_ids=" + currentUser.id,
         beforeSend: function (request) {
             request.setRequestHeader("x-ig-app-id", settings.applicationId);
@@ -331,7 +370,7 @@ function loadStoryList() {
         xhrFields: {
             withCredentials: true
         }
-    }).done(function (data) {
+    }, function (data) {
         let stories = data.reels_media[0] ? data.reels_media[0].items : [];
         drawStoryList(stories);
     });
@@ -339,9 +378,10 @@ function loadStoryList() {
 
 function drawStoryList(stories) {
     if (stories.length === 0) {
-        $(storyListHeading).text("No Stories");
+        showPopup("Warning", "Currently this account doesn't have any stories.")
+        return;
     } else {
-        $(storyListHeading).text("Select Story");
+        $(storyListOverlay).css("display", "flex");
     }
 
     $(storyListContent).empty();
@@ -368,7 +408,7 @@ function onStoryElementClicked(event) {
 }
 
 function loadStoryViewers(storyId, maxId) {
-    $.ajax({
+    makeRequest({
         url: "https://i.instagram.com/api/v1/media/" + storyId + "/list_reel_media_viewer/?max_id=" + maxId,
         beforeSend: function (request) {
             request.setRequestHeader("x-ig-app-id", settings.applicationId);
@@ -376,7 +416,7 @@ function loadStoryViewers(storyId, maxId) {
         xhrFields: {
             withCredentials: true
         }
-    }).done(function (data) {
+    }, function (data) {
         let storyViewers = data.users;
         let nextMaxId = data.next_max_id;
 
@@ -427,7 +467,6 @@ function onLoadPostLikesBtnClicked() {
     $(postListLoadMoreBtn).removeClass(DISABLED_CLASS);
 
     loadPostList("");
-    $(postListOverlay).css("display", "flex");
 }
 
 function loadPostList(endCursor) {
@@ -439,12 +478,12 @@ function loadPostList(endCursor) {
 
     let encodedJsonVars = encodeURIComponent(JSON.stringify(jsonVars));
 
-    $.ajax({
+    makeRequest({
         url: "https://www.instagram.com/graphql/query/?query_hash=" + settings.loadPostListQueryHash + "&variables=" + encodedJsonVars,
         xhrFields: {
             withCredentials: true
         }
-    }).done(function (data) {
+    }, function (data) {
         let posts = data.data.user.edge_owner_to_timeline_media.edges;
         let endCursor = data.data.user.edge_owner_to_timeline_media.page_info.end_cursor;
         let hasNextPage = data.data.user.edge_owner_to_timeline_media.page_info.has_next_page;
@@ -454,14 +493,15 @@ function loadPostList(endCursor) {
         if (!hasNextPage) {
             $(postListLoadMoreBtn).addClass(DISABLED_CLASS);
         }
-    })
+    });
 }
 
 function drawPostList(posts, endCursor) {
     if (posts.length === 0) {
-        $(postListHeading).text("No Posts");
+        showPopup("Warning", "Currently this account doesn't have any posts.")
+        return;
     } else {
-        $(postListHeading).text("Select Post");
+        $(postListOverlay).css("display", "flex");
     }
 
     for (let post of posts) {
@@ -488,7 +528,7 @@ function onPostElementClicked(event) {
     loadUsersRange(USERS_TYPE.POST_LIKES, likes, {shortcode});
 }
 
-function loadPostLikes(callback, shortcode, loaded, endCursor, limit) {
+function loadPostLikes(callback, shortcode, loaded, skipped, endCursor, limit, skip) {
     let jsonVars = {
         shortcode: shortcode,
         include_reel: true,
@@ -498,12 +538,12 @@ function loadPostLikes(callback, shortcode, loaded, endCursor, limit) {
 
     let encodedJsonVars = encodeURIComponent(JSON.stringify(jsonVars));
 
-    $.ajax({
+    makeRequest({
         url: "https://www.instagram.com/graphql/query/?query_hash=" + settings.loadPostLikesQueryHash + "&variables=" + encodedJsonVars,
         xhrFields: {
             withCredentials: true
         }
-    }).done(function (data) {
+    }, function (data) {
         let likes = data.data.shortcode_media.edge_liked_by.edges;
         let totalLikesCount = data.data.shortcode_media.edge_liked_by.count;
         let limitReached = false;
@@ -514,20 +554,33 @@ function loadPostLikes(callback, shortcode, loaded, endCursor, limit) {
                 break;
             }
 
-            let user = {
-                id: like.node.id,
-                username: like.node.username,
-                full_name: like.node.full_name,
-                profile_pic_url: like.node.profile_pic_url,
-                is_private: like.node.is_private
-            };
+            if (skip && skipped < skip) {
+                skipped++;
+            } else {
+                let user = {
+                    id: like.node.id,
+                    username: like.node.username,
+                    full_name: like.node.full_name,
+                    profile_pic_url: like.node.profile_pic_url,
+                    is_private: like.node.is_private
+                };
 
-            postLikesMap.set(like.node.id, user);
-            loaded++;
+                if (loaded === 0) {
+                    postLikesMap.clear();
+                }
+
+                postLikesMap.set(like.node.id, user);
+                loaded++;
+            }
         }
 
         $(loadingBarElement).css("display", "flex");
-        updateLoadingBarElement(limit ? limit : totalLikesCount, loaded, "Loading Post Likes");
+
+        if (skip && skipped < skip) {
+            updateLoadingBarElement(skip, skipped, "Skipping Post Likes");
+        } else {
+            updateLoadingBarElement(limit ? limit : totalLikesCount, loaded, "Loading Post Likes");
+        }
 
         let pageInfo = data.data.shortcode_media.edge_liked_by.page_info;
 
@@ -538,7 +591,7 @@ function loadPostLikes(callback, shortcode, loaded, endCursor, limit) {
             let secondsRemaining = randomizeTimeout(settings.loadingUsersTimeout, settings.timeoutRandomization);
 
             loadUsersTimeout(secondsRemaining, function () {
-                loadPostLikes(callback, shortcode, loaded, pageInfo.end_cursor, limit);
+                loadPostLikes(callback, shortcode, loaded, skipped, pageInfo.end_cursor, limit, skip);
             });
         }
     });
@@ -560,9 +613,13 @@ function hideFollowingOptions() {
     $(followingOptionsOverlay).css("display", "none");
 }
 
-function onPopupConfirmBtnClicked() {
-    hidePopup();
-    loadFollowers(loadUnfollowed, 0, "", null);
+function onloadUnfollowedConfirmBtnClicked() {
+    hideLoadUnfollowed();
+    loadFollowers(loadUnfollowed, 0, 0, "", null, null);
+}
+
+function hideLoadUnfollowed() {
+    $(loadUnfollowedOverlay).css("display", "none");
 }
 
 function hidePopup() {
@@ -646,7 +703,7 @@ function onSaveQueueBtnClicked() {
     chrome.runtime.sendMessage({download: {url: url, filename: "queue.txt"}})
 }
 
-function loadFollowers(callback, loaded, endCursor, limit) {
+function loadFollowers(callback, loaded, skipped, endCursor, limit, skip) {
     let jsonVars = {
         id: currentUser.id,
         first: 48,
@@ -655,12 +712,12 @@ function loadFollowers(callback, loaded, endCursor, limit) {
 
     let encodedJsonVars = encodeURIComponent(JSON.stringify(jsonVars));
 
-    $.ajax({
+    makeRequest({
         url: "https://www.instagram.com/graphql/query/?query_hash=" + settings.loadFollowersQueryHash + "&variables=" + encodedJsonVars,
         xhrFields: {
             withCredentials: true
         }
-    }).done(function (data) {
+    }, function (data) {
         let followers = data.data.user.edge_followed_by.edges;
         let totalFollowersCount = data.data.user.edge_followed_by.count;
         let limitReached = false;
@@ -671,20 +728,33 @@ function loadFollowers(callback, loaded, endCursor, limit) {
                 break;
             }
 
-            let user = {
-                id: follower.node.id,
-                username: follower.node.username,
-                full_name: follower.node.full_name,
-                profile_pic_url: follower.node.profile_pic_url,
-                is_private: follower.node.is_private
-            };
+            if (skip && skipped < skip) {
+                skipped++;
+            } else {
+                let user = {
+                    id: follower.node.id,
+                    username: follower.node.username,
+                    full_name: follower.node.full_name,
+                    profile_pic_url: follower.node.profile_pic_url,
+                    is_private: follower.node.is_private
+                };
 
-            followersMap.set(follower.node.id, user);
-            loaded++;
+                if (loaded === 0) {
+                    followersMap.clear();
+                }
+
+                followersMap.set(follower.node.id, user);
+                loaded++;
+            }
         }
 
         $(loadingBarElement).css("display", "flex");
-        updateLoadingBarElement(limit ? limit : totalFollowersCount, loaded, "Loading Followers");
+
+        if (skip && skipped < skip) {
+            updateLoadingBarElement(skip, skipped, "Skipping Followers");
+        } else {
+            updateLoadingBarElement(limit ? limit : totalFollowersCount, loaded, "Loading Followers");
+        }
 
         let pageInfo = data.data.user.edge_followed_by.page_info;
 
@@ -699,13 +769,13 @@ function loadFollowers(callback, loaded, endCursor, limit) {
             let secondsRemaining = randomizeTimeout(settings.loadingUsersTimeout, settings.timeoutRandomization);
 
             loadUsersTimeout(secondsRemaining, function () {
-                loadFollowers(callback, loaded, pageInfo.end_cursor, limit);
+                loadFollowers(callback, loaded, skipped, pageInfo.end_cursor, limit, skip);
             });
         }
     });
 }
 
-function loadFollowing(callback, loaded, endCursor, limit) {
+function loadFollowing(callback, loaded, skipped, endCursor, limit, skip) {
     let jsonVars = {
         id: currentUser.id,
         first: 48,
@@ -714,12 +784,12 @@ function loadFollowing(callback, loaded, endCursor, limit) {
 
     let encodedJsonVars = encodeURIComponent(JSON.stringify(jsonVars));
 
-    $.ajax({
+    makeRequest({
         url: "https://www.instagram.com/graphql/query/?query_hash=" + settings.loadFollowingQueryHash + "&variables=" + encodedJsonVars,
         xhrFields: {
             withCredentials: true
         }
-    }).done(function (data) {
+    }, function (data) {
         let usersFollowing = data.data.user.edge_follow.edges;
         let totalFollowingCount = data.data.user.edge_follow.count;
         let limitReached = false;
@@ -730,20 +800,33 @@ function loadFollowing(callback, loaded, endCursor, limit) {
                 break;
             }
 
-            let user = {
-                id: userFollowing.node.id,
-                username: userFollowing.node.username,
-                full_name: userFollowing.node.full_name,
-                profile_pic_url: userFollowing.node.profile_pic_url,
-                is_private: userFollowing.node.is_private
-            };
+            if (skip && skipped < skip) {
+                skipped++;
+            } else {
+                let user = {
+                    id: userFollowing.node.id,
+                    username: userFollowing.node.username,
+                    full_name: userFollowing.node.full_name,
+                    profile_pic_url: userFollowing.node.profile_pic_url,
+                    is_private: userFollowing.node.is_private
+                };
 
-            followingMap.set(userFollowing.node.id, user);
-            loaded++;
+                if (loaded === 0) {
+                    followingMap.clear();
+                }
+
+                followingMap.set(userFollowing.node.id, user);
+                loaded++;
+            }
         }
 
         $(loadingBarElement).css("display", "flex");
-        updateLoadingBarElement(limit ? limit : totalFollowingCount, loaded, "Loading Following");
+
+        if (skip && skipped < skip) {
+            updateLoadingBarElement(skip, skipped, "Skipping Following");
+        } else {
+            updateLoadingBarElement(limit ? limit : totalFollowingCount, loaded, "Loading Following");
+        }
 
         let pageInfo = data.data.user.edge_follow.page_info;
 
@@ -754,7 +837,7 @@ function loadFollowing(callback, loaded, endCursor, limit) {
             let secondsRemaining = randomizeTimeout(settings.loadingUsersTimeout, settings.timeoutRandomization);
 
             loadUsersTimeout(secondsRemaining, function () {
-                loadFollowing(callback, loaded, pageInfo.end_cursor, limit);
+                loadFollowing(callback, loaded, skipped, pageInfo.end_cursor, limit, skip);
             });
         }
     });
@@ -786,10 +869,6 @@ function loadNotFollowingBack() {
 }
 
 function drawUsers() {
-    followersMap.clear();
-    followingMap.clear();
-    postLikesMap.clear();
-
     $(scrollableArea).empty();
     visibleUsersCount = 0;
 
@@ -805,7 +884,7 @@ function drawUsers() {
         $(profilePicture).attr("src", user.profile_pic_url);
 
         if (user.full_name) {
-            $(userElementClone).find("p.name").text(user.full_name);
+            $(userElementClone).find("span.name").text(user.full_name);
         }
 
         $(userElementClone).find("a.username")
@@ -849,32 +928,35 @@ function onProfilePictureClicked(event) {
 
 function onStartFollowingBtnClicked() {
     $(likePhotosCount)[0].noUiSlider.set(settings.likePhotosCount);
-    $(skipFollowedUnfollowedUsers)[0].noUiSlider.set(settings.skipFollowedUnfollowedUsers);
+    $(skipAlreadyProcessedUsers)[0].noUiSlider.set(settings.skipAlreadyProcessedUsers);
     $(skipPrivateAccounts)[0].noUiSlider.set(settings.skipPrivateAccounts);
 
     $(followingOptionsOverlay).css("display", "flex");
 }
 
-function onUsersRangeConfirmBtnClicked(data) {
+function onUsersRangeConfirmBtnClicked(data, count) {
     let values = $(usersRangeSlider)[0].noUiSlider.get();
 
     let start = parseInt(values[0].replace(/\s+/g, ""));
-    let limit = parseInt(values[1].replace(/\s+/g, "")) - start;
+    let end = parseInt(values[1].replace(/\s+/g, ""));
+
+    let limit = end - start;
+    let skip = count - end;
 
     hideUsersRange();
 
     switch ($(usersRangeHeading).text()) {
         case USERS_TYPE.FOLLOWERS.HEADING:
-            loadFollowers(() => clearQueueAndDrawUsers(followersMap), 0, "", limit);
+            loadFollowers(() => clearQueueAndDrawUsers(followersMap), 0, 0, "", limit, skip);
             break;
         case USERS_TYPE.FOLLOWING.HEADING:
-            loadFollowing(() => clearQueueAndDrawUsers(followingMap), 0, "", limit);
+            loadFollowing(() => clearQueueAndDrawUsers(followingMap), 0, 0, "", limit, skip);
             break;
         case USERS_TYPE.POST_LIKES.HEADING:
             loadPostLikes(() => {
                 clearQueueAndDrawUsers(postLikesMap);
                 hidePostList();
-            }, data.shortcode, 0, "", limit);
+            }, data.shortcode, 0, 0, "", limit, skip);
             break;
     }
 }
@@ -893,7 +975,7 @@ function clearQueueAndDrawUsers(usersMap) {
 function onFollowingOptionsConfirmBtnClicked() {
     settings.skipPrivateAccounts = parseInt($(skipPrivateAccounts)[0].noUiSlider.get());
     settings.likePhotosCount = parseInt($(likePhotosCount)[0].noUiSlider.get());
-    settings.skipFollowedUnfollowedUsers = parseInt($(skipFollowedUnfollowedUsers)[0].noUiSlider.get());
+    settings.skipAlreadyProcessedUsers = parseInt($(skipAlreadyProcessedUsers)[0].noUiSlider.get());
 
     chrome.runtime.sendMessage({setToLocalStorage: true, key: "settings", value: settings});
 
@@ -944,7 +1026,7 @@ function processUsers(users, processType) {
             let millisecondsPassedSinceFollowUnfollow = Date.now() - followedUnfollowedUsersMap.get(user.id);
             let daysPassedSinceFollowUnfollow = (((((millisecondsPassedSinceFollowUnfollow) / 1000) / 60) / 60) / 24);
 
-            if (daysPassedSinceFollowUnfollow < settings.skipFollowedUnfollowedUsers) {
+            if (daysPassedSinceFollowUnfollow < settings.skipAlreadyProcessedUsers) {
                 shouldSkipFollowedUnfollowedUser = true;
             }
         }
@@ -954,7 +1036,7 @@ function processUsers(users, processType) {
             return;
         }
 
-        $.ajax({
+        makeRequest({
             url: "https://www.instagram.com/web/friendships/" + user.id + processType.ENDPOINT,
             method: "POST",
             beforeSend: function (xhr) {
@@ -963,7 +1045,7 @@ function processUsers(users, processType) {
             xhrFields: {
                 withCredentials: true
             }
-        }).done(function () {
+        }, function () {
             if (processType === PROCESS_TYPE.FOLLOWING && settings.likePhotosCount > 0) {
                 let countdownElement = $("div#" + user.id, shadowRoot).find(".countdown").css("display", "block");
                 getLatestPhotosIds(user, users, countdownElement, settings.likePhotosCount);
@@ -1018,12 +1100,12 @@ function onUserProcessed(user, users, processType, skipped) {
 function getLatestPhotosIds(user, users, countdownElement, count) {
     let photosIds = [];
 
-    $.ajax({
+    makeRequest({
         url: "https://www.instagram.com/" + user.username + "/?__a=1",
         xhrFields: {
             withCredentials: true
         }
-    }).done(function (data) {
+    }, function (data) {
         let photos = data.graphql.user.edge_owner_to_timeline_media.edges;
         let loadedCount = 0;
 
@@ -1050,7 +1132,7 @@ function getLatestPhotosIds(user, users, countdownElement, count) {
 function likePhotos(user, users, countdownElement, photosIds, totalPhotosCount) {
     let photoId = photosIds.shift();
 
-    $.ajax({
+    makeRequest({
         url: "https://www.instagram.com/web/likes/" + photoId + "/like/",
         method: "POST",
         beforeSend: function (xhr) {
@@ -1059,7 +1141,7 @@ function likePhotos(user, users, countdownElement, photosIds, totalPhotosCount) 
         xhrFields: {
             withCredentials: true
         }
-    }).done(function () {
+    }, function () {
         if (photosIds.length === 0) {
             onUserProcessed(user, users, PROCESS_TYPE.FOLLOWING, false);
             return;
@@ -1200,7 +1282,7 @@ function disableElements(processType) {
         $(stopUnfollowingBtn).css("display", "inline-flex");
     }
 
-    $(searchBarInput).addClass(DISABLED_CLASS);
+    $(searchBar).addClass(DISABLED_CLASS);
     $(loadUsersDropdown).addClass(DISABLED_CLASS);
     $(queueActionsDropdown).addClass(DISABLED_CLASS);
     $(selectionDropdown).addClass(DISABLED_CLASS);
@@ -1223,7 +1305,7 @@ function enableElements(processType) {
         $(loadUsersDropdown).removeClass(DISABLED_CLASS);
     }
 
-    $(searchBarInput).removeClass(DISABLED_CLASS);
+    $(searchBar).removeClass(DISABLED_CLASS);
     $(queueActionsDropdown).removeClass(DISABLED_CLASS);
     $(selectionDropdown).removeClass(DISABLED_CLASS);
     $(dots).removeClass(DISABLED_CLASS);
@@ -1297,4 +1379,86 @@ function mergeTooltips(slider, threshold, separator) {
             }
         });
     });
+}
+
+function makeRequest(requestSettings, callback) {
+    $.ajax(requestSettings).done(callback).fail(function () {
+        $(rateLimitRetryBtn).off("click");
+
+        $(rateLimitRetryBtn).on("click", () => {
+            hideRateLimitOverlay();
+            makeRequest(requestSettings, callback);
+        });
+
+        $(rateLimitOverlay).css("display", "flex");
+        let secondsRemaining = settings.rateLimitTimeout * 60;
+
+        makeRequestTimeout(secondsRemaining, secondsRemaining, function () {
+            hideRateLimitOverlay();
+            makeRequest(requestSettings, callback);
+        });
+    });
+}
+
+function makeRequestTimeout(totalSeconds, secondsRemaining, callback) {
+    if (secondsRemaining > 0) {
+        updateRateLimitCountdownElement(secondsRemaining);
+
+        rateLimitTimeoutObject = setTimeout(function () {
+            makeRequestTimeout(totalSeconds, secondsRemaining - 1, callback);
+        }, 1000);
+    } else {
+        callback();
+    }
+}
+
+function updateRateLimitCountdownElement(secondsRemaining) {
+    $(rateLimitMessage).text("Possible rate limit detected. Waiting " + secondsRemaining + " seconds before auto retry.");
+}
+
+function onRateLimitOverlayClicked(e) {
+    if (!$(e.target).is($(rateLimitOverlay))) {
+        return;
+    }
+
+    hideRateLimitOverlay();
+}
+
+function hideRateLimitOverlay() {
+    $(rateLimitOverlay).css("display", "none");
+    clearTimeout(rateLimitTimeoutObject);
+}
+
+function showPopup(heading, message) {
+    $(popupHeading).text(heading);
+    $(popupMessage).text(message);
+    $(popupOverlay).css("display", "flex");
+}
+
+function onUsersRangeToggle(values, handle) {
+    if (values[handle] === '1') {
+        $(usersRangeSlider).css("display", "none");
+        $(usersRangeInputs).css("display", "flex");
+    } else {
+        $(usersRangeInputs).css("display", "none");
+        $(usersRangeSlider).css("display", "flex");
+    }
+}
+
+function onUsersRangeSliderUpdate(values) {
+    let start = parseInt(values[0].replace(/\s+/g, ""));
+    let end = parseInt(values[1].replace(/\s+/g, ""));
+
+    $(usersRangeStartInput).val(start);
+    $(usersRangeEndInput).val(end);
+}
+
+function onUsersRangeStartInputChange() {
+    let start = $(usersRangeStartInput).val();
+    $(usersRangeSlider)[0].noUiSlider.set([start, null]);
+}
+
+function onUsersRangeEndInputChange() {
+    let end = $(usersRangeEndInput).val();
+    $(usersRangeSlider)[0].noUiSlider.set([null, end]);
 }

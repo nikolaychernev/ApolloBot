@@ -40,12 +40,17 @@ let applicationIdInput = $("#applicationId", shadowRoot);
 let followUnfollowTimeout = $("#followUnfollowTimeout", shadowRoot);
 let loadingUsersTimeout = $("#loadingUsersTimeout", shadowRoot);
 let likingPhotosTimeout = $("#likingPhotosTimeout", shadowRoot);
+let rateLimitTimeout = $("#rateLimitTimeout", shadowRoot);
 let timeoutRandomization = $("#timeoutRandomization", shadowRoot);
 
 //Users Range
 let usersRangeOverlay = $("#usersRangeOverlay", shadowRoot);
 let usersRangeHeading = $("#usersRangeHeading", shadowRoot);
+let usersRangeToggle = $("#usersRangeToggle", shadowRoot);
 let usersRangeSlider = $("#usersRangeSlider", shadowRoot);
+let usersRangeInputs = $("#usersRangeInputs", shadowRoot);
+let usersRangeStartInput = $("#usersRangeStartInput", shadowRoot);
+let usersRangeEndInput = $("#usersRangeEndInput", shadowRoot);
 let usersRangeConfirmBtn = $("#usersRangeConfirmBtn", shadowRoot);
 let usersRangeCancelBtn = $("#usersRangeCancelBtn", shadowRoot);
 
@@ -53,28 +58,38 @@ let usersRangeCancelBtn = $("#usersRangeCancelBtn", shadowRoot);
 let followingOptionsOverlay = $("#followingOptionsOverlay", shadowRoot);
 let skipPrivateAccounts = $("#skipPrivateAccounts", shadowRoot);
 let likePhotosCount = $("#likePhotosCount", shadowRoot);
-let skipFollowedUnfollowedUsers = $("#skipFollowedUnfollowedUsers", shadowRoot);
+let skipAlreadyProcessedUsers = $("#skipAlreadyProcessedUsers", shadowRoot);
 let followingOptionsConfirmBtn = $("#followingOptionsConfirmBtn", shadowRoot);
 let followingOptionsCancelBtn = $("#followingOptionsCancelBtn", shadowRoot);
 
+//Load Unfollowed
+let loadUnfollowedOverlay = $("#loadUnfollowedOverlay", shadowRoot);
+let loadUnfollowedMessage = $("#loadUnfollowedMessage", shadowRoot);
+let loadUnfollowedConfirmBtn = $("#loadUnfollowedConfirmBtn", shadowRoot);
+let loadUnfollowedCancelBtn = $("#loadUnfollowedCancelBtn", shadowRoot);
+
 //Popup
 let popupOverlay = $("#popupOverlay", shadowRoot);
+let popupHeading = $("#popupHeading", shadowRoot);
 let popupMessage = $("#popupMessage", shadowRoot);
-let popupConfirmBtn = $("#popupConfirmBtn", shadowRoot);
 let popupCancelBtn = $("#popupCancelBtn", shadowRoot);
 
 //Story List
 let storyListOverlay = $("#storyListOverlay", shadowRoot);
-let storyListHeading = $("#storyListHeading", shadowRoot);
 let storyListContent = $("#storyListContent", shadowRoot);
 let storyListCancelBtn = $("#storyListCancelBtn", shadowRoot);
 
 //Post List
 let postListOverlay = $("#postListOverlay", shadowRoot);
-let postListHeading = $("#postListHeading", shadowRoot);
 let postListContent = $("#postListContent", shadowRoot);
 let postListCancelBtn = $("#postListCancelBtn", shadowRoot);
 let postListLoadMoreBtn = $("#postListLoadMoreBtn", shadowRoot);
+
+//Rate Limit Overlay
+let rateLimitOverlay = $("#rateLimitOverlay", shadowRoot);
+let rateLimitMessage = $("#rateLimitMessage", shadowRoot);
+let rateLimitCancelBtn = $("#rateLimitCancelBtn", shadowRoot);
+let rateLimitRetryBtn = $("#rateLimitRetryBtn", shadowRoot);
 
 // Other Elements
 let currentUserProfilePicture = $("#currentUserProfilePicture", shadowRoot);
@@ -86,6 +101,7 @@ let queueTotalUsersCount = $("#queueTotalUsersCount", shadowRoot);
 let queueSelectedUsersCount = $("#queueSelectedUsersCount", shadowRoot);
 let loadingBarElement = $("#loadingBar", shadowRoot);
 let loadingMessageField = $("#loadingMessage", shadowRoot);
+let searchBar = $("#searchBar", shadowRoot);
 let searchBarInput = $("#searchBarInput", shadowRoot);
 let emptyQueueMessage = $("#emptyQueueMessage", shadowRoot);
 let dots = $("#dots", shadowRoot);

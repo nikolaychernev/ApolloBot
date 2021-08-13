@@ -7,9 +7,10 @@ let DEFAULT_SETTINGS = {
     "followUnfollowTimeout": 60,
     "loadingUsersTimeout": 3,
     "likingPhotosTimeout": 5,
+    "rateLimitTimeout": 10,
     "timeoutRandomization": 50,
     "likePhotosCount": 1,
-    "skipFollowedUnfollowedUsers": 30,
+    "skipAlreadyProcessedUsers": 30,
     "skipPrivateAccounts": 1
 };
 
@@ -38,12 +39,12 @@ const PROCESS_TYPE = {
 
 const USERS_TYPE = {
     FOLLOWERS: {
-        HEADING: "Select Followers Range To Load"
+        HEADING: "Select Followers Range"
     },
     FOLLOWING: {
-        HEADING: "Select Following Range To Load"
+        HEADING: "Select Following Range"
     },
     POST_LIKES: {
-        HEADING: "Select Users Range To Load"
+        HEADING: "Select Users Range"
     },
 };

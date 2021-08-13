@@ -1,7 +1,9 @@
 let csrfToken;
+let userId;
 let currentUser;
 let settings;
 let timeoutObject;
+let rateLimitTimeoutObject;
 let lastChecked;
 let followedUnfollowedUsersMap = new Map();
 let visibleUsersCount = 0;

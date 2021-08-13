@@ -1,6 +1,5 @@
 h1 {
-    margin-top: 0;
-    margin-bottom: 1.5em;
+    margin: 0;
 }
 
 h3 {
@@ -15,7 +14,7 @@ h1, h3, strong {
 .button {
     display: inline-flex;
     padding: 0.6em 1.2em;
-    border: 0.1em solid #FFFFFF;
+    border: 0.12em solid #ffffff;
     border-radius: 0.5em;
     transition: all 0.3s;
     cursor: pointer;
@@ -26,7 +25,7 @@ h1, h3, strong {
 }
 
 #buyMeACoffeeBtn {
-    color: white;
+    color: #ffffff;
 }
 
 #buyMeACoffeeBtn:hover {
@@ -42,7 +41,6 @@ h1, h3, strong {
     position: absolute;
     padding-top: 1em;
     width: 16em;
-    z-index: 1;
     border-radius: 1.5em;
 }
 
@@ -68,7 +66,7 @@ h1, h3, strong {
 
 .button:hover {
     color: #000000;
-    background-color: #FFFFFF;
+    background-color: #ffffff;
 }
 
 .button:hover img {
@@ -138,7 +136,8 @@ h1, h3, strong {
 }
 
 p {
-    margin: 0.2em 0;
+    margin: 0;
+    font-size: 1.3em;
 }
 
 a {
@@ -157,8 +156,8 @@ img {
 }
 
 #currentUserProfilePicture {
-    width: 4em;
-    height: 4em;
+    width: 4.5em;
+    height: 4.5em;
 }
 
 .alignCenter {
@@ -182,7 +181,7 @@ img {
 }
 
 .skipped {
-    box-shadow: inset 0 0 0 4px white;
+    box-shadow: inset 0 0 0 4px #ffffff;
 }
 
 .selected {
@@ -194,7 +193,7 @@ img {
     justify-content: space-between;
 }
 
-.overlay {
+.overlay, .rateLimitOverlay {
     justify-content: center;
     align-items: center;
     background-color: rgba(0, 0, 0, 0.5);
@@ -205,31 +204,40 @@ img {
     top: 0;
 }
 
-.settingsPage, #usersRange, #followingOptions {
-    background-color: #313c49;
-    width: 35%;
-    border-radius: 1.5em;
-    padding: 2em;
-}
-
-#usersRangeHeading {
-    margin-bottom: 2.5em;
-}
-
-#usersRangeOverlay {
+#usersRangeOverlay, #rateLimitOverlay, .dropdown-content {
     z-index: 1;
 }
 
-.setting {
-    margin-bottom: 2em;
+#advancedSettings .setting:not(:last-child), #basicSettings .setting:last-child {
+    margin-bottom: 1.5em;
+}
+
+#basicSettings .setting:not(:last-child), #followingOptionsOverlay .setting:not(:last-child) {
+    margin-bottom: 3em;
 }
 
 .disabled, .greenDot, .redDot {
     pointer-events: none;
 }
 
-.disabled#searchBarInput, .disabled.dropdown, .disabled#dots, .disabled#postListLoadMoreBtn {
+.disabled:not(.selection) {
     opacity: 0.5;
+}
+
+#searchBar {
+    display: flex;
+    align-items: center;
+    border: 0.12em solid #ffffff;
+    border-radius: 0.5em;
+    padding: 0.6em 1.2em;
+    font-size: 1.2em;
+}
+
+#searchBarInput {
+    border: none;
+    padding: 0;
+    margin-left: 0.3em;
+    box-shadow: none;
 }
 
 .loadUsersButton {
@@ -267,7 +275,6 @@ img {
 
 #startFollowingBtn, #startUnfollowingBtn, #stopFollowingBtn, #stopUnfollowingBtn {
     width: 50%;
-    border-width: 0.15em;
 }
 
 .hidden {
@@ -284,7 +291,7 @@ img {
 .countdown strong {
     width: 100%;
     font-size: 2em;
-    color: white;
+    color: #ffffff;
     line-height: 300%;
 }
 
@@ -313,7 +320,7 @@ img {
 #loadingBar strong, #loadingMessage {
     width: 100%;
     font-size: 2em;
-    color: white;
+    color: #ffffff;
 }
 
 #loadingMessage {
@@ -341,7 +348,7 @@ img {
 .jam {
     display: block;
     width: 1.1em;
-    margin-right: 0.2em;
+    margin-right: 0.3em;
     filter: invert(86%) sepia(100%) saturate(0%) hue-rotate(202deg) brightness(111%) contrast(100%);
 }
 
@@ -372,34 +379,15 @@ img {
     }
 }
 
-#popup {
-    text-align: center;
-    background-color: #313c49;
-    width: 35%;
-    border-radius: 1.5em;
-    padding: 2em;
-}
-
-#popupMessage {
-    display: block;
-    margin-bottom: 1em;
-    font-size: 1.5em;
-}
-
 input {
     width: 100%;
     box-sizing: border-box;
     background: none;
-    border: 0.1em solid #FFFFFF;
+    border: 0.13rem solid #ffffff;
     border-radius: 0.5em;
-    color: white;
+    color: #ffffff;
     padding: 0.8em 1.2em;
     -moz-appearance: textfield;
-}
-
-input:hover {
-    border: 0.1em solid darkgray;
-    transition: all 0.3s;
 }
 
 input:focus {
@@ -407,9 +395,6 @@ input:focus {
 }
 
 #storyList, #postList {
-    background-color: #313c49;
-    border-radius: 1.5em;
-    padding: 2em;
     width: 70%;
 }
 
@@ -436,7 +421,6 @@ input:focus {
 
 .storyElement, .postElement {
     height: 20em;
-    margin-bottom: 1.5em;
     border-radius: 1.5em;
     cursor: pointer;
     margin-right: 1.5em;
@@ -445,15 +429,12 @@ input:focus {
 .postElement {
     width: 20em;
     object-fit: cover;
+    margin-bottom: 1.5em;
 }
 
 .storyElement:hover, .postElement:hover, #stopLoadingBtn:hover, .dot:hover {
     opacity: 0.5;
     transition: all 0.3s;
-}
-
-#storyListCancelBtn, #postListCancelBtn, #postListLoadMoreBtn {
-    margin-top: 2em;
 }
 
 #emptyQueueMessage {
@@ -465,7 +446,7 @@ input:focus {
     opacity: 0.2;
 }
 
-input, .button, .noUi-target {
+input, .button, .noUi-target, #searchBar {
     box-shadow: 0 0 25px 5px rgba(0, 0, 0, 0.25);
 }
 
@@ -473,12 +454,18 @@ input, .button, .noUi-target {
     box-shadow: 15px 5px 25px 1px rgba(0, 0, 0, 0.1);
 }
 
-.settingsPage, #popup, #storyList, #postList, #usersRange, #followingOptions {
+.modal {
+    background-color: #313c49;
+    width: 35%;
+    border-radius: 1.5em;
+    padding: 2em;
     box-shadow: 0 0 25px 10px rgba(0, 0, 0, 1);
 }
 
-#resetSettingsBtn, #popupCancelBtn, #usersRangeCancelBtn, #followingOptionsCancelBtn {
-    margin-left: 0.2em;
+.modalHeading, .modalBody {
+    padding-bottom: 1.5em;
+    margin-bottom: 1.5em;
+    border-bottom: 2px solid #5a626d;
 }
 
 .dot {
@@ -508,8 +495,6 @@ input, .button, .noUi-target {
     background: none;
     height: 2.2em;
     padding: 0 1.1em;
-    margin-bottom: 4em;
-    border: 0.1em solid #FFFFFF;
     border-radius: 5em;
 }
 
@@ -544,15 +529,19 @@ input, .button, .noUi-target {
 .noUi-horizontal .noUi-tooltip {
     bottom: -120%;
     background: none;
-    color: white;
+    color: #ffffff;
     border: none;
     font-size: 1.1em;
 }
 
-#settingsToggle, #skipPrivateAccounts {
+#settingsToggle, #skipPrivateAccounts, #usersRangeToggle {
     width: 4.5em
 }
 
-.marginTop {
+#usersRangeSlider {
     margin-top: 4.5em;
+}
+
+.name {
+    display: block;
 }
