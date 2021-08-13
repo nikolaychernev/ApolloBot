@@ -565,6 +565,10 @@ function loadPostLikes(callback, shortcode, loaded, skipped, endCursor, limit, s
                     is_private: like.node.is_private
                 };
 
+                if (loaded === 0) {
+                    postLikesMap.clear();
+                }
+
                 postLikesMap.set(like.node.id, user);
                 loaded++;
             }
@@ -735,6 +739,10 @@ function loadFollowers(callback, loaded, skipped, endCursor, limit, skip) {
                     is_private: follower.node.is_private
                 };
 
+                if (loaded === 0) {
+                    followersMap.clear();
+                }
+
                 followersMap.set(follower.node.id, user);
                 loaded++;
             }
@@ -803,6 +811,10 @@ function loadFollowing(callback, loaded, skipped, endCursor, limit, skip) {
                     is_private: userFollowing.node.is_private
                 };
 
+                if (loaded === 0) {
+                    followingMap.clear();
+                }
+
                 followingMap.set(userFollowing.node.id, user);
                 loaded++;
             }
@@ -857,10 +869,6 @@ function loadNotFollowingBack() {
 }
 
 function drawUsers() {
-    followersMap.clear();
-    followingMap.clear();
-    postLikesMap.clear();
-
     $(scrollableArea).empty();
     visibleUsersCount = 0;
 
