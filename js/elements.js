@@ -101,6 +101,7 @@ let queueTotalUsersCount = $("#queueTotalUsersCount", shadowRoot);
 let queueSelectedUsersCount = $("#queueSelectedUsersCount", shadowRoot);
 let loadingBarElement = $("#loadingBar", shadowRoot);
 let loadingMessageField = $("#loadingMessage", shadowRoot);
+let searchBar = $("#searchBar", shadowRoot);
 let searchBarInput = $("#searchBarInput", shadowRoot);
 let emptyQueueMessage = $("#emptyQueueMessage", shadowRoot);
 let dots = $("#dots", shadowRoot);

@@ -1282,7 +1282,7 @@ function disableElements(processType) {
         $(stopUnfollowingBtn).css("display", "inline-flex");
     }
 
-    $(searchBarInput).addClass(DISABLED_CLASS);
+    $(searchBar).addClass(DISABLED_CLASS);
     $(loadUsersDropdown).addClass(DISABLED_CLASS);
     $(queueActionsDropdown).addClass(DISABLED_CLASS);
     $(selectionDropdown).addClass(DISABLED_CLASS);
@@ -1305,7 +1305,7 @@ function enableElements(processType) {
         $(loadUsersDropdown).removeClass(DISABLED_CLASS);
     }
 
-    $(searchBarInput).removeClass(DISABLED_CLASS);
+    $(searchBar).removeClass(DISABLED_CLASS);
     $(queueActionsDropdown).removeClass(DISABLED_CLASS);
     $(selectionDropdown).removeClass(DISABLED_CLASS);
     $(dots).removeClass(DISABLED_CLASS);

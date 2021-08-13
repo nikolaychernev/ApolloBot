@@ -220,7 +220,7 @@ img {
     pointer-events: none;
 }
 
-.disabled#searchBarInput, .disabled.dropdown, .disabled#dots, .disabled#postListLoadMoreBtn {
+.disabled:not(.selection) {
     opacity: 0.5;
 }
 
