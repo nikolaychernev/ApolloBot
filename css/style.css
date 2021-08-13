@@ -41,7 +41,6 @@ h1, h3, strong {
     position: absolute;
     padding-top: 1em;
     width: 16em;
-    z-index: 1;
     border-radius: 1.5em;
 }
 
@@ -205,7 +204,7 @@ img {
     top: 0;
 }
 
-#usersRangeOverlay {
+#usersRangeOverlay, #rateLimitOverlay, .dropdown-content {
     z-index: 1;
 }
 
