@@ -283,6 +283,25 @@ function onLoadFollowingBtnClicked() {
 }
 
 function loadUsersRange(usersType, count, data) {
+    if (count === 0) {
+        let message;
+
+        switch (usersType) {
+            case USERS_TYPE.FOLLOWERS:
+                message = "Currently this account doesn't have any followers."
+                break;
+            case USERS_TYPE.FOLLOWING:
+                message = "Currently this account doesn't have any following."
+                break;
+            case USERS_TYPE.POST_LIKES:
+                message = "Currently this post doesn't have any likes."
+                break;
+        }
+
+        showPopup("Warning", message)
+        return;
+    }
+
     $(usersRangeHeading).text(usersType.HEADING);
     let start = count - 2048;
 
