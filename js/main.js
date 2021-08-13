@@ -1,11 +1,18 @@
 appendEmptyQueueMessage();
 initializeCsrfToken();
+initializeUserId();
 initializeSettings();
 initializeEventListeners();
 
 function initializeCsrfToken() {
     chrome.runtime.sendMessage({csrfToken: true}, function (response) {
         csrfToken = response;
+    });
+}
+
+function initializeUserId() {
+    chrome.runtime.sendMessage({userId: true}, function (response) {
+        userId = response;
     });
 }
 
@@ -346,6 +353,11 @@ function onLoadUnfollowedBtnClicked() {
 }
 
 function onLoadStoryViewersBtnClicked() {
+    if (userId !== currentUser.id) {
+        showPopup("Warning", "You can only load the viewers of your own stories.")
+        return;
+    }
+
     loadStoryList();
 }
 

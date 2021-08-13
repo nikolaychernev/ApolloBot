@@ -2,6 +2,8 @@ chrome.runtime.onMessage.addListener(
     function (request, sender, sendResponse) {
         if (request.csrfToken) {
             getCsrfToken(sendResponse);
+        } else if (request.userId) {
+            getUserId(sendResponse);
         } else if (request.currentUrl) {
             getCurrentUrl(sendResponse);
         } else if (request.download) {
@@ -23,6 +25,17 @@ function getCsrfToken(sendResponse) {
     chrome.cookies.get({
         url: 'https://www.instagram.com',
         name: 'csrftoken'
+    }, function (cookie) {
+        if (cookie) {
+            sendResponse(cookie.value);
+        }
+    });
+}
+
+function getUserId(sendResponse) {
+    chrome.cookies.get({
+        url: 'https://www.instagram.com',
+        name: 'ds_user_id'
     }, function (cookie) {
         if (cookie) {
             sendResponse(cookie.value);
