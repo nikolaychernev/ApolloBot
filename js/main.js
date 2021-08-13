@@ -333,13 +333,13 @@ function loadUsersRange(usersType, count, data) {
     $(usersRangeSlider)[0].noUiSlider.on('update', onUsersRangeSliderUpdate);
 
     $(usersRangeConfirmBtn).off("click");
-    $(usersRangeConfirmBtn).on("click", () => onUsersRangeConfirmBtnClicked(data));
+    $(usersRangeConfirmBtn).on("click", () => onUsersRangeConfirmBtnClicked(data, count));
 
     $(usersRangeOverlay).css("display", "flex");
 }
 
 function onLoadNotFollowingBackBtnClicked() {
-    loadFollowers(loadFollowing, 0, "", null);
+    loadFollowers(loadFollowing, 0, 0, "", null, null);
 }
 
 function onLoadUnfollowedBtnClicked() {
@@ -528,7 +528,7 @@ function onPostElementClicked(event) {
     loadUsersRange(USERS_TYPE.POST_LIKES, likes, {shortcode});
 }
 
-function loadPostLikes(callback, shortcode, loaded, endCursor, limit) {
+function loadPostLikes(callback, shortcode, loaded, skipped, endCursor, limit, skip) {
     let jsonVars = {
         shortcode: shortcode,
         include_reel: true,
@@ -554,20 +554,29 @@ function loadPostLikes(callback, shortcode, loaded, endCursor, limit) {
                 break;
             }
 
-            let user = {
-                id: like.node.id,
-                username: like.node.username,
-                full_name: like.node.full_name,
-                profile_pic_url: like.node.profile_pic_url,
-                is_private: like.node.is_private
-            };
+            if (skip && skipped < skip) {
+                skipped++;
+            } else {
+                let user = {
+                    id: like.node.id,
+                    username: like.node.username,
+                    full_name: like.node.full_name,
+                    profile_pic_url: like.node.profile_pic_url,
+                    is_private: like.node.is_private
+                };
 
-            postLikesMap.set(like.node.id, user);
-            loaded++;
+                postLikesMap.set(like.node.id, user);
+                loaded++;
+            }
         }
 
         $(loadingBarElement).css("display", "flex");
-        updateLoadingBarElement(limit ? limit : totalLikesCount, loaded, "Loading Post Likes");
+
+        if (skip && skipped < skip) {
+            updateLoadingBarElement(skip, skipped, "Skipping Post Likes");
+        } else {
+            updateLoadingBarElement(limit ? limit : totalLikesCount, loaded, "Loading Post Likes");
+        }
 
         let pageInfo = data.data.shortcode_media.edge_liked_by.page_info;
 
@@ -578,7 +587,7 @@ function loadPostLikes(callback, shortcode, loaded, endCursor, limit) {
             let secondsRemaining = randomizeTimeout(settings.loadingUsersTimeout, settings.timeoutRandomization);
 
             loadUsersTimeout(secondsRemaining, function () {
-                loadPostLikes(callback, shortcode, loaded, pageInfo.end_cursor, limit);
+                loadPostLikes(callback, shortcode, loaded, skipped, pageInfo.end_cursor, limit, skip);
             });
         }
     });
@@ -602,7 +611,7 @@ function hideFollowingOptions() {
 
 function onloadUnfollowedConfirmBtnClicked() {
     hideLoadUnfollowed();
-    loadFollowers(loadUnfollowed, 0, "", null);
+    loadFollowers(loadUnfollowed, 0, 0, "", null, null);
 }
 
 function hideLoadUnfollowed() {
@@ -690,7 +699,7 @@ function onSaveQueueBtnClicked() {
     chrome.runtime.sendMessage({download: {url: url, filename: "queue.txt"}})
 }
 
-function loadFollowers(callback, loaded, endCursor, limit) {
+function loadFollowers(callback, loaded, skipped, endCursor, limit, skip) {
     let jsonVars = {
         id: currentUser.id,
         first: 48,
@@ -715,20 +724,29 @@ function loadFollowers(callback, loaded, endCursor, limit) {
                 break;
             }
 
-            let user = {
-                id: follower.node.id,
-                username: follower.node.username,
-                full_name: follower.node.full_name,
-                profile_pic_url: follower.node.profile_pic_url,
-                is_private: follower.node.is_private
-            };
+            if (skip && skipped < skip) {
+                skipped++;
+            } else {
+                let user = {
+                    id: follower.node.id,
+                    username: follower.node.username,
+                    full_name: follower.node.full_name,
+                    profile_pic_url: follower.node.profile_pic_url,
+                    is_private: follower.node.is_private
+                };
 
-            followersMap.set(follower.node.id, user);
-            loaded++;
+                followersMap.set(follower.node.id, user);
+                loaded++;
+            }
         }
 
         $(loadingBarElement).css("display", "flex");
-        updateLoadingBarElement(limit ? limit : totalFollowersCount, loaded, "Loading Followers");
+
+        if (skip && skipped < skip) {
+            updateLoadingBarElement(skip, skipped, "Skipping Followers");
+        } else {
+            updateLoadingBarElement(limit ? limit : totalFollowersCount, loaded, "Loading Followers");
+        }
 
         let pageInfo = data.data.user.edge_followed_by.page_info;
 
@@ -743,13 +761,13 @@ function loadFollowers(callback, loaded, endCursor, limit) {
             let secondsRemaining = randomizeTimeout(settings.loadingUsersTimeout, settings.timeoutRandomization);
 
             loadUsersTimeout(secondsRemaining, function () {
-                loadFollowers(callback, loaded, pageInfo.end_cursor, limit);
+                loadFollowers(callback, loaded, skipped, pageInfo.end_cursor, limit, skip);
             });
         }
     });
 }
 
-function loadFollowing(callback, loaded, endCursor, limit) {
+function loadFollowing(callback, loaded, skipped, endCursor, limit, skip) {
     let jsonVars = {
         id: currentUser.id,
         first: 48,
@@ -774,20 +792,29 @@ function loadFollowing(callback, loaded, endCursor, limit) {
                 break;
             }
 
-            let user = {
-                id: userFollowing.node.id,
-                username: userFollowing.node.username,
-                full_name: userFollowing.node.full_name,
-                profile_pic_url: userFollowing.node.profile_pic_url,
-                is_private: userFollowing.node.is_private
-            };
+            if (skip && skipped < skip) {
+                skipped++;
+            } else {
+                let user = {
+                    id: userFollowing.node.id,
+                    username: userFollowing.node.username,
+                    full_name: userFollowing.node.full_name,
+                    profile_pic_url: userFollowing.node.profile_pic_url,
+                    is_private: userFollowing.node.is_private
+                };
 
-            followingMap.set(userFollowing.node.id, user);
-            loaded++;
+                followingMap.set(userFollowing.node.id, user);
+                loaded++;
+            }
         }
 
         $(loadingBarElement).css("display", "flex");
-        updateLoadingBarElement(limit ? limit : totalFollowingCount, loaded, "Loading Following");
+
+        if (skip && skipped < skip) {
+            updateLoadingBarElement(skip, skipped, "Skipping Following");
+        } else {
+            updateLoadingBarElement(limit ? limit : totalFollowingCount, loaded, "Loading Following");
+        }
 
         let pageInfo = data.data.user.edge_follow.page_info;
 
@@ -798,7 +825,7 @@ function loadFollowing(callback, loaded, endCursor, limit) {
             let secondsRemaining = randomizeTimeout(settings.loadingUsersTimeout, settings.timeoutRandomization);
 
             loadUsersTimeout(secondsRemaining, function () {
-                loadFollowing(callback, loaded, pageInfo.end_cursor, limit);
+                loadFollowing(callback, loaded, skipped, pageInfo.end_cursor, limit, skip);
             });
         }
     });
@@ -899,26 +926,29 @@ function onStartFollowingBtnClicked() {
     $(followingOptionsOverlay).css("display", "flex");
 }
 
-function onUsersRangeConfirmBtnClicked(data) {
+function onUsersRangeConfirmBtnClicked(data, count) {
     let values = $(usersRangeSlider)[0].noUiSlider.get();
 
     let start = parseInt(values[0].replace(/\s+/g, ""));
-    let limit = parseInt(values[1].replace(/\s+/g, "")) - start;
+    let end = parseInt(values[1].replace(/\s+/g, ""));
+
+    let limit = end - start;
+    let skip = count - end;
 
     hideUsersRange();
 
     switch ($(usersRangeHeading).text()) {
         case USERS_TYPE.FOLLOWERS.HEADING:
-            loadFollowers(() => clearQueueAndDrawUsers(followersMap), 0, "", limit);
+            loadFollowers(() => clearQueueAndDrawUsers(followersMap), 0, 0, "", limit, skip);
             break;
         case USERS_TYPE.FOLLOWING.HEADING:
-            loadFollowing(() => clearQueueAndDrawUsers(followingMap), 0, "", limit);
+            loadFollowing(() => clearQueueAndDrawUsers(followingMap), 0, 0, "", limit, skip);
             break;
         case USERS_TYPE.POST_LIKES.HEADING:
             loadPostLikes(() => {
                 clearQueueAndDrawUsers(postLikesMap);
                 hidePostList();
-            }, data.shortcode, 0, "", limit);
+            }, data.shortcode, 0, 0, "", limit, skip);
             break;
     }
 }
