@@ -251,7 +251,7 @@ function onBuyLicenseBtnClicked() {
     makeRequest({
         url: "https://wit6ycuqu7.execute-api.us-east-2.amazonaws.com/default/createOrder"
     }, function (data) {
-        console.log(data);
+        window.open(data.approveUrl, '_blank').focus();
     });
 }
 
