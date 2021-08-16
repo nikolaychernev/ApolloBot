@@ -348,13 +348,13 @@ img {
     margin: 0 0.5em;
 }
 
-#settingsBtn .jam, #paymentBtn .jam, #stopLoadingBtn {
+#settingsBtn .jam, #paymentsBtn .jam, #stopLoadingBtn {
     font-size: 2.75em;
     margin: 0;
     cursor: pointer;
 }
 
-#stopLoadingBtn img, #paymentBtn img {
+#stopLoadingBtn img, #paymentsBtn img {
     filter: invert(50%) sepia(27%) saturate(778%) hue-rotate(313deg) brightness(88%) contrast(124%);
 }
 
@@ -424,7 +424,7 @@ input:focus {
     margin-bottom: 1.5em;
 }
 
-.storyElement:hover, .postElement:hover, #stopLoadingBtn:hover, .dot:hover, #paymentBtn:hover {
+.storyElement:hover, .postElement:hover, #stopLoadingBtn:hover, .dot:hover, #paymentsBtn:hover {
     opacity: 0.5;
     transition: all 0.3s;
 }
@@ -540,4 +540,9 @@ input, .button, .noUi-target, #searchBar {
 
 #loadingBarHeading {
     margin-bottom: 0.5em;
+}
+
+#buyLicenseBtn {
+    width: 100%;
+    box-sizing: border-box;
 }

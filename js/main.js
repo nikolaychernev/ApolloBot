@@ -76,6 +76,9 @@ function initializeEventListeners() {
     $(cancelSettingsBtn).on("click", hideSettingsPage);
     $(saveSettingsBtn).on("click", onSaveSettingsBtnClicked);
     $(resetSettingsBtn).on("click", onResetSettingsBtnClicked);
+    $(paymentsBtn).on("click", onPaymentsBtnClicked);
+    $(buyLicenseBtn).on("click", onBuyLicenseBtnClicked);
+    $(cancelPaymentsBtn).on("click", hidePaymentsPage);
     $(selectAllBtn).on("click", onSelectAllBtnClicked);
     $(selectNoneBtn).on("click", onSelectNoneBtnClicked);
     $(revertSelectionBtn).on("click", onRevertSelectionBtnClicked);
@@ -238,6 +241,22 @@ function onResetSettingsBtnClicked() {
     }, function () {
         populateSettings();
     });
+}
+
+function onPaymentsBtnClicked() {
+    $(paymentsOverlay).css("display", "flex");
+}
+
+function onBuyLicenseBtnClicked() {
+    makeRequest({
+        url: "https://wit6ycuqu7.execute-api.us-east-2.amazonaws.com/default/createOrder"
+    }, function (data) {
+        console.log(data);
+    });
+}
+
+function hidePaymentsPage() {
+    $(paymentsOverlay).css("display", "none");
 }
 
 function populateSettings() {
