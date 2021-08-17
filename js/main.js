@@ -251,7 +251,15 @@ function onBuyLicenseBtnClicked() {
     makeRequest({
         url: "https://wit6ycuqu7.execute-api.us-east-2.amazonaws.com/default/createOrder"
     }, function (data) {
-        window.open(data.approveUrl, '_blank').focus();
+        const pos = {
+            width: 500,
+            height: 700,
+            x: (screen.width / 2) - (500 / 2),
+            y: (screen.height / 2) - (700 / 2)
+        };
+
+        window.open(data.approveUrl, '_blank',
+            `width=${pos.width}, height=${pos.height}, left=${pos.x}, top=${pos.y}`);
     });
 }
 
