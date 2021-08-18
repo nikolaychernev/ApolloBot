@@ -3,6 +3,7 @@ initializeCsrfToken();
 initializeUserId();
 initializeSettings();
 initializeEventListeners();
+initializeTrial();
 
 function initializeCsrfToken() {
     chrome.runtime.sendMessage({csrfToken: true}, function (response) {
@@ -76,9 +77,9 @@ function initializeEventListeners() {
     $(cancelSettingsBtn).on("click", hideSettingsPage);
     $(saveSettingsBtn).on("click", onSaveSettingsBtnClicked);
     $(resetSettingsBtn).on("click", onResetSettingsBtnClicked);
-    $(paymentsBtn).on("click", onPaymentsBtnClicked);
+    $(licensePageBtn).on("click", onLicensePageBtnClicked);
     $(buyLicenseBtn).on("click", onBuyLicenseBtnClicked);
-    $(cancelPaymentsBtn).on("click", hidePaymentsPage);
+    $(cancelLicensePageBtn).on("click", hideLicensePage);
     $(selectAllBtn).on("click", onSelectAllBtnClicked);
     $(selectNoneBtn).on("click", onSelectNoneBtnClicked);
     $(revertSelectionBtn).on("click", onRevertSelectionBtnClicked);
@@ -114,6 +115,10 @@ function initializeEventListeners() {
     $(bottomDot).on("click", onBottomDotClicked);
     $(rateLimitOverlay).on("mousedown", onRateLimitOverlayClicked);
     $(rateLimitCancelBtn).on("click", hideRateLimitOverlay);
+}
+
+function initializeTrial() {
+    $(licenseText).text("2 Days, 23 Hours, 58 Minutes Trial Left");
 }
 
 function extractUserInfo() {
@@ -243,8 +248,8 @@ function onResetSettingsBtnClicked() {
     });
 }
 
-function onPaymentsBtnClicked() {
-    $(paymentsOverlay).css("display", "flex");
+function onLicensePageBtnClicked() {
+    $(licensePageOverlay).css("display", "flex");
 }
 
 function onBuyLicenseBtnClicked() {
@@ -263,8 +268,8 @@ function onBuyLicenseBtnClicked() {
     });
 }
 
-function hidePaymentsPage() {
-    $(paymentsOverlay).css("display", "none");
+function hideLicensePage() {
+    $(licensePageOverlay).css("display", "none");
 }
 
 function populateSettings() {

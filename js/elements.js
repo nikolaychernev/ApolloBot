@@ -4,7 +4,7 @@ let settingsBtn = $("#settingsBtn", shadowRoot);
 let cancelSettingsBtn = $("#cancelSettingsBtn", shadowRoot);
 let saveSettingsBtn = $("#saveSettingsBtn", shadowRoot);
 let resetSettingsBtn = $("#resetSettingsBtn", shadowRoot);
-let paymentsBtn = $("#paymentsBtn", shadowRoot);
+let licensePageBtn = $("#licensePageBtn", shadowRoot);
 let selectAllBtn = $("#selectAllBtn", shadowRoot);
 let selectNoneBtn = $("#selectNoneBtn", shadowRoot);
 let revertSelectionBtn = $("#revertSelectionBtn", shadowRoot);
@@ -44,10 +44,10 @@ let likingPhotosTimeout = $("#likingPhotosTimeout", shadowRoot);
 let rateLimitTimeout = $("#rateLimitTimeout", shadowRoot);
 let timeoutRandomization = $("#timeoutRandomization", shadowRoot);
 
-// Payments Page
-let paymentsOverlay = $("#paymentsPageOverlay", shadowRoot);
+// License Page
+let licensePageOverlay = $("#licensePageOverlay", shadowRoot);
 let buyLicenseBtn = $("#buyLicenseBtn", shadowRoot);
-let cancelPaymentsBtn = $("#cancelPaymentsBtn", shadowRoot);
+let cancelLicensePageBtn = $("#cancelLicensePageBtn", shadowRoot);
 
 // Users Range
 let usersRangeOverlay = $("#usersRangeOverlay", shadowRoot);
@@ -103,6 +103,7 @@ let usernameField = $("#username", shadowRoot);
 let scrollableArea = $(".scrollable-area", shadowRoot);
 let userElement = $("div.userElement", shadowRoot);
 let loadQueueFileInput = $("#loadQueueFileSelector", shadowRoot);
+let licenseText = $("#licenseText", shadowRoot);
 let queueTotalUsersCount = $("#queueTotalUsersCount", shadowRoot);
 let queueSelectedUsersCount = $("#queueSelectedUsersCount", shadowRoot);
 let loadingBarElement = $("#loadingBar", shadowRoot);
