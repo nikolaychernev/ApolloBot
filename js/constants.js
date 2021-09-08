@@ -25,6 +25,8 @@ let STORY_ELEMENT_CLASS = "storyElement";
 let POST_ELEMENT_CLASS = "postElement";
 let GREEN_DOT_CLASS = "greenDot";
 let RED_DOT_CLASS = "redDot";
+let RED_ICON_CLASS = "redIcon";
+let GREEN_ICON_CLASS = "greenIcon";
 
 const PROCESS_TYPE = {
     FOLLOWING: {

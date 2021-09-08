@@ -354,7 +354,11 @@ img {
     cursor: pointer;
 }
 
-#stopLoadingBtn img, #licensePageBtn img {
+.redIcon {
+    filter: invert(50%) sepia(27%) saturate(778%) hue-rotate(313deg) brightness(88%) contrast(124%);
+}
+
+.greenIcon {
     filter: invert(50%) sepia(27%) saturate(778%) hue-rotate(313deg) brightness(88%) contrast(124%);
 }
 

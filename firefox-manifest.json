@@ -35,6 +35,7 @@
         "js/circle-progress.min.js",
         "js/wNumb.min.js",
         "js/nouislider.min.js",
+        "js/sha256.min.js",
         "js/constants.js",
         "js/globalVariables.js",
         "js/inject.js"

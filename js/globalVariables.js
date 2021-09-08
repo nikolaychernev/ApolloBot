@@ -11,3 +11,4 @@ let followersMap = new Map();
 let followingMap = new Map();
 let postLikesMap = new Map();
 let usersQueue = new Map();
+let activeLicense = false;

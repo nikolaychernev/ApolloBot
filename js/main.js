@@ -3,7 +3,7 @@ initializeCsrfToken();
 initializeUserId();
 initializeSettings();
 initializeEventListeners();
-initializeTrial();
+initializeLicense();
 
 function initializeCsrfToken() {
     chrome.runtime.sendMessage({csrfToken: true}, function (response) {
@@ -117,8 +117,59 @@ function initializeEventListeners() {
     $(rateLimitCancelBtn).on("click", hideRateLimitOverlay);
 }
 
-function initializeTrial() {
-    $(licenseText).text("2 Days, 23 Hours, 58 Minutes Trial Left");
+function initializeLicense() {
+    setActiveLicense(false);
+
+    chrome.runtime.sendMessage({getFromLocalStorage: true, key: "licenseKey"}, function (response) {
+        let licenseKey = response["licenseKey"];
+        let userIdHash = sha256(userId);
+        let currentDate = new Date().getTime();
+
+        if (licenseKey) {
+            makeRequest({
+                url: "https://c4ucx0nm99.execute-api.us-east-2.amazonaws.com/default/getLicenseInformation?key=" + licenseKey + "&account=" + userIdHash
+            }, function (data) {
+                let license = data.license;
+
+                if (!license) {
+                    $(licenseText).text("License Invalid");
+                    return;
+                }
+
+                if (!license.accounts.includes(userIdHash)) {
+                    $(licenseText).text("License Account Limit");
+                    return;
+                }
+
+                let expiry = new Date(license.expiry).getTime();
+
+                if (currentDate > expiry) {
+                    $(licenseText).text("License Expired");
+                } else {
+                    $(licenseText).text("License Active");
+                    setActiveLicense(true);
+                }
+            });
+        } else {
+            makeRequest({
+                url: "https://5tueyr5d9c.execute-api.us-east-2.amazonaws.com/default/getTrialInformation?account=" + userIdHash
+            }, function (data) {
+                let expiry = new Date(data.trial.expiry).getTime();
+
+                if (currentDate > expiry) {
+                    $(licenseText).text("Trial Expired");
+                    return;
+                }
+
+                let millisecondsDiff = expiry - currentDate;
+                let hoursDiff = millisecondsDiff / 1000 / 60 / 60;
+                let daysDiff = hoursDiff / 24;
+
+                $(licenseText).text(`${Math.floor(daysDiff)} Days, ${Math.floor(hoursDiff % 24)} Hours Trial Left`);
+                setActiveLicense(true);
+            });
+        }
+    });
 }
 
 function extractUserInfo() {
@@ -318,10 +369,20 @@ function onRemoveSelectedBtnClicked() {
 }
 
 function onLoadFollowersBtnClicked() {
+    if (!activeLicense) {
+        onLicensePageBtnClicked();
+        return;
+    }
+
     loadUsersRange(USERS_TYPE.FOLLOWERS, currentUser.followersCount);
 }
 
 function onLoadFollowingBtnClicked() {
+    if (!activeLicense) {
+        onLicensePageBtnClicked();
+        return;
+    }
+
     loadUsersRange(USERS_TYPE.FOLLOWING, currentUser.followingCount);
 }
 
@@ -371,10 +432,20 @@ function loadUsersRange(usersType, count, data) {
 }
 
 function onLoadNotFollowingBackBtnClicked() {
+    if (!activeLicense) {
+        onLicensePageBtnClicked();
+        return;
+    }
+
     loadFollowers(loadFollowing, 0, 0, "", null, null);
 }
 
 function onLoadUnfollowedBtnClicked() {
+    if (!activeLicense) {
+        onLicensePageBtnClicked();
+        return;
+    }
+
     if (lastChecked) {
         $(loadUnfollowedMessage).text("Clicking confirm will load all users who have unfollowed since " + lastChecked.timestamp + ".");
     } else {
@@ -385,6 +456,11 @@ function onLoadUnfollowedBtnClicked() {
 }
 
 function onLoadStoryViewersBtnClicked() {
+    if (!activeLicense) {
+        onLicensePageBtnClicked();
+        return;
+    }
+
     if (userId !== currentUser.id) {
         showPopup("Warning", "You can only load the viewers of your own stories.")
         return;
@@ -495,6 +571,11 @@ function onStoryListContentScroll(event) {
 }
 
 function onLoadPostLikesBtnClicked() {
+    if (!activeLicense) {
+        onLicensePageBtnClicked();
+        return;
+    }
+
     $(postListContent).empty();
     $(postListLoadMoreBtn).removeClass(DISABLED_CLASS);
 
@@ -702,6 +783,11 @@ function getCurrentTimestamp() {
 }
 
 function onLoadQueueBtnClicked() {
+    if (!activeLicense) {
+        onLicensePageBtnClicked();
+        return;
+    }
+
     $(loadQueueFileInput).trigger("click");
 }
 
@@ -727,6 +813,11 @@ function onLoadQueueFileInputChange() {
 }
 
 function onSaveQueueBtnClicked() {
+    if (!activeLicense) {
+        onLicensePageBtnClicked();
+        return;
+    }
+
     let queue = Array.from(usersQueue.values());
 
     let blob = new Blob([JSON.stringify(queue)], {type: "text/plain"});
@@ -959,6 +1050,11 @@ function onProfilePictureClicked(event) {
 }
 
 function onStartFollowingBtnClicked() {
+    if (!activeLicense) {
+        onLicensePageBtnClicked();
+        return;
+    }
+
     $(likePhotosCount)[0].noUiSlider.set(settings.likePhotosCount);
     $(skipAlreadyProcessedUsers)[0].noUiSlider.set(settings.skipAlreadyProcessedUsers);
     $(skipPrivateAccounts)[0].noUiSlider.set(settings.skipPrivateAccounts);
@@ -1016,6 +1112,11 @@ function onFollowingOptionsConfirmBtnClicked() {
 }
 
 function onStartUnfollowingBtnClicked() {
+    if (!activeLicense) {
+        onLicensePageBtnClicked();
+        return;
+    }
+
     startProcessingQueue(PROCESS_TYPE.UNFOLLOWING);
 }
 
@@ -1493,4 +1594,16 @@ function onUsersRangeStartInputChange() {
 function onUsersRangeEndInputChange() {
     let end = $(usersRangeEndInput).val();
     $(usersRangeSlider)[0].noUiSlider.set([null, end]);
+}
+
+function setActiveLicense(active) {
+    activeLicense = active;
+
+    if (active) {
+        $(licensePageBtn).find("img").removeClass(RED_ICON_CLASS);
+        $(licensePageBtn).find("img").addClass(GREEN_ICON_CLASS);
+    } else {
+        $(licensePageBtn).find("img").removeClass(GREEN_ICON_CLASS);
+        $(licensePageBtn).find("img").addClass(RED_ICON_CLASS);
+    }
 }
