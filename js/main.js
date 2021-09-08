@@ -141,21 +141,21 @@ function checkLicenseOrTrial() {
                 let license = data.license;
 
                 if (!license) {
-                    $(licenseText).text("License Invalid");
+                    $(licenseText).text("License invalid");
                     return;
                 }
 
                 if (!license.accounts.includes(userIdHash)) {
-                    $(licenseText).text("License Account Limit");
+                    $(licenseText).text("License account limit");
                     return;
                 }
 
                 let expiry = new Date(license.expiry).getTime();
 
                 if (currentDate > expiry) {
-                    $(licenseText).text("License Expired");
+                    $(licenseText).text("License expired");
                 } else {
-                    $(licenseText).text("License Active");
+                    $(licenseText).text("License active");
                     activeLicense = true;
 
                     $(licensePageBtn).find("img").removeClass(RED_ICON_CLASS);
@@ -169,7 +169,7 @@ function checkLicenseOrTrial() {
                 let expiry = new Date(data.trial.expiry).getTime();
 
                 if (currentDate > expiry) {
-                    $(licenseText).text("Trial Expired");
+                    $(licenseText).text("Trial expired");
                     return;
                 }
 
@@ -177,7 +177,7 @@ function checkLicenseOrTrial() {
                 let hoursDiff = millisecondsDiff / 1000 / 60 / 60;
                 let daysDiff = hoursDiff / 24;
 
-                $(licenseText).text(`${Math.floor(daysDiff)} Days, ${Math.floor(hoursDiff % 24)} Hours Trial Left`);
+                $(licenseText).text(`Trial expires in ${Math.floor(daysDiff)} days, ${Math.floor(hoursDiff % 24)} hours`);
                 activeTrial = true;
             });
         }

@@ -551,3 +551,9 @@ input, .button, .noUi-target, #searchBar {
     box-sizing: border-box;
     margin-top: 1.5em;
 }
+
+.licenseText {
+    color: #E5E4E2;
+    margin-top: 0.5em;
+    font-size: 1em;
+}
