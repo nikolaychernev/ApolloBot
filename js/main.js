@@ -118,6 +118,11 @@ function initializeEventListeners() {
 }
 
 function initializeLicenseOrTrial() {
+    checkLicenseOrTrial();
+    setInterval(checkLicenseOrTrial, 3.6e6);
+}
+
+function checkLicenseOrTrial() {
     activeLicense = false;
     activeTrial = false;
 
