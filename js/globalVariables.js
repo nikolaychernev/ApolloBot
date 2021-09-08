@@ -12,3 +12,4 @@ let followingMap = new Map();
 let postLikesMap = new Map();
 let usersQueue = new Map();
 let activeLicense = false;
+let activeTrial = false;

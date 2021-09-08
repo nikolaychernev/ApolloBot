@@ -3,7 +3,7 @@ initializeCsrfToken();
 initializeUserId();
 initializeSettings();
 initializeEventListeners();
-initializeLicense();
+initializeLicenseOrTrial();
 
 function initializeCsrfToken() {
     chrome.runtime.sendMessage({csrfToken: true}, function (response) {
@@ -117,8 +117,12 @@ function initializeEventListeners() {
     $(rateLimitCancelBtn).on("click", hideRateLimitOverlay);
 }
 
-function initializeLicense() {
-    setActiveLicense(false);
+function initializeLicenseOrTrial() {
+    activeLicense = false;
+    activeTrial = false;
+
+    $(licensePageBtn).find("img").removeClass(GREEN_ICON_CLASS);
+    $(licensePageBtn).find("img").addClass(RED_ICON_CLASS);
 
     chrome.runtime.sendMessage({getFromLocalStorage: true, key: "licenseKey"}, function (response) {
         let licenseKey = response["licenseKey"];
@@ -147,7 +151,10 @@ function initializeLicense() {
                     $(licenseText).text("License Expired");
                 } else {
                     $(licenseText).text("License Active");
-                    setActiveLicense(true);
+                    activeLicense = true;
+
+                    $(licensePageBtn).find("img").removeClass(RED_ICON_CLASS);
+                    $(licensePageBtn).find("img").addClass(GREEN_ICON_CLASS);
                 }
             });
         } else {
@@ -166,7 +173,7 @@ function initializeLicense() {
                 let daysDiff = hoursDiff / 24;
 
                 $(licenseText).text(`${Math.floor(daysDiff)} Days, ${Math.floor(hoursDiff % 24)} Hours Trial Left`);
-                setActiveLicense(true);
+                activeTrial = true;
             });
         }
     });
@@ -369,7 +376,7 @@ function onRemoveSelectedBtnClicked() {
 }
 
 function onLoadFollowersBtnClicked() {
-    if (!activeLicense) {
+    if (!activeLicense && !activeTrial) {
         onLicensePageBtnClicked();
         return;
     }
@@ -378,7 +385,7 @@ function onLoadFollowersBtnClicked() {
 }
 
 function onLoadFollowingBtnClicked() {
-    if (!activeLicense) {
+    if (!activeLicense && !activeTrial) {
         onLicensePageBtnClicked();
         return;
     }
@@ -432,7 +439,7 @@ function loadUsersRange(usersType, count, data) {
 }
 
 function onLoadNotFollowingBackBtnClicked() {
-    if (!activeLicense) {
+    if (!activeLicense && !activeTrial) {
         onLicensePageBtnClicked();
         return;
     }
@@ -441,7 +448,7 @@ function onLoadNotFollowingBackBtnClicked() {
 }
 
 function onLoadUnfollowedBtnClicked() {
-    if (!activeLicense) {
+    if (!activeLicense && !activeTrial) {
         onLicensePageBtnClicked();
         return;
     }
@@ -456,7 +463,7 @@ function onLoadUnfollowedBtnClicked() {
 }
 
 function onLoadStoryViewersBtnClicked() {
-    if (!activeLicense) {
+    if (!activeLicense && !activeTrial) {
         onLicensePageBtnClicked();
         return;
     }
@@ -571,7 +578,7 @@ function onStoryListContentScroll(event) {
 }
 
 function onLoadPostLikesBtnClicked() {
-    if (!activeLicense) {
+    if (!activeLicense && !activeTrial) {
         onLicensePageBtnClicked();
         return;
     }
@@ -783,7 +790,7 @@ function getCurrentTimestamp() {
 }
 
 function onLoadQueueBtnClicked() {
-    if (!activeLicense) {
+    if (!activeLicense && !activeTrial) {
         onLicensePageBtnClicked();
         return;
     }
@@ -813,7 +820,7 @@ function onLoadQueueFileInputChange() {
 }
 
 function onSaveQueueBtnClicked() {
-    if (!activeLicense) {
+    if (!activeLicense && !activeTrial) {
         onLicensePageBtnClicked();
         return;
     }
@@ -1050,7 +1057,7 @@ function onProfilePictureClicked(event) {
 }
 
 function onStartFollowingBtnClicked() {
-    if (!activeLicense) {
+    if (!activeLicense && !activeTrial) {
         onLicensePageBtnClicked();
         return;
     }
@@ -1112,7 +1119,7 @@ function onFollowingOptionsConfirmBtnClicked() {
 }
 
 function onStartUnfollowingBtnClicked() {
-    if (!activeLicense) {
+    if (!activeLicense && !activeTrial) {
         onLicensePageBtnClicked();
         return;
     }
@@ -1594,16 +1601,4 @@ function onUsersRangeStartInputChange() {
 function onUsersRangeEndInputChange() {
     let end = $(usersRangeEndInput).val();
     $(usersRangeSlider)[0].noUiSlider.set([null, end]);
-}
-
-function setActiveLicense(active) {
-    activeLicense = active;
-
-    if (active) {
-        $(licensePageBtn).find("img").removeClass(RED_ICON_CLASS);
-        $(licensePageBtn).find("img").addClass(GREEN_ICON_CLASS);
-    } else {
-        $(licensePageBtn).find("img").removeClass(GREEN_ICON_CLASS);
-        $(licensePageBtn).find("img").addClass(RED_ICON_CLASS);
-    }
 }
