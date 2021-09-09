@@ -557,3 +557,11 @@ input, .button, .noUi-target, #searchBar {
     margin-top: 0.5em;
     font-size: 1em;
 }
+
+.redText {
+    color: indianred;
+}
+
+.greenText {
+    color: lightgreen;
+}

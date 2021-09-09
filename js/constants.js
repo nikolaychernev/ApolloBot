@@ -28,6 +28,8 @@ let GREEN_DOT_CLASS = "greenDot";
 let RED_DOT_CLASS = "redDot";
 let RED_ICON_CLASS = "redIcon";
 let GREEN_ICON_CLASS = "greenIcon";
+let RED_TEXT_CLASS = "redText";
+let GREEN_TEXT_CLASS = "greenText";
 
 const PROCESS_TYPE = {
     FOLLOWING: {

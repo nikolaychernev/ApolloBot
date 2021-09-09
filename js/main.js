@@ -166,6 +166,9 @@ function checkLicenseOrTrial() {
             $(licensePageBtn).find("img").removeClass(RED_ICON_CLASS);
             $(licensePageBtn).find("img").addClass(GREEN_ICON_CLASS);
 
+            $(licenseText).removeClass(RED_TEXT_CLASS);
+            $(licenseText).addClass(GREEN_TEXT_CLASS);
+
             activeLicense = true;
         });
     } else {
@@ -195,6 +198,9 @@ function resetLicenseAndTrialInformation() {
     $(licensePageBtn).find("img").addClass(RED_ICON_CLASS);
 
     $(licenseText).text("No license key provided");
+    $(licenseText).removeClass(GREEN_TEXT_CLASS);
+    $(licenseText).addClass(RED_TEXT_CLASS);
+
     $(trialText).text("");
     $(trialText).next().remove('.separator');
 }
