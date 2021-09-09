@@ -332,6 +332,8 @@ function onLicensePageBtnClicked() {
 }
 
 function onBuyLicenseBtnClicked() {
+    timeoutButton(9, buyLicenseBtn, $(buyLicenseBtn).find('span').text());
+
     makeRequest({
         url: "https://wit6ycuqu7.execute-api.us-east-2.amazonaws.com/default/createOrder"
     }, function (data) {
@@ -1622,4 +1624,18 @@ function onUsersRangeStartInputChange() {
 function onUsersRangeEndInputChange() {
     let end = $(usersRangeEndInput).val();
     $(usersRangeSlider)[0].noUiSlider.set([null, end]);
+}
+
+function timeoutButton(secondsRemaining, button, buttonText) {
+    if (secondsRemaining > 0) {
+        $(button).find('span').text(`(${secondsRemaining}) ${buttonText}`);
+        $(button).addClass(DISABLED_CLASS);
+
+        setTimeout(function () {
+            timeoutButton(secondsRemaining - 1, button, buttonText);
+        }, 1000);
+    } else {
+        $(button).find('span').text(buttonText);
+        $(button).removeClass(DISABLED_CLASS);
+    }
 }
