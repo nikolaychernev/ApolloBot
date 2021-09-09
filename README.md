@@ -26,8 +26,8 @@ To use the extension just open Instagram™ and a new icon will appear in the to
 In case Instagram™ change their APIs there are written instructions on how to get the extension working again at http://apollo-bot.com/.
 
 # Screenshots
-![Screenshot](misc/screenshots/1.png)
-![Screenshot](misc/screenshots/2.png)
-![Screenshot](misc/screenshots/3.png)
-![Screenshot](misc/screenshots/4.png)
-![Screenshot](misc/screenshots/5.png)
+![Screenshot](misc/screenshots/background1.png)
+![Screenshot](misc/screenshots/background2.png)
+![Screenshot](misc/screenshots/background3.png)
+![Screenshot](misc/screenshots/background4.png)
+![Screenshot](misc/screenshots/background5.png)
