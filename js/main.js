@@ -3,6 +3,7 @@ initializeCsrfToken();
 initializeUserId();
 initializeSettings();
 initializeEventListeners();
+initializeLicenseOrTrial();
 
 function initializeCsrfToken() {
     chrome.runtime.sendMessage({csrfToken: true}, function (response) {
@@ -76,6 +77,10 @@ function initializeEventListeners() {
     $(cancelSettingsBtn).on("click", hideSettingsPage);
     $(saveSettingsBtn).on("click", onSaveSettingsBtnClicked);
     $(resetSettingsBtn).on("click", onResetSettingsBtnClicked);
+    $(licensePageBtn).on("click", onLicensePageBtnClicked);
+    $(buyLicenseBtn).on("click", onBuyLicenseBtnClicked);
+    $(cancelLicensePageBtn).on("click", hideLicensePage);
+    $(saveLicenseBtn).on("click", onSaveLicenseBtnClicked);
     $(selectAllBtn).on("click", onSelectAllBtnClicked);
     $(selectNoneBtn).on("click", onSelectNoneBtnClicked);
     $(revertSelectionBtn).on("click", onRevertSelectionBtnClicked);
@@ -111,6 +116,95 @@ function initializeEventListeners() {
     $(bottomDot).on("click", onBottomDotClicked);
     $(rateLimitOverlay).on("mousedown", onRateLimitOverlayClicked);
     $(rateLimitCancelBtn).on("click", hideRateLimitOverlay);
+}
+
+function initializeLicenseOrTrial() {
+    chrome.runtime.sendMessage({getFromLocalStorage: true, key: "licenseKey"}, function (response) {
+        licenseKey = response["licenseKey"];
+
+        checkLicenseOrTrial();
+        setInterval(checkLicenseOrTrial, 3.6e6);
+    });
+}
+
+function checkLicenseOrTrial() {
+    resetLicenseAndTrialInformation();
+
+    let userIdHash = sha256(userId);
+    let currentDate = new Date().getTime();
+
+    if (licenseKey) {
+        if (typeof licenseKey !== 'string' || !UUID_REGEX.test(licenseKey)) {
+            $(licenseText).text("License key is invalid");
+            return;
+        }
+
+        makeRequest({
+            url: "https://c4ucx0nm99.execute-api.us-east-2.amazonaws.com/default/getLicenseInformation?key=" + licenseKey + "&account=" + userIdHash
+        }, function (data) {
+            let license = data.license;
+
+            if (Object.keys(license).length === 0 || !license.accounts || !license.expiry) {
+                $(licenseText).text("License key is invalid");
+                return;
+            }
+
+            if (!license.accounts.includes(userIdHash)) {
+                $(licenseText).text("License account limit reached");
+                return;
+            }
+
+            let expiry = new Date(license.expiry).getTime();
+
+            if (currentDate > expiry) {
+                $(licenseText).text("License has expired");
+                return;
+            }
+
+            $(licenseText).text(getTimeDifferenceText(expiry, currentDate, 'License'));
+
+            $(licensePageBtn).find("img").removeClass(RED_ICON_CLASS);
+            $(licensePageBtn).find("img").addClass(GREEN_ICON_CLASS);
+
+            activeLicense = true;
+        });
+    } else {
+        makeRequest({
+            url: "https://5tueyr5d9c.execute-api.us-east-2.amazonaws.com/default/getTrialInformation?account=" + userIdHash
+        }, function (data) {
+            let expiry = new Date(data.trial.expiry).getTime();
+
+            if (currentDate > expiry) {
+                $(trialText).text("Trial has expired");
+                return;
+            }
+
+            $(trialText).text(getTimeDifferenceText(expiry, currentDate, 'Trial'));
+            $(trialText).after('<span class="separator">|</span>');
+
+            activeTrial = true;
+        });
+    }
+}
+
+function resetLicenseAndTrialInformation() {
+    activeLicense = false;
+    activeTrial = false;
+
+    $(licensePageBtn).find("img").removeClass(GREEN_ICON_CLASS);
+    $(licensePageBtn).find("img").addClass(RED_ICON_CLASS);
+
+    $(licenseText).text("No license key provided");
+    $(trialText).text("");
+    $(trialText).next().remove('.separator');
+}
+
+function getTimeDifferenceText(expiry, currentDate, placeholder) {
+    let millisecondsDiff = expiry - currentDate;
+    let hoursDiff = millisecondsDiff / 1000 / 60 / 60;
+    let daysDiff = hoursDiff / 24;
+
+    return `${placeholder} expires in ${Math.floor(daysDiff)} days, ${Math.floor(hoursDiff % 24)} hours`
 }
 
 function extractUserInfo() {
@@ -240,6 +334,42 @@ function onResetSettingsBtnClicked() {
     });
 }
 
+function onLicensePageBtnClicked() {
+    $(licenseKeyInput).val(licenseKey);
+    $(licensePageOverlay).css("display", "flex");
+}
+
+function onBuyLicenseBtnClicked() {
+    timeoutButton(9, buyLicenseBtn, $(buyLicenseBtn).find('span').text());
+
+    makeRequest({
+        url: "https://wit6ycuqu7.execute-api.us-east-2.amazonaws.com/default/createOrder"
+    }, function (data) {
+        const pos = {
+            width: 500,
+            height: 700,
+            x: (screen.width / 2) - (500 / 2),
+            y: (screen.height / 2) - (700 / 2)
+        };
+
+        window.open(data.approveUrl, '_blank',
+            `width=${pos.width}, height=${pos.height}, left=${pos.x}, top=${pos.y}`);
+    });
+}
+
+function hideLicensePage() {
+    $(licensePageOverlay).css("display", "none");
+}
+
+function onSaveLicenseBtnClicked() {
+    timeoutButton(9, saveLicenseBtn, $(saveLicenseBtn).find('span').text());
+    licenseKey = $(licenseKeyInput).val();
+
+    chrome.runtime.sendMessage({setToLocalStorage: true, key: "licenseKey", value: licenseKey}, function () {
+        checkLicenseOrTrial();
+    });
+}
+
 function populateSettings() {
     $(loadFollowersQueryHashInput).val(settings.loadFollowersQueryHash);
     $(loadFollowingQueryHashInput).val(settings.loadFollowingQueryHash);
@@ -286,10 +416,20 @@ function onRemoveSelectedBtnClicked() {
 }
 
 function onLoadFollowersBtnClicked() {
+    if (!activeLicense && !activeTrial) {
+        onLicensePageBtnClicked();
+        return;
+    }
+
     loadUsersRange(USERS_TYPE.FOLLOWERS, currentUser.followersCount);
 }
 
 function onLoadFollowingBtnClicked() {
+    if (!activeLicense && !activeTrial) {
+        onLicensePageBtnClicked();
+        return;
+    }
+
     loadUsersRange(USERS_TYPE.FOLLOWING, currentUser.followingCount);
 }
 
@@ -339,10 +479,20 @@ function loadUsersRange(usersType, count, data) {
 }
 
 function onLoadNotFollowingBackBtnClicked() {
+    if (!activeLicense && !activeTrial) {
+        onLicensePageBtnClicked();
+        return;
+    }
+
     loadFollowers(loadFollowing, 0, 0, "", null, null);
 }
 
 function onLoadUnfollowedBtnClicked() {
+    if (!activeLicense && !activeTrial) {
+        onLicensePageBtnClicked();
+        return;
+    }
+
     if (lastChecked) {
         $(loadUnfollowedMessage).text("Clicking confirm will load all users who have unfollowed since " + lastChecked.timestamp + ".");
     } else {
@@ -353,6 +503,11 @@ function onLoadUnfollowedBtnClicked() {
 }
 
 function onLoadStoryViewersBtnClicked() {
+    if (!activeLicense && !activeTrial) {
+        onLicensePageBtnClicked();
+        return;
+    }
+
     if (userId !== currentUser.id) {
         showPopup("Warning", "You can only load the viewers of your own stories.")
         return;
@@ -463,6 +618,11 @@ function onStoryListContentScroll(event) {
 }
 
 function onLoadPostLikesBtnClicked() {
+    if (!activeLicense && !activeTrial) {
+        onLicensePageBtnClicked();
+        return;
+    }
+
     $(postListContent).empty();
     $(postListLoadMoreBtn).removeClass(DISABLED_CLASS);
 
@@ -670,6 +830,11 @@ function getCurrentTimestamp() {
 }
 
 function onLoadQueueBtnClicked() {
+    if (!activeLicense && !activeTrial) {
+        onLicensePageBtnClicked();
+        return;
+    }
+
     $(loadQueueFileInput).trigger("click");
 }
 
@@ -695,6 +860,11 @@ function onLoadQueueFileInputChange() {
 }
 
 function onSaveQueueBtnClicked() {
+    if (!activeLicense && !activeTrial) {
+        onLicensePageBtnClicked();
+        return;
+    }
+
     let queue = Array.from(usersQueue.values());
 
     let blob = new Blob([JSON.stringify(queue)], {type: "text/plain"});
@@ -927,6 +1097,11 @@ function onProfilePictureClicked(event) {
 }
 
 function onStartFollowingBtnClicked() {
+    if (!activeLicense && !activeTrial) {
+        onLicensePageBtnClicked();
+        return;
+    }
+
     $(likePhotosCount)[0].noUiSlider.set(settings.likePhotosCount);
     $(skipAlreadyProcessedUsers)[0].noUiSlider.set(settings.skipAlreadyProcessedUsers);
     $(skipPrivateAccounts)[0].noUiSlider.set(settings.skipPrivateAccounts);
@@ -984,6 +1159,11 @@ function onFollowingOptionsConfirmBtnClicked() {
 }
 
 function onStartUnfollowingBtnClicked() {
+    if (!activeLicense && !activeTrial) {
+        onLicensePageBtnClicked();
+        return;
+    }
+
     startProcessingQueue(PROCESS_TYPE.UNFOLLOWING);
 }
 
@@ -1461,4 +1641,18 @@ function onUsersRangeStartInputChange() {
 function onUsersRangeEndInputChange() {
     let end = $(usersRangeEndInput).val();
     $(usersRangeSlider)[0].noUiSlider.set([null, end]);
+}
+
+function timeoutButton(secondsRemaining, button, buttonText) {
+    if (secondsRemaining > 0) {
+        $(button).find('span').text(`(${secondsRemaining}) ${buttonText}`);
+        $(button).addClass(DISABLED_CLASS);
+
+        setTimeout(function () {
+            timeoutButton(secondsRemaining - 1, button, buttonText);
+        }, 1000);
+    } else {
+        $(button).find('span').text(buttonText);
+        $(button).removeClass(DISABLED_CLASS);
+    }
 }

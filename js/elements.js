@@ -4,6 +4,7 @@ let settingsBtn = $("#settingsBtn", shadowRoot);
 let cancelSettingsBtn = $("#cancelSettingsBtn", shadowRoot);
 let saveSettingsBtn = $("#saveSettingsBtn", shadowRoot);
 let resetSettingsBtn = $("#resetSettingsBtn", shadowRoot);
+let licensePageBtn = $("#licensePageBtn", shadowRoot);
 let selectAllBtn = $("#selectAllBtn", shadowRoot);
 let selectNoneBtn = $("#selectNoneBtn", shadowRoot);
 let revertSelectionBtn = $("#revertSelectionBtn", shadowRoot);
@@ -43,7 +44,14 @@ let likingPhotosTimeout = $("#likingPhotosTimeout", shadowRoot);
 let rateLimitTimeout = $("#rateLimitTimeout", shadowRoot);
 let timeoutRandomization = $("#timeoutRandomization", shadowRoot);
 
-//Users Range
+// License Page
+let licensePageOverlay = $("#licensePageOverlay", shadowRoot);
+let licenseKeyInput = $("#licenseKeyInput", shadowRoot);
+let buyLicenseBtn = $("#buyLicenseBtn", shadowRoot);
+let cancelLicensePageBtn = $("#cancelLicensePageBtn", shadowRoot);
+let saveLicenseBtn = $("#saveLicenseBtn", shadowRoot);
+
+// Users Range
 let usersRangeOverlay = $("#usersRangeOverlay", shadowRoot);
 let usersRangeHeading = $("#usersRangeHeading", shadowRoot);
 let usersRangeToggle = $("#usersRangeToggle", shadowRoot);
@@ -54,7 +62,7 @@ let usersRangeEndInput = $("#usersRangeEndInput", shadowRoot);
 let usersRangeConfirmBtn = $("#usersRangeConfirmBtn", shadowRoot);
 let usersRangeCancelBtn = $("#usersRangeCancelBtn", shadowRoot);
 
-//Following Options
+// Following Options
 let followingOptionsOverlay = $("#followingOptionsOverlay", shadowRoot);
 let skipPrivateAccounts = $("#skipPrivateAccounts", shadowRoot);
 let likePhotosCount = $("#likePhotosCount", shadowRoot);
@@ -62,30 +70,30 @@ let skipAlreadyProcessedUsers = $("#skipAlreadyProcessedUsers", shadowRoot);
 let followingOptionsConfirmBtn = $("#followingOptionsConfirmBtn", shadowRoot);
 let followingOptionsCancelBtn = $("#followingOptionsCancelBtn", shadowRoot);
 
-//Load Unfollowed
+// Load Unfollowed
 let loadUnfollowedOverlay = $("#loadUnfollowedOverlay", shadowRoot);
 let loadUnfollowedMessage = $("#loadUnfollowedMessage", shadowRoot);
 let loadUnfollowedConfirmBtn = $("#loadUnfollowedConfirmBtn", shadowRoot);
 let loadUnfollowedCancelBtn = $("#loadUnfollowedCancelBtn", shadowRoot);
 
-//Popup
+// Popup
 let popupOverlay = $("#popupOverlay", shadowRoot);
 let popupHeading = $("#popupHeading", shadowRoot);
 let popupMessage = $("#popupMessage", shadowRoot);
 let popupCancelBtn = $("#popupCancelBtn", shadowRoot);
 
-//Story List
+// Story List
 let storyListOverlay = $("#storyListOverlay", shadowRoot);
 let storyListContent = $("#storyListContent", shadowRoot);
 let storyListCancelBtn = $("#storyListCancelBtn", shadowRoot);
 
-//Post List
+// Post List
 let postListOverlay = $("#postListOverlay", shadowRoot);
 let postListContent = $("#postListContent", shadowRoot);
 let postListCancelBtn = $("#postListCancelBtn", shadowRoot);
 let postListLoadMoreBtn = $("#postListLoadMoreBtn", shadowRoot);
 
-//Rate Limit Overlay
+// Rate Limit Overlay
 let rateLimitOverlay = $("#rateLimitOverlay", shadowRoot);
 let rateLimitMessage = $("#rateLimitMessage", shadowRoot);
 let rateLimitCancelBtn = $("#rateLimitCancelBtn", shadowRoot);
@@ -97,6 +105,8 @@ let usernameField = $("#username", shadowRoot);
 let scrollableArea = $(".scrollable-area", shadowRoot);
 let userElement = $("div.userElement", shadowRoot);
 let loadQueueFileInput = $("#loadQueueFileSelector", shadowRoot);
+let licenseText = $("#licenseText", shadowRoot);
+let trialText = $("#trialText", shadowRoot);
 let queueTotalUsersCount = $("#queueTotalUsersCount", shadowRoot);
 let queueSelectedUsersCount = $("#queueSelectedUsersCount", shadowRoot);
 let loadingBarElement = $("#loadingBar", shadowRoot);

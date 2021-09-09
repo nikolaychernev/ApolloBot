@@ -14,7 +14,7 @@ h1, h3, strong {
 .button {
     display: inline-flex;
     padding: 0.6em 1.2em;
-    border: 0.12em solid #ffffff;
+    border: 0.1em solid #ffffff;
     border-radius: 0.5em;
     transition: all 0.3s;
     cursor: pointer;
@@ -22,14 +22,6 @@ h1, h3, strong {
     align-items: center;
     font-size: 1.2em;
     user-select: none;
-}
-
-#buyMeACoffeeBtn {
-    color: #ffffff;
-}
-
-#buyMeACoffeeBtn:hover {
-    color: black;
 }
 
 .dropdown {
@@ -84,11 +76,11 @@ h1, h3, strong {
     padding-bottom: 2.5em;
 }
 
-#queueTotalUsersCount, #queueSelectedUsersCount {
+#extraData span {
     margin: 0.5em;
 }
 
-#counters {
+#extraData {
     display: flex;
     position: absolute;
     bottom: 0;
@@ -227,7 +219,7 @@ img {
 #searchBar {
     display: flex;
     align-items: center;
-    border: 0.12em solid #ffffff;
+    border: 0.1em solid #ffffff;
     border-radius: 0.5em;
     padding: 0.6em 1.2em;
     font-size: 1.2em;
@@ -347,7 +339,7 @@ img {
 
 .jam {
     display: block;
-    width: 1.1em;
+    width: 1.2em;
     margin-right: 0.3em;
     filter: invert(86%) sepia(100%) saturate(0%) hue-rotate(202deg) brightness(111%) contrast(100%);
 }
@@ -356,14 +348,18 @@ img {
     margin: 0 0.5em;
 }
 
-#settingsBtn .jam, #stopLoadingBtn {
-    font-size: 3em;
+#settingsBtn .jam, #licensePageBtn .jam, #stopLoadingBtn {
+    font-size: 2.75em;
     margin: 0;
     cursor: pointer;
 }
 
-#stopLoadingBtn img {
+.redIcon {
     filter: invert(50%) sepia(27%) saturate(778%) hue-rotate(313deg) brightness(88%) contrast(124%);
+}
+
+.greenIcon {
+    filter: invert(89%) sepia(10%) saturate(1754%) hue-rotate(60deg) brightness(98%) contrast(90%);
 }
 
 #settingsBtn:hover {
@@ -383,7 +379,7 @@ input {
     width: 100%;
     box-sizing: border-box;
     background: none;
-    border: 0.13rem solid #ffffff;
+    border: 0.1em solid #ffffff;
     border-radius: 0.5em;
     color: #ffffff;
     padding: 0.8em 1.2em;
@@ -432,7 +428,7 @@ input:focus {
     margin-bottom: 1.5em;
 }
 
-.storyElement:hover, .postElement:hover, #stopLoadingBtn:hover, .dot:hover {
+.storyElement:hover, .postElement:hover, #stopLoadingBtn:hover, .dot:hover, #licensePageBtn:hover {
     opacity: 0.5;
     transition: all 0.3s;
 }
@@ -469,8 +465,8 @@ input, .button, .noUi-target, #searchBar {
 }
 
 .dot {
-    height: 1.1em;
-    width: 1.1em;
+    height: 1.2em;
+    width: 1.2em;
     background-color: #5a626d;
     border-radius: 50%;
     cursor: pointer;
@@ -544,4 +540,20 @@ input, .button, .noUi-target, #searchBar {
 
 .name {
     display: block;
+}
+
+#loadingBarHeading {
+    margin-bottom: 0.5em;
+}
+
+#buyLicenseBtn {
+    width: 100%;
+    box-sizing: border-box;
+    margin-top: 1.5em;
+}
+
+.licenseText {
+    color: #E5E4E2;
+    margin-top: 0.5em;
+    font-size: 1em;
 }

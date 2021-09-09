@@ -34,6 +34,9 @@
                 </div>
             </div>
         </div>
+        <div id="licensePageBtn">
+            <img data-src="icons/coin-f.svg" class="jam redIcon"/>
+        </div>
         <div id="settingsBtn">
             <img data-src="icons/cog-f.svg" class="jam"/>
         </div>
@@ -41,8 +44,10 @@
 </div>
 <div class="container">
     <div class="scrollable-area"></div>
-    <div id="counters">
+    <div id="extraData">
+        <span id="trialText"></span>
         <span id="queueTotalUsersCount">0 Users</span>
+        <span class="separator">|</span>
         <span id="queueSelectedUsersCount">0 Selected</span>
     </div>
 </div>
@@ -77,11 +82,6 @@
                 <img data-src="icons/picture.svg" class="jam"/>
                 <span>Load Post Likes</span>
             </div>
-            <a id="buyMeACoffeeBtn" class="button greenButton" href="https://www.buymeacoffee.com/apollobot"
-               target="_blank">
-                <img data-src="icons/coffee.svg" class="jam"/>
-                <span>Buy Me A Coffee</span>
-            </a>
         </div>
     </div>
     <div class="grow">
@@ -189,6 +189,35 @@
                     <img data-src="icons/save.svg" class="jam"/>
                     <span>Save</span>
                 </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="licensePageOverlay" class="overlay hidden">
+    <div class="modal">
+        <div class="modalHeading spaceBetween">
+            <h1>License</h1>
+        </div>
+        <div class="modalBody">
+            <div class="setting">
+                <h3>License Key</h3>
+                <input type="text" id="licenseKeyInput" name="licenseKeyInput">
+            </div>
+            <p id="licenseText" class="licenseText"></p>
+            <div id="buyLicenseBtn" class="button greenButton">
+                <img data-src="icons/paypal.svg" class="jam"/>
+                <span>Buy License with PayPal™</span>
+            </div>
+            <p class="licenseText">$3.99 per month for up to 3 accounts</p>
+        </div>
+        <div class="spaceBetween">
+            <div id="cancelLicensePageBtn" class="button">
+                <img data-src="icons/close.svg" class="jam"/>
+                <span>Cancel</span>
+            </div>
+            <div id="saveLicenseBtn" class="button greenButton">
+                <img data-src="icons/save.svg" class="jam"/>
+                <span>Save</span>
             </div>
         </div>
     </div>
@@ -342,9 +371,9 @@
 <input type="file" id="loadQueueFileSelector" class="hidden" accept=".txt">
 <div id="loadingBar" class="hidden">
     <div id="loadingBarContent">
-        <div class="alignCenter">
+        <div id="loadingBarHeading" class="alignCenter">
             <div id="stopLoadingBtn">
-                <img data-src="icons/close.svg" class="jam"/>
+                <img data-src="icons/close.svg" class="jam redIcon"/>
             </div>
             <h1 id="loadingMessage"></h1>
         </div>

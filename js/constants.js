@@ -15,6 +15,7 @@ let DEFAULT_SETTINGS = {
 };
 
 let EXTRACT_USERNAME_REGEX = /.*instagram\.com\/([^\/]+)/;
+let UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
 let SELECTED_CLASS = "selected";
 let FOLLOWED_CLASS = "followed";
@@ -25,6 +26,8 @@ let STORY_ELEMENT_CLASS = "storyElement";
 let POST_ELEMENT_CLASS = "postElement";
 let GREEN_DOT_CLASS = "greenDot";
 let RED_DOT_CLASS = "redDot";
+let RED_ICON_CLASS = "redIcon";
+let GREEN_ICON_CLASS = "greenIcon";
 
 const PROCESS_TYPE = {
     FOLLOWING: {
