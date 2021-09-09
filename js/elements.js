@@ -46,8 +46,10 @@ let timeoutRandomization = $("#timeoutRandomization", shadowRoot);
 
 // License Page
 let licensePageOverlay = $("#licensePageOverlay", shadowRoot);
+let licenseKeyInput = $("#licenseKeyInput", shadowRoot);
 let buyLicenseBtn = $("#buyLicenseBtn", shadowRoot);
 let cancelLicensePageBtn = $("#cancelLicensePageBtn", shadowRoot);
+let saveLicenseBtn = $("#saveLicenseBtn", shadowRoot);
 
 // Users Range
 let usersRangeOverlay = $("#usersRangeOverlay", shadowRoot);

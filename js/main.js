@@ -80,6 +80,7 @@ function initializeEventListeners() {
     $(licensePageBtn).on("click", onLicensePageBtnClicked);
     $(buyLicenseBtn).on("click", onBuyLicenseBtnClicked);
     $(cancelLicensePageBtn).on("click", hideLicensePage);
+    $(saveLicenseBtn).on("click", onSaveLicenseBtnClicked);
     $(selectAllBtn).on("click", onSelectAllBtnClicked);
     $(selectNoneBtn).on("click", onSelectNoneBtnClicked);
     $(revertSelectionBtn).on("click", onRevertSelectionBtnClicked);
@@ -131,6 +132,11 @@ function checkLicenseOrTrial() {
         let currentDate = new Date().getTime();
 
         if (licenseKey) {
+            if (typeof licenseKey !== 'string' || !UUID_REGEX.test(licenseKey)) {
+                $(licenseText).text("License key is invalid");
+                return;
+            }
+
             makeRequest({
                 url: "https://c4ucx0nm99.execute-api.us-east-2.amazonaws.com/default/getLicenseInformation?key=" + licenseKey + "&account=" + userIdHash
             }, function (data) {
@@ -351,6 +357,18 @@ function onBuyLicenseBtnClicked() {
 
 function hideLicensePage() {
     $(licensePageOverlay).css("display", "none");
+}
+
+function onSaveLicenseBtnClicked() {
+    timeoutButton(9, saveLicenseBtn, $(saveLicenseBtn).find('span').text());
+
+    chrome.runtime.sendMessage({
+        setToLocalStorage: true,
+        key: "licenseKey",
+        value: $(licenseKeyInput).val()
+    }, function () {
+        checkLicenseOrTrial();
+    });
 }
 
 function populateSettings() {
