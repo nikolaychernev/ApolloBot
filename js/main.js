@@ -121,10 +121,10 @@ function initializeEventListeners() {
 function initializeLicenseOrTrial() {
     chrome.runtime.sendMessage({getFromLocalStorage: true, key: "licenseKey"}, function (response) {
         licenseKey = response["licenseKey"];
-    });
 
-    checkLicenseOrTrial();
-    setInterval(checkLicenseOrTrial, 3.6e6);
+        checkLicenseOrTrial();
+        setInterval(checkLicenseOrTrial, 3.6e6);
+    });
 }
 
 function checkLicenseOrTrial() {
