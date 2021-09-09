@@ -123,11 +123,7 @@ function initializeLicenseOrTrial() {
 }
 
 function checkLicenseOrTrial() {
-    activeLicense = false;
-    activeTrial = false;
-
-    $(licensePageBtn).find("img").removeClass(GREEN_ICON_CLASS);
-    $(licensePageBtn).find("img").addClass(RED_ICON_CLASS);
+    resetLicenseAndTrialInformation();
 
     chrome.runtime.sendMessage({getFromLocalStorage: true, key: "licenseKey"}, function (response) {
         let licenseKey = response["licenseKey"];
@@ -141,26 +137,28 @@ function checkLicenseOrTrial() {
                 let license = data.license;
 
                 if (!license) {
-                    $(licenseText).text("License invalid");
+                    $(licenseText).text("License key is invalid");
                     return;
                 }
 
                 if (!license.accounts.includes(userIdHash)) {
-                    $(licenseText).text("License account limit");
+                    $(licenseText).text("License account limit reached");
                     return;
                 }
 
                 let expiry = new Date(license.expiry).getTime();
 
                 if (currentDate > expiry) {
-                    $(licenseText).text("License expired");
-                } else {
-                    $(licenseText).text("License active");
-                    activeLicense = true;
-
-                    $(licensePageBtn).find("img").removeClass(RED_ICON_CLASS);
-                    $(licensePageBtn).find("img").addClass(GREEN_ICON_CLASS);
+                    $(licenseText).text("License has expired");
+                    return;
                 }
+
+                $(licenseText).text(getTimeDifferenceText(expiry, currentDate, 'License'));
+
+                $(licensePageBtn).find("img").removeClass(RED_ICON_CLASS);
+                $(licensePageBtn).find("img").addClass(GREEN_ICON_CLASS);
+
+                activeLicense = true;
             });
         } else {
             makeRequest({
@@ -169,19 +167,37 @@ function checkLicenseOrTrial() {
                 let expiry = new Date(data.trial.expiry).getTime();
 
                 if (currentDate > expiry) {
-                    $(licenseText).text("Trial expired");
+                    $(trialText).text("Trial has expired");
                     return;
                 }
 
-                let millisecondsDiff = expiry - currentDate;
-                let hoursDiff = millisecondsDiff / 1000 / 60 / 60;
-                let daysDiff = hoursDiff / 24;
+                $(trialText).text(getTimeDifferenceText(expiry, currentDate, 'Trial'));
+                $(trialText).after('<span class="separator">|</span>');
 
-                $(licenseText).text(`Trial expires in ${Math.floor(daysDiff)} days, ${Math.floor(hoursDiff % 24)} hours`);
                 activeTrial = true;
             });
         }
     });
+}
+
+function resetLicenseAndTrialInformation() {
+    activeLicense = false;
+    activeTrial = false;
+
+    $(licensePageBtn).find("img").removeClass(GREEN_ICON_CLASS);
+    $(licensePageBtn).find("img").addClass(RED_ICON_CLASS);
+
+    $(licenseText).text("No license key provided");
+    $(trialText).text("");
+    $(trialText).next().remove('.separator');
+}
+
+function getTimeDifferenceText(expiry, currentDate, placeholder) {
+    let millisecondsDiff = expiry - currentDate;
+    let hoursDiff = millisecondsDiff / 1000 / 60 / 60;
+    let daysDiff = hoursDiff / 24;
+
+    return `${placeholder} expires in ${Math.floor(daysDiff)} days, ${Math.floor(hoursDiff % 24)} hours`
 }
 
 function extractUserInfo() {

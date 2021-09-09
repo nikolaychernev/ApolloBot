@@ -104,6 +104,7 @@ let scrollableArea = $(".scrollable-area", shadowRoot);
 let userElement = $("div.userElement", shadowRoot);
 let loadQueueFileInput = $("#loadQueueFileSelector", shadowRoot);
 let licenseText = $("#licenseText", shadowRoot);
+let trialText = $("#trialText", shadowRoot);
 let queueTotalUsersCount = $("#queueTotalUsersCount", shadowRoot);
 let queueSelectedUsersCount = $("#queueSelectedUsersCount", shadowRoot);
 let loadingBarElement = $("#loadingBar", shadowRoot);
