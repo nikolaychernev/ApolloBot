@@ -119,6 +119,10 @@ function initializeEventListeners() {
 }
 
 function initializeLicenseOrTrial() {
+    chrome.runtime.sendMessage({getFromLocalStorage: true, key: "licenseKey"}, function (response) {
+        licenseKey = response["licenseKey"];
+    });
+
     checkLicenseOrTrial();
     setInterval(checkLicenseOrTrial, 3.6e6);
 }
@@ -126,64 +130,61 @@ function initializeLicenseOrTrial() {
 function checkLicenseOrTrial() {
     resetLicenseAndTrialInformation();
 
-    chrome.runtime.sendMessage({getFromLocalStorage: true, key: "licenseKey"}, function (response) {
-        let licenseKey = response["licenseKey"];
-        let userIdHash = sha256(userId);
-        let currentDate = new Date().getTime();
+    let userIdHash = sha256(userId);
+    let currentDate = new Date().getTime();
 
-        if (licenseKey) {
-            if (typeof licenseKey !== 'string' || !UUID_REGEX.test(licenseKey)) {
+    if (licenseKey) {
+        if (typeof licenseKey !== 'string' || !UUID_REGEX.test(licenseKey)) {
+            $(licenseText).text("License key is invalid");
+            return;
+        }
+
+        makeRequest({
+            url: "https://c4ucx0nm99.execute-api.us-east-2.amazonaws.com/default/getLicenseInformation?key=" + licenseKey + "&account=" + userIdHash
+        }, function (data) {
+            let license = data.license;
+
+            if (!license) {
                 $(licenseText).text("License key is invalid");
                 return;
             }
 
-            makeRequest({
-                url: "https://c4ucx0nm99.execute-api.us-east-2.amazonaws.com/default/getLicenseInformation?key=" + licenseKey + "&account=" + userIdHash
-            }, function (data) {
-                let license = data.license;
+            if (!license.accounts.includes(userIdHash)) {
+                $(licenseText).text("License account limit reached");
+                return;
+            }
 
-                if (!license) {
-                    $(licenseText).text("License key is invalid");
-                    return;
-                }
+            let expiry = new Date(license.expiry).getTime();
 
-                if (!license.accounts.includes(userIdHash)) {
-                    $(licenseText).text("License account limit reached");
-                    return;
-                }
+            if (currentDate > expiry) {
+                $(licenseText).text("License has expired");
+                return;
+            }
 
-                let expiry = new Date(license.expiry).getTime();
+            $(licenseText).text(getTimeDifferenceText(expiry, currentDate, 'License'));
 
-                if (currentDate > expiry) {
-                    $(licenseText).text("License has expired");
-                    return;
-                }
+            $(licensePageBtn).find("img").removeClass(RED_ICON_CLASS);
+            $(licensePageBtn).find("img").addClass(GREEN_ICON_CLASS);
 
-                $(licenseText).text(getTimeDifferenceText(expiry, currentDate, 'License'));
+            activeLicense = true;
+        });
+    } else {
+        makeRequest({
+            url: "https://5tueyr5d9c.execute-api.us-east-2.amazonaws.com/default/getTrialInformation?account=" + userIdHash
+        }, function (data) {
+            let expiry = new Date(data.trial.expiry).getTime();
 
-                $(licensePageBtn).find("img").removeClass(RED_ICON_CLASS);
-                $(licensePageBtn).find("img").addClass(GREEN_ICON_CLASS);
+            if (currentDate > expiry) {
+                $(trialText).text("Trial has expired");
+                return;
+            }
 
-                activeLicense = true;
-            });
-        } else {
-            makeRequest({
-                url: "https://5tueyr5d9c.execute-api.us-east-2.amazonaws.com/default/getTrialInformation?account=" + userIdHash
-            }, function (data) {
-                let expiry = new Date(data.trial.expiry).getTime();
+            $(trialText).text(getTimeDifferenceText(expiry, currentDate, 'Trial'));
+            $(trialText).after('<span class="separator">|</span>');
 
-                if (currentDate > expiry) {
-                    $(trialText).text("Trial has expired");
-                    return;
-                }
-
-                $(trialText).text(getTimeDifferenceText(expiry, currentDate, 'Trial'));
-                $(trialText).after('<span class="separator">|</span>');
-
-                activeTrial = true;
-            });
-        }
-    });
+            activeTrial = true;
+        });
+    }
 }
 
 function resetLicenseAndTrialInformation() {
@@ -334,6 +335,7 @@ function onResetSettingsBtnClicked() {
 }
 
 function onLicensePageBtnClicked() {
+    $(licenseKeyInput).val(licenseKey);
     $(licensePageOverlay).css("display", "flex");
 }
 
@@ -361,12 +363,9 @@ function hideLicensePage() {
 
 function onSaveLicenseBtnClicked() {
     timeoutButton(9, saveLicenseBtn, $(saveLicenseBtn).find('span').text());
+    licenseKey = $(licenseKeyInput).val();
 
-    chrome.runtime.sendMessage({
-        setToLocalStorage: true,
-        key: "licenseKey",
-        value: $(licenseKeyInput).val()
-    }, function () {
+    chrome.runtime.sendMessage({setToLocalStorage: true, key: "licenseKey", value: licenseKey}, function () {
         checkLicenseOrTrial();
     });
 }
