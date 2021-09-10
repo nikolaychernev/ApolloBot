@@ -7,7 +7,7 @@ chrome.runtime.onMessage.addListener(
         } else if (request.currentUrl) {
             getCurrentUrl(sendResponse);
         } else if (request.download) {
-            downloadUrl(request.download.url, request.download.filename);
+            downloadUrl(request.download.blob, request.download.filename);
         } else if (request.getFromLocalStorage) {
             getFromLocalStorage(request.key, sendResponse);
         } else if (request.setToLocalStorage) {
@@ -53,7 +53,9 @@ function getCurrentUrl(sendResponse) {
     })
 }
 
-function downloadUrl(url, fileName) {
+function downloadUrl(blob, fileName) {
+    let url = URL.createObjectURL(blob);
+
     chrome.downloads.download({
         url: url,
         filename: fileName

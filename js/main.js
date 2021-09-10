@@ -874,11 +874,9 @@ function onSaveQueueBtnClicked() {
     }
 
     let queue = Array.from(usersQueue.values());
-
     let blob = new Blob([JSON.stringify(queue)], {type: "text/plain"});
-    let url = URL.createObjectURL(blob);
 
-    chrome.runtime.sendMessage({download: {url: url, filename: "queue.txt"}})
+    chrome.runtime.sendMessage({download: {blob: blob, filename: "queue.txt"}})
 }
 
 function loadFollowers(callback, loaded, skipped, endCursor, limit, skip) {
