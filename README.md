@@ -2,7 +2,7 @@
 ![Logo](misc/promotional/promotional.png)
 
 # Security
-We don't collect any login information. The extension operates locally without a remote server by making all requests on your behalf.
+We don't collect any login information. The extension operates locally by making all requests on your behalf.
 
 # Features
 The main features of ApolloBot are the following:
