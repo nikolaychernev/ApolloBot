@@ -21,9 +21,15 @@ There are 2 modes for processing the users queue toggled by clicking the dots on
 2. Start Unfollowing - every user in the queue will be unfollowed.
 
 # How to use
-To use the extension just open Instagram™ and a new icon will appear in the top right corner. Go to your or another profile page and click the icon.
+To use the extension just open Instagram™ and a new icon will appear in the top right corner. Go to your or another profile page and click the icon. When the extension opens if you don't see a profile picture and a username in the top left corner please reload the page.
 
-In case Instagram™ change their APIs there are written instructions on how to get the extension working again at http://apollo-bot.com/.
+# Use cases
+The extension can be used in many different ways. It can be used to either grow your account or get rid of people you don't want to follow anymore. For example if you want to grow your photography page you should go to another photography page and load its followers or post likers. Start following those people and configure liking at least 1 of their photos. You will quickly see how they start following you back and begin building engagement.
+
+# Pricing
+The extension has a 1 week trial including all of the functionality without any limits. The license key costs $3.99 per month and it can be used on up to 3 accounts, on unlimited number of devices. Payments are handled securely by PayPal™. Keep in mind we'll send you the product key to the email address registered to your PayPal™ account.
+
+In case Instagram™ change their APIs there are written instructions on how to get the extension working again at https://apollo-bot.com/.
 
 # Screenshots
 ![Screenshot](misc/screenshots/background1.png)
