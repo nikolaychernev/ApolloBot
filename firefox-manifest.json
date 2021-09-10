@@ -14,7 +14,8 @@
     "downloads",
     "tabs",
     "cookies",
-    "*://*.instagram.com/*"
+    "*://*.instagram.com/*",
+    "*://*.amazonaws.com/*"
   ],
   "background": {
     "scripts": [

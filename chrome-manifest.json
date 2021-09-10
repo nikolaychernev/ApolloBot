@@ -13,7 +13,8 @@
     "storage",
     "downloads",
     "cookies",
-    "*://*.instagram.com/*"
+    "*://*.instagram.com/*",
+    "*://*.amazonaws.com/*"
   ],
   "background": {
     "scripts": [
