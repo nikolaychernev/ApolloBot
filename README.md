@@ -2,16 +2,18 @@
 ![Logo](misc/promotional/promotional.png)
 
 # Features
-✓  Loading the followers and following of the current page. The range of users loaded can be specified.  
-✓ Load the people not following back.  
-✓ Load the people who have unfollowed since the last check.  
-✓ Global users queue search by username and full name.  
-✓ Showing who has viewed any of your last active stories. Combined with the search functionality you can easily know if a specific person has watched your story.  
-✓ Load the people who have liked a specific post.  
-✓ Removing specific people from the queue who you for example don't want to unfollow even if they don't follow you back.  
-✓ Saving and loading queues in order to be processed later.  
-✓ Basic and advanced settings allowing you to configure the timeouts, timeout randomization and even the queue hashes and application id in case Instagram™ change their APIs.  
-✓ Automatic retry in case the Instagram™ rate limit is triggered.
+The main features of ApolloBot are the following:
+
+1. Loading the followers and following of the current page. The range of users loaded can be specified.
+2. Load the people not following back.
+3. Load the people who have unfollowed since the last check.
+4. Global users queue search by username and full name.
+5. Showing who has viewed any of your last active stories. Combined with the search functionality you can easily know if a specific person has watched your story.
+6. Load the people who have liked a specific post.
+7. Removing specific people from the queue who you for example don't want to unfollow even if they don't follow you back.
+8. Saving and loading queues in order to be processed later.
+9. Basic and advanced settings allowing you to configure the timeouts, timeout randomization and even the queue hashes and application id in case Instagram™ change their APIs.
+10. Automatic retry in case the Instagram™ rate limit is triggered.
 
 There are 2 modes for processing the users queue toggled by clicking the dots on the left side of the main button:
 
