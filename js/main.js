@@ -353,17 +353,16 @@ function onBuyLicenseBtnClicked() {
         y: (screen.height / 2) - (700 / 2)
     };
 
-    let paymentWindow = window.open('', '_blank',
+    let paymentWindow = window.open('https://apollo-bot.com/creating-payment.html', '_blank',
         `width=${pos.width}, height=${pos.height}, left=${pos.x}, top=${pos.y}`);
-
-    paymentWindow.document.write('Creating payment...');
-    timeoutButton(9, buyLicenseBtn, $(buyLicenseBtn).find('span').text());
 
     makeRequest({
         url: "https://wit6ycuqu7.execute-api.us-east-2.amazonaws.com/default/createOrder"
     }, function (data) {
         paymentWindow.location.href = data.approveUrl;
     });
+
+    timeoutButton(9, buyLicenseBtn, $(buyLicenseBtn).find('span').text());
 }
 
 function hideLicensePage() {
