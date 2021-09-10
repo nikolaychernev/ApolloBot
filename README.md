@@ -1,9 +1,6 @@
 # ApolloBot
 ![Logo](misc/promotional/promotional.png)
 
-# Security
-We don't collect any login information. The extension operates locally by making all requests on your behalf.
-
 # Features
 ✓ Loading the followers and following of the current page. The range of users loaded can be specified.  
 ✓ Load the people not following back.  
@@ -29,6 +26,9 @@ The extension can be used in many different ways. It can be used to either grow 
 
 # Pricing
 The extension has a 1 week trial including all of the functionality without any limits. The license key costs $3.99 per month and it can be used on up to 3 accounts, on unlimited number of devices. Payments are handled securely by PayPal™. Keep in mind we'll send you the license key to the email address registered to your PayPal™ account.
+
+# Security
+We don't collect any login information. The extension operates locally by making all requests on your behalf.
 
 # Support
 In case Instagram™ change their APIs there are written instructions on how to get the extension working again at https://apollo-bot.com/. If you have any questions or problems don't hesitate to contact us at support@apollo-bot.com.
