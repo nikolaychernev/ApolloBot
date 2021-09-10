@@ -2,7 +2,7 @@
 ![Logo](misc/promotional/promotional.png)
 
 # Features
-✓ Loading the followers and following of the current page. The range of users loaded can be specified.  
+✓  Loading the followers and following of the current page. The range of users loaded can be specified.  
 ✓ Load the people not following back.  
 ✓ Load the people who have unfollowed since the last check.  
 ✓ Global users queue search by username and full name.  
