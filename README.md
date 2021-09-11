@@ -1,6 +1,9 @@
 # ApolloBot
 ![Logo](misc/promotional/promotional.png)
 
+# How to use
+To use the extension just open Instagram™ and a new icon will appear in the top right corner. Go to your or another profile page and click the icon.
+
 # Features
 The main features of ApolloBot are the following:
 
@@ -19,9 +22,6 @@ There are 2 modes for processing the users queue toggled by clicking the dots on
 
 1. Start Following - by selecting this mode a pop-up will appear with options to select if you want to like any of the latest photos automatically, skip already followed/unfollowed users and skip private accounts.
 2. Start Unfollowing - every user in the queue will be unfollowed.
-
-# How to use
-To use the extension just open Instagram™ and a new icon will appear in the top right corner. Go to your or another profile page and click the icon. When the extension opens if you don't see a profile picture and a username in the top left corner please reload the page.
 
 # Use cases
 The extension can be used in many different ways. It can be used to either grow your account or get rid of people you don't want to follow anymore. For example if you want to grow your photography page you should go to another photography page and load its followers or post likers. Start following those people and configure liking at least 1 of their photos. You will quickly see how they start following you back and begin building engagement.
