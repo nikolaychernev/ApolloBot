@@ -142,7 +142,7 @@ function checkLicenseOrTrial() {
         }, function (data) {
             let license = data.license;
 
-            if (!license.accounts || !license.expiryText || !license.expired) {
+            if (Object.keys(license).length === 0) {
                 $(licenseText).text("License key is invalid");
                 return;
             }
