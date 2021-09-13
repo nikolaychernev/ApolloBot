@@ -14,6 +14,7 @@ function initializeCsrfToken() {
 function initializeUserId() {
     chrome.runtime.sendMessage({userId: true}, function (response) {
         userId = response;
+        userIdHash = sha256(userId);
     });
 }
 
@@ -130,9 +131,6 @@ function initializeLicenseOrTrial() {
 function checkLicenseOrTrial() {
     resetLicenseAndTrialInformation();
 
-    let userIdHash = sha256(userId);
-    let currentDate = new Date().getTime();
-
     if (licenseKey) {
         if (typeof licenseKey !== 'string' || !UUID_REGEX.test(licenseKey)) {
             $(licenseText).text("License key is invalid");
@@ -144,7 +142,7 @@ function checkLicenseOrTrial() {
         }, function (data) {
             let license = data.license;
 
-            if (Object.keys(license).length === 0 || !license.accounts || !license.expiry) {
+            if (!license.accounts || !license.expiryText || !license.expired) {
                 $(licenseText).text("License key is invalid");
                 return;
             }
@@ -154,14 +152,11 @@ function checkLicenseOrTrial() {
                 return;
             }
 
-            let expiry = new Date(license.expiry).getTime();
+            $(licenseText).text(license.expiryText);
 
-            if (currentDate > expiry) {
-                $(licenseText).text("License has expired");
+            if (license.expired) {
                 return;
             }
-
-            $(licenseText).text(getTimeDifferenceText(expiry, currentDate, 'License'));
 
             $(licensePageBtn).find("img").removeClass(RED_ICON_CLASS);
             $(licensePageBtn).find("img").addClass(GREEN_ICON_CLASS);
@@ -175,15 +170,14 @@ function checkLicenseOrTrial() {
         makeRequest({
             url: "https://5tueyr5d9c.execute-api.us-east-2.amazonaws.com/default/getTrialInformation?account=" + userIdHash
         }, function (data) {
-            let expiry = new Date(data.trial.expiry).getTime();
+            let trial = data.trial;
 
-            if (currentDate > expiry) {
-                $(trialText).text("Trial has expired");
+            $(trialText).text(trial.expiryText);
+            $(trialText).after('<span class="separator">|</span>');
+
+            if (trial.expired) {
                 return;
             }
-
-            $(trialText).text(getTimeDifferenceText(expiry, currentDate, 'Trial'));
-            $(trialText).after('<span class="separator">|</span>');
 
             activeTrial = true;
         });
@@ -203,14 +197,6 @@ function resetLicenseAndTrialInformation() {
 
     $(trialText).text("");
     $(trialText).next().remove('.separator');
-}
-
-function getTimeDifferenceText(expiry, currentDate, placeholder) {
-    let millisecondsDiff = expiry - currentDate;
-    let hoursDiff = millisecondsDiff / 1000 / 60 / 60;
-    let daysDiff = hoursDiff / 24;
-
-    return `${placeholder} expires in ${Math.floor(daysDiff)} days, ${Math.floor(hoursDiff % 24)} hours`
 }
 
 function extractUserInfo() {

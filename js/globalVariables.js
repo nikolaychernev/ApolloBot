@@ -1,5 +1,6 @@
 let csrfToken;
 let userId;
+let userIdHash;
 let currentUser;
 let settings;
 let timeoutObject;
